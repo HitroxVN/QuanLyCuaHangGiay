@@ -68,5 +68,16 @@ namespace QuanLyCuaHangGiay.database.repository
             string sql = "SELECT * FROM DanhMuc WHERE trangthai = 'Active'";
             return DBConnection.GetDataTable(sql);
         }
+
+        // Xóa mềm danh mục
+        public int ChangeStatus(int id, string status)
+        {
+            string sql = "UPDATE DanhMuc SET trangthai = @status WHERE id = @id";
+            SqlParameter[] p = {
+                new SqlParameter("@id", id),
+                new SqlParameter("@status", status)
+            };
+            return DBConnection.ExecuteNonQuery(sql, p);
+        }
     }
 }

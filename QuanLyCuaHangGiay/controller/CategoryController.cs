@@ -7,11 +7,30 @@ namespace QuanLyCuaHangGiay.controller
 {
     internal class CategoryController
     {
+
+        // Thêm chữ "static" để biến class này thành toàn cục, dùng được ở mọi nơi
+        public static class UserSession
+        {
+            // Giả lập bạn đang đăng nhập bằng tài khoản Staff (Nhân viên)
+            // Bạn có thể đổi chữ "Staff" thành "Admin" để test quyền của Giám đốc nhé!
+            public static string Role = "Staff";
+        }
+
+
+
+
+
         private CategoryRepository repo = new CategoryRepository();
 
         // Lấy danh sách thể loại
         public DataTable GetAllCategories()
         {
+            // Nhân viên chỉ xem danh mục Active
+            if (UserSession.Role == "Staff")
+            {
+                return repo.GetActiveCategories();
+            }
+            // Admin xem toàn bộ
             return repo.GetAll();
         }
 
@@ -68,5 +87,7 @@ namespace QuanLyCuaHangGiay.controller
         {
             return repo.GetActiveCategories(); // (Nếu biến của bạn tên là repo thì xóa dấu gạch dưới đi nhé)
         }
+
+
     }
 }

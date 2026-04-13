@@ -87,5 +87,28 @@ namespace QuanLyCuaHangGiay.database.repository
                            INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id";
             return DBConnection.GetDataTable(sql);
         }
+
+
+        // Hàm 1: Chỉ lấy sản phẩm Active (dành cho Staff)
+        public DataTable GetActiveProductsWithCategoryName()
+        {
+            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, 
+                                  sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
+                           FROM SanPham sp
+                           INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id
+                           WHERE sp.trangthai = 'Active'";
+            return DBConnection.GetDataTable(sql);
+        }
+
+        // Hàm 2: Xóa mềm (Chỉ đổi trạng thái thành Inactive)
+        public int ChangeStatus(int id, string status)
+        {
+            string sql = "UPDATE SanPham SET trangthai = @status WHERE id = @id";
+            SqlParameter[] p = {
+                new SqlParameter("@id", id),
+                new SqlParameter("@status", status)
+            };
+            return DBConnection.ExecuteNonQuery(sql, p);
+        }
     }
 }

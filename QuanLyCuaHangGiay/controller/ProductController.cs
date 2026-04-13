@@ -5,13 +5,31 @@ using QuanLyCuaHangGiay.model;
 
 namespace QuanLyCuaHangGiay.controller
 {
+
     internal class ProductController
     {
+
+
+        // Thêm chữ "static" để biến class này thành toàn cục, dùng được ở mọi nơi
+        public static class UserSession
+        {
+            // Giả lập bạn đang đăng nhập bằng tài khoản Staff (Nhân viên)
+            // Bạn có thể đổi chữ "Staff" thành "Admin" để test quyền của Giám đốc nhé!
+            public static string Role = "admin";
+        }
+
+
         private ProductRepository repo = new ProductRepository();
 
         // Lấy danh sách sản phẩm (Sử dụng hàm Join để hiển thị tên danh mục thay vì ID)
         public DataTable GetAllProducts()
         {
+            // Nếu là Nhân viên -> Chỉ cho xem sản phẩm Active
+            if (UserSession.Role == "Staff")
+            {
+                return repo.GetActiveProductsWithCategoryName();
+            }
+            // Nếu là Admin -> Cho xem tất cả
             return repo.GetAllWithCategoryName();
         }
 
@@ -49,8 +67,19 @@ namespace QuanLyCuaHangGiay.controller
         {
             if (id <= 0) return false;
 
-            int result = repo.Delete(id);
-            return result > 0;
+            if (UserSession.Role == "Staff")
+            {
+                // Nhân viên -> Bấm xóa là Xóa mềm (Đổi sang Inactive)
+                int result = repo.ChangeStatus(id, "Inactive");
+                return result > 0;
+            }
+            else
+            {
+                // Admin -> Xóa cứng (Mất luôn khỏi CSDL)
+                // (Hoặc bạn có thể cho Admin xóa mềm luôn nếu muốn giữ lịch sử dữ liệu)
+                int result = repo.Delete(id);
+                return result > 0;
+            }
         }
 
         // Tìm kiếm sản phẩm
