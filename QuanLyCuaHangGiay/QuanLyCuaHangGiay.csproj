@@ -52,7 +52,9 @@
     <Compile Include="controller\PhieuNhapController.cs" />
     <Compile Include="database\DBConnection.cs" />
     <Compile Include="database\repository\Class1.cs" />
+    <Compile Include="database\repository\KhoRepository.cs" />
     <Compile Include="database\repository\NhaCungCapRepository.cs" />
+    <Compile Include="database\repository\PhieuNhapRepository.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
