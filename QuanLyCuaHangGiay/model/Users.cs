@@ -15,7 +15,7 @@ namespace QuanLyCuaHangGiay.model
         public string sdt { get; set; }
         public string diaChi { get; set; }
         public string quyen { get; set; }
-        public string ngayTao { get; set; }
+        public DateTime ngayTao { get; set; }
         public string trangThai { get; set; }
     }
 }

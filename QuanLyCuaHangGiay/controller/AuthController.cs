@@ -12,6 +12,7 @@ namespace QuanLyCuaHangGiay.controller
     internal class AuthController
     {
         private UserRepository repo = new UserRepository();
+        private ValidateUser validate = new ValidateUser();
 
         public Users login(string email, string password)
         {
@@ -26,18 +27,37 @@ namespace QuanLyCuaHangGiay.controller
             return null;
         }
 
-        public bool register(Users u)
+        public bool register(Users u, out string m)
         {
             Users checkEmail = repo.getByEmail(u.email);
-            if (checkEmail != null) return false;
+
+            if (!validate.validateForAdd(u, out m))
+            {
+                return false;
+            }
+
+            if (checkEmail != null)
+            {
+                m = "Email đã tồn tại";
+                return false;
+            }
 
             u.quyen = "user";
-            u.ngayTao = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss");
+            u.ngayTao = DateTime.Now;
             u.trangThai = "active";
 
             u.matKhau = HashPassword.hashPassword(u.matKhau);
 
-            return repo.addUser(u);
+            if(repo.addUser(u))
+            {
+                m = "Đăng ký thành công";
+                return true;
+            }
+            else
+            {
+                m = "Đăng ký thất bại";
+                return false;
+            }
         }
 
         public void logout()

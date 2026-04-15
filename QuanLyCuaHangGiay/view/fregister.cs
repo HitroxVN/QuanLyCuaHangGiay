@@ -52,14 +52,15 @@ namespace QuanLyCuaHangGiay.view
                 return;
             }
 
-            if (auth.register(u))
+            string m;
+            if (auth.register(u, out m))
             {
-                MessageBox.Show("Đăng ký thành công!");
+                MessageBox.Show(m);
                 this.Close();
             }
             else
             {
-                MessageBox.Show("Đăng ký thất bại!");
+                MessageBox.Show(m);
             }
         }
     }
