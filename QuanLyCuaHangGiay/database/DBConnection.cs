@@ -6,7 +6,7 @@ namespace QuanLyCuaHangGiay.Database
 {
     internal class DBConnection
     {
-        private static readonly String connectionString = @"Data Source=HOANGTRUONG;Initial Catalog=shoe_store;Integrated Security=True";
+        private static readonly String connectionString = @"Data Source=MSI\SQLEXPRESS;Initial Catalog=shoe_shop;Integrated Security=True";
 
         public static SqlConnection GetDBConnection()
         {
