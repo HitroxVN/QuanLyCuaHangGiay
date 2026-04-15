@@ -43,5 +43,10 @@ namespace QuanLyCuaHangGiay.view
         {
             OpenForm(new frmKho());
         }
+
+        private void nhàCungCấpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmNCC());
+        }
     }
 }

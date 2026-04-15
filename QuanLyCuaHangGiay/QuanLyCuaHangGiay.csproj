@@ -48,9 +48,11 @@
   <ItemGroup>
     <Compile Include="controller\Class1.cs" />
     <Compile Include="controller\KhoController.cs" />
+    <Compile Include="controller\NhaCungCapController.cs" />
     <Compile Include="controller\PhieuNhapController.cs" />
     <Compile Include="database\DBConnection.cs" />
     <Compile Include="database\repository\Class1.cs" />
+    <Compile Include="database\repository\NhaCungCapRepository.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -69,6 +71,12 @@
     </Compile>
     <Compile Include="view\frmMain.Designer.cs">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="view\frmNCC.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="view\frmNCC.Designer.cs">
+      <DependentUpon>frmNCC.cs</DependentUpon>
     </Compile>
     <Compile Include="view\frmPhieuNhap.cs">
       <SubType>Form</SubType>
@@ -96,6 +104,9 @@
     </Compile>
     <EmbeddedResource Include="view\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="view\frmNCC.resx">
+      <DependentUpon>frmNCC.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="view\frmPhieuNhap.resx">
       <DependentUpon>frmPhieuNhap.cs</DependentUpon>
