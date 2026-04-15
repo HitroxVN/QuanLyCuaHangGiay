@@ -6,6 +6,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace QuanLyCuaHangGiay.controller
 {
@@ -14,18 +15,19 @@ namespace QuanLyCuaHangGiay.controller
         //Hiển thị
         public DataTable GetAll()
         {
-            string sql = @"SELECT pn.id,
-
-                                  sp.tenSP,
-                                  sp.mau,
-                                  sp.kichco,
-                                  dm.tenDanhMuc,
-                                  ncc.tenNCC,
-
-                                  pn.soLuong,
-                                  pn.giaDonNhap,
-                                  pn.thoiGian,
-                                  pn.ghiChu
+            string sql = @"SELECT   pn.id,
+                                    dm.tenDanhMuc,
+                                    sp.tenSP,
+                                    sp.kichco,
+                                    sp.mau,
+                                    ncc.tenNCC,
+                                    pn.soLuong,
+                                    pn.giaDonNhap,
+                                    pn.thoiGian,
+                                    pn.ghiChu,
+                                    pn.sanphamID,
+                                    pn.nhacungcapID,
+                                    sp.danhmucID
                            FROM PhieuNhap pn
                            JOIN SanPham sp ON pn.sanphamID = sp.id
                            JOIN DanhMuc dm ON sp.danhmucID = dm.id
@@ -125,32 +127,38 @@ namespace QuanLyCuaHangGiay.controller
                 }
             }
         }
-        //Update + Cập nhật Kho
+
+        //update + Cập nhật Kho
         public bool Update(int id, int spID, int nccID, int soLuong, decimal giaNhap, string ghiChu)
         {
             using (SqlConnection conn = DBConnection.GetDBConnection())
             {
                 conn.Open();
+                //MessageBox.Show("spID = " + spID);
                 SqlTransaction tran = conn.BeginTransaction();
 
                 try
                 {
+                    int oldSP = 0;
+                    int oldSL = 0;
+
                     // 1. Lấy dữ liệu cũ
                     string getSql = "SELECT sanphamID, soLuong FROM PhieuNhap WHERE id=@id";
                     SqlCommand cmdGet = new SqlCommand(getSql, conn, tran);
                     cmdGet.Parameters.AddWithValue("@id", id);
 
-                    SqlDataReader reader = cmdGet.ExecuteReader();
-
-                    int oldSP = 0;
-                    int oldSL = 0;
-
-                    if (reader.Read())
+                    using (SqlDataReader reader = cmdGet.ExecuteReader())
                     {
-                        oldSP = Convert.ToInt32(reader["sanphamID"]);
-                        oldSL = Convert.ToInt32(reader["soLuong"]);
+                        if (reader.Read())
+                        {
+                            oldSP = Convert.ToInt32(reader["sanphamID"]);
+                            oldSL = Convert.ToInt32(reader["soLuong"]);
+                        }
+                        else
+                        {
+                            throw new Exception("Không tìm thấy phiếu nhập!");
+                        }
                     }
-                    reader.Close();
 
                     // 2. Trừ kho cũ
                     string truKho = "UPDATE Kho SET soLuong = soLuong - @sl WHERE sanphamID=@sp";
@@ -171,21 +179,44 @@ namespace QuanLyCuaHangGiay.controller
                     cmd2.Parameters.AddWithValue("@gia", giaNhap);
                     cmd2.Parameters.AddWithValue("@gc", ghiChu);
                     cmd2.Parameters.AddWithValue("@id", id);
-                    cmd2.ExecuteNonQuery();
 
-                    // 4. Cộng lại kho mới
-                    string congKho = "UPDATE Kho SET soLuong = soLuong + @sl WHERE sanphamID=@sp";
-                    SqlCommand cmd3 = new SqlCommand(congKho, conn, tran);
-                    cmd3.Parameters.AddWithValue("@sl", soLuong);
-                    cmd3.Parameters.AddWithValue("@sp", spID);
-                    cmd3.ExecuteNonQuery();
+                    int rows = cmd2.ExecuteNonQuery();
+
+                    if (rows == 0)
+                        throw new Exception("Update thất bại!");
+
+                    // 4. Nếu chưa có trong Kho → insert
+                    string checkKho = "SELECT COUNT(*) FROM Kho WHERE sanphamID=@sp";
+                    SqlCommand cmdCheck = new SqlCommand(checkKho, conn, tran);
+                    cmdCheck.Parameters.AddWithValue("@sp", spID);
+
+                    int count = (int)cmdCheck.ExecuteScalar();
+
+                    if (count == 0)
+                    {
+                        string insertKho = "INSERT INTO Kho(sanphamID, soLuong) VALUES(@sp, @sl)";
+                        SqlCommand cmdInsert = new SqlCommand(insertKho, conn, tran);
+                        cmdInsert.Parameters.AddWithValue("@sp", spID);
+                        cmdInsert.Parameters.AddWithValue("@sl", soLuong);
+                        cmdInsert.ExecuteNonQuery();
+                    }
+                    else
+                    {
+                        // 5. Cộng kho mới
+                        string congKho = "UPDATE Kho SET soLuong = soLuong + @sl WHERE sanphamID=@sp";
+                        SqlCommand cmd3 = new SqlCommand(congKho, conn, tran);
+                        cmd3.Parameters.AddWithValue("@sl", soLuong);
+                        cmd3.Parameters.AddWithValue("@sp", spID);
+                        cmd3.ExecuteNonQuery();
+                    }
 
                     tran.Commit();
                     return true;
                 }
-                catch
+                catch (Exception ex)
                 {
                     tran.Rollback();
+                    MessageBox.Show("Lỗi update: " + ex.Message);
                     return false;
                 }
             }

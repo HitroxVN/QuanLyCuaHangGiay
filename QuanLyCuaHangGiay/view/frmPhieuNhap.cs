@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -42,6 +43,9 @@ namespace QuanLyCuaHangGiay.view
         private void LoadData()
         {
             dgvDanhSach.DataSource = _controller.GetAll();
+            dgvDanhSach.Columns["sanphamID"].Visible = false;
+            dgvDanhSach.Columns["nhacungcapID"].Visible = false;
+            dgvDanhSach.Columns["danhmucID"].Visible = false;
             TinhTien1Dong();
         }
 
@@ -50,6 +54,14 @@ namespace QuanLyCuaHangGiay.view
             cbDanhMuc.DataSource = _controller.GetDanhMuc();
             cbDanhMuc.DisplayMember = "tenDanhMuc";
             cbDanhMuc.ValueMember = "id";
+        }
+
+        private void LoadSanPhamByDanhMuc(int danhMucID)
+        {
+            cbSanPham.DataSource = _controller.GetSanPhamByDanhMuc(danhMucID);
+            cbSanPham.DisplayMember = "tenSP";
+            cbSanPham.ValueMember = "id";
+            cbSanPham.SelectedIndex = -1;
         }
 
         private void LoadComboBox()
@@ -65,26 +77,37 @@ namespace QuanLyCuaHangGiay.view
             dgvDanhSach.DataSource = _controller.Filter(dtFrom.Value, dtTo.Value);
         }
 
-        private void btnTaoMoi_Click(object sender, EventArgs e)
+        private void ResetForm()
         {
+            isLoading = true;
+
             txtSoLuong.Clear();
             txtGiaNhap.Clear();
             txtGhiChu.Clear();
 
             cbDanhMuc.SelectedIndex = -1;
+
             cbSanPham.DataSource = null;
             cbSanPham.Text = "";
+
             cbNCC.SelectedIndex = -1;
 
             txtMau.Clear();
             txtSize.Clear();
 
             selectedID = -1;
+
+            isLoading = false;
+        }
+        private void btnTaoMoi_Click(object sender, EventArgs e)
+        {
+            ResetForm();
+            btnHoanThanh.Enabled = true;
         }
 
         private void btnLuu_Click(object sender, EventArgs e)
         {
-
+            
             if (selectedID == -1)
             {
                 MessageBox.Show("Vui lòng chọn dòng để sửa!");
@@ -98,7 +121,6 @@ namespace QuanLyCuaHangGiay.view
                 int soLuong = int.Parse(txtSoLuong.Text);
                 decimal gia = decimal.Parse(txtGiaNhap.Text);
                 string ghiChu = txtGhiChu.Text;
-
                 bool result = _controller.Update(selectedID, spID, nccID, soLuong, gia, ghiChu);
 
                 if (result)
@@ -106,6 +128,7 @@ namespace QuanLyCuaHangGiay.view
                     MessageBox.Show("Cập nhật thành công!");
                     LoadData();
                     TinhTien1Dong();
+                    ResetForm();
                 }
                 else
                 {
@@ -135,6 +158,7 @@ namespace QuanLyCuaHangGiay.view
                     MessageBox.Show("Xóa thành công!");
                     LoadData();
                     TinhTien1Dong();
+                    ResetForm();
                 }
                 else
                 {
@@ -163,11 +187,7 @@ namespace QuanLyCuaHangGiay.view
                     LoadData();
                     TinhTien1Dong();
 
-                    // reset form
-                    txtSoLuong.Clear();
-                    txtGiaNhap.Clear();
-                    txtGhiChu.Clear();
-                    selectedID = -1;
+                    ResetForm();
                 }
                 else
                 {
@@ -182,26 +202,37 @@ namespace QuanLyCuaHangGiay.view
 
         private void dgvDanhSach_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
-            {
-                isLoading = true;
-                DataGridViewRow row = dgvDanhSach.Rows[e.RowIndex];
 
-                selectedID = Convert.ToInt32(row.Cells["id"].Value);
+            if (e.RowIndex < 0) return;
 
-                txtSoLuong.Text = row.Cells["soLuong"].Value.ToString();
-                txtGiaNhap.Text = row.Cells["giaDonNhap"].Value.ToString();
-                txtGhiChu.Text = row.Cells["ghiChu"].Value?.ToString();
-                cbSanPham.Text = row.Cells["tenSP"].Value.ToString();
-                cbNCC.Text = row.Cells["tenNCC"].Value.ToString();
-                txtMau.Text = row.Cells["mau"].Value.ToString();
-                txtSize.Text = row.Cells["kichco"].Value.ToString();
-                cbDanhMuc.Text = row.Cells["tenDanhMuc"].Value.ToString();
+            btnHoanThanh.Enabled = false;
+            DataGridViewRow row = dgvDanhSach.Rows[e.RowIndex];
 
+            if (row.Cells["id"].Value == null || row.Cells["id"].Value == DBNull.Value)
+                return;
 
-                isLoading = false;
-                TinhTien1Dong();
-            }
+            isLoading = true;
+
+            selectedID = Convert.ToInt32(row.Cells["id"].Value);
+
+            txtSoLuong.Text = row.Cells["soLuong"].Value.ToString();
+            txtGiaNhap.Text = row.Cells["giaDonNhap"].Value.ToString();
+            txtGhiChu.Text = row.Cells["ghiChu"].Value?.ToString();
+
+            int danhMucID = Convert.ToInt32(row.Cells["danhmucID"].Value);
+            cbDanhMuc.SelectedValue = danhMucID;
+
+            LoadSanPhamByDanhMuc(danhMucID);
+
+            int spID = Convert.ToInt32(row.Cells["sanphamID"].Value);
+            cbSanPham.SelectedValue = spID;
+            cbNCC.Text = row.Cells["tenNCC"].Value.ToString();
+            txtSize.Text = row.Cells["kichco"].Value.ToString();
+            txtMau.Text = row.Cells["mau"].Value.ToString();
+
+            isLoading = false;
+
+            TinhTien1Dong();
         }
 
         private void cbDanhMuc_SelectedIndexChanged(object sender, EventArgs e)

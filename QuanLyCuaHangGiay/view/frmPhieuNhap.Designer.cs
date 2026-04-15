@@ -32,6 +32,9 @@
             this.label1 = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
+            this.lblThanhTien = new System.Windows.Forms.Label();
+            this.txtTong = new System.Windows.Forms.TextBox();
+            this.label14 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.btnLoc = new System.Windows.Forms.Button();
             this.dtTo = new System.Windows.Forms.DateTimePicker();
@@ -73,9 +76,6 @@
             this.giaDonNhap = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.thoiGian = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.ghiChu = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.label14 = new System.Windows.Forms.Label();
-            this.txtTong = new System.Windows.Forms.TextBox();
-            this.lblThanhTien = new System.Windows.Forms.Label();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -136,6 +136,37 @@
             this.groupBox3.TabIndex = 18;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Giá trị đơn hàng";
+            // 
+            // lblThanhTien
+            // 
+            this.lblThanhTien.AutoSize = true;
+            this.lblThanhTien.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblThanhTien.ForeColor = System.Drawing.Color.Brown;
+            this.lblThanhTien.Location = new System.Drawing.Point(127, 77);
+            this.lblThanhTien.Name = "lblThanhTien";
+            this.lblThanhTien.Size = new System.Drawing.Size(107, 20);
+            this.lblThanhTien.TabIndex = 20;
+            this.lblThanhTien.Text = "Không đồng";
+            // 
+            // txtTong
+            // 
+            this.txtTong.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.txtTong.ForeColor = System.Drawing.Color.Brown;
+            this.txtTong.Location = new System.Drawing.Point(85, 35);
+            this.txtTong.Name = "txtTong";
+            this.txtTong.ReadOnly = true;
+            this.txtTong.Size = new System.Drawing.Size(379, 27);
+            this.txtTong.TabIndex = 19;
+            // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.ForeColor = System.Drawing.Color.Brown;
+            this.label14.Location = new System.Drawing.Point(6, 38);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(56, 20);
+            this.label14.TabIndex = 1;
+            this.label14.Text = "Tổng:";
             // 
             // label12
             // 
@@ -559,37 +590,6 @@
             this.ghiChu.MinimumWidth = 6;
             this.ghiChu.Name = "ghiChu";
             this.ghiChu.ReadOnly = true;
-            // 
-            // label14
-            // 
-            this.label14.AutoSize = true;
-            this.label14.ForeColor = System.Drawing.Color.Brown;
-            this.label14.Location = new System.Drawing.Point(6, 38);
-            this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(56, 20);
-            this.label14.TabIndex = 1;
-            this.label14.Text = "Tổng:";
-            // 
-            // txtTong
-            // 
-            this.txtTong.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTong.ForeColor = System.Drawing.Color.Brown;
-            this.txtTong.Location = new System.Drawing.Point(85, 35);
-            this.txtTong.Name = "txtTong";
-            this.txtTong.ReadOnly = true;
-            this.txtTong.Size = new System.Drawing.Size(379, 27);
-            this.txtTong.TabIndex = 19;
-            // 
-            // lblThanhTien
-            // 
-            this.lblThanhTien.AutoSize = true;
-            this.lblThanhTien.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblThanhTien.ForeColor = System.Drawing.Color.Brown;
-            this.lblThanhTien.Location = new System.Drawing.Point(127, 77);
-            this.lblThanhTien.Name = "lblThanhTien";
-            this.lblThanhTien.Size = new System.Drawing.Size(107, 20);
-            this.lblThanhTien.TabIndex = 20;
-            this.lblThanhTien.Text = "Không đồng";
             // 
             // frmPhieuNhap
             // 
