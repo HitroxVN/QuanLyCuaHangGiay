@@ -41,15 +41,15 @@ namespace QuanLyCuaHangGiay.view
 
                 // phân quyền form
                 // test
-                if(u.quyen == "admin")
+                if(Session.user.quyen == "admin" || Session.user.quyen == "staff")
                 {
-                    // gọi form admin
-                } else if(Session.user.quyen == "staff")
-                {
-                    // form staff
+                    frmMain f = new frmMain();
+                    this.Hide();
+                    f.ShowDialog();
+                    this.Close();
                 } else
                 {
-                    // form user
+                    MessageBox.Show("Bạn chưa có quyền truy cập vào phần mềm!");
                 }
             }
         }

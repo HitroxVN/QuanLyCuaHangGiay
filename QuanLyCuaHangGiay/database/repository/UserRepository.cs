@@ -175,5 +175,33 @@ namespace QuanLyCuaHangGiay.database.repository
             return list;
         }
 
+        public bool checkPassword(int userId, string password)
+        {
+            string query = "SELECT matKhau FROM TaiKhoan WHERE id = @id";
+            SqlParameter[] p = new SqlParameter[]
+            {
+                new SqlParameter("@id", userId)
+            };
+            DataTable dt = DBConnection.GetDataTable(query, p);
+            if (dt.Rows.Count > 0)
+            {
+                return dt.Rows[0]["matKhau"].ToString() == password;
+            }
+            return false;
+        }
+
+        public bool changePassword(int id, string newPass)
+        {
+            string query = "UPDATE TaiKhoan SET matKhau = @mk WHERE id = @id";
+
+            SqlParameter[] p = new SqlParameter[]
+            {
+                new SqlParameter("@mk", newPass),
+                new SqlParameter("@id", id)
+            };
+
+            return DBConnection.ExecuteNonQuery(query, p) > 0;
+        }
+
     }
 }

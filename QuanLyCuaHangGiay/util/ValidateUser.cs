@@ -67,6 +67,22 @@ namespace QuanLyCuaHangGiay.util
             return true;
         }
 
+        public bool validateForPasswordChange(string pass, out string m)
+        {
+            m = "";
+            if (string.IsNullOrWhiteSpace(pass))
+            {
+                m = "Mật khẩu mới không được để trống.";
+                return false;
+            }
+            if (pass.Length < 6)
+            {
+                m = "Mật khẩu mới phải >= 6 ký tự.";
+                return false;
+            }
+            return true;
+        }
+
         public bool validateForUpdate(Users u, out string m)
         {
             m = "";

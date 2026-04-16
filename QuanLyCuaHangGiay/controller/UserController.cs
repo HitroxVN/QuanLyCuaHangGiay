@@ -71,6 +71,33 @@ namespace QuanLyCuaHangGiay.controller
             return repo.removeUser(id);
         }
 
+        public bool changePassword(int id, string newPass, string oldPass, out string m)
+        {
+            if (!validate.validateForPasswordChange(newPass, out m))
+            {
+                return false;
+            }
+            string newhashed = HashPassword.hashPassword(newPass);
+            string oldhashed = HashPassword.hashPassword(oldPass);
+
+            if (!repo.checkPassword(id, oldhashed))
+            {
+                m = "Mật khẩu cũ không đúng.";
+                return false;
+            }
+            
+            if (repo.changePassword(id, newhashed))
+            {
+                m = "Đổi mật khẩu thành công.";
+                return true;
+            }
+            else
+            {
+                m = "Đổi mật khẩu thất bại.";
+                return false;
+            }
+        }
+
         public List<Users> getAllUsers()
         {
             return repo.getAllUsers();
