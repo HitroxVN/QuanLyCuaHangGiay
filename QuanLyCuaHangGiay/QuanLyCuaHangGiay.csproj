@@ -34,7 +34,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
@@ -47,34 +46,55 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="controller\AuthController.cs" />
-    <Compile Include="controller\UserController.cs" />
+    <Compile Include="controller\Class1.cs" />
+    <Compile Include="controller\KhoController.cs" />
+    <Compile Include="controller\NhaCungCapController.cs" />
+    <Compile Include="controller\PhieuNhapController.cs" />
     <Compile Include="database\DBConnection.cs" />
-    <Compile Include="database\repository\UserRepository.cs" />
+    <Compile Include="database\repository\Class1.cs" />
+    <Compile Include="database\repository\KhoRepository.cs" />
+    <Compile Include="database\repository\NhaCungCapRepository.cs" />
+    <Compile Include="database\repository\PhieuNhapRepository.cs" />
+    <Compile Include="Form1.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Form1.Designer.cs">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </Compile>
+    <Compile Include="model\Kho.cs" />
+    <Compile Include="model\NhaCungCap.cs" />
+    <Compile Include="model\PhieuNhap.cs" />
+    <Compile Include="model\SanPham.cs" />
     <Compile Include="model\Users.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="util\HashPassword.cs" />
-    <Compile Include="util\Session.cs" />
-    <Compile Include="util\ValidateUser.cs" />
-    <Compile Include="view\faccount.cs">
+    <Compile Include="view\frmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="view\faccount.Designer.cs">
-      <DependentUpon>faccount.cs</DependentUpon>
+    <Compile Include="view\frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
     </Compile>
-    <Compile Include="view\flogin.cs">
+    <Compile Include="view\frmNCC.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="view\flogin.Designer.cs">
-      <DependentUpon>flogin.cs</DependentUpon>
+    <Compile Include="view\frmNCC.Designer.cs">
+      <DependentUpon>frmNCC.cs</DependentUpon>
     </Compile>
-    <Compile Include="view\fregister.cs">
+    <Compile Include="view\frmPhieuNhap.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="view\fregister.Designer.cs">
-      <DependentUpon>fregister.cs</DependentUpon>
+    <Compile Include="view\frmPhieuNhap.Designer.cs">
+      <DependentUpon>frmPhieuNhap.cs</DependentUpon>
     </Compile>
+    <Compile Include="view\frmKho.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="view\frmKho.Designer.cs">
+      <DependentUpon>frmKho.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="Form1.resx">
+      <DependentUpon>Form1.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
@@ -84,14 +104,17 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="view\faccount.resx">
-      <DependentUpon>faccount.cs</DependentUpon>
+    <EmbeddedResource Include="view\frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="view\flogin.resx">
-      <DependentUpon>flogin.cs</DependentUpon>
+    <EmbeddedResource Include="view\frmNCC.resx">
+      <DependentUpon>frmNCC.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="view\fregister.resx">
-      <DependentUpon>fregister.cs</DependentUpon>
+    <EmbeddedResource Include="view\frmPhieuNhap.resx">
+      <DependentUpon>frmPhieuNhap.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="view\frmKho.resx">
+      <DependentUpon>frmKho.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
