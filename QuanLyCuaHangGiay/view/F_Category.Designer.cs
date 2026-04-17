@@ -88,7 +88,7 @@
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Location = new System.Drawing.Point(59, 384);
+            this.groupBox1.Location = new System.Drawing.Point(49, 428);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(550, 84);
             this.groupBox1.TabIndex = 16;
@@ -154,7 +154,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(613, 206);
+            this.dataGridView1.Size = new System.Drawing.Size(613, 255);
             this.dataGridView1.TabIndex = 22;
             // 
             // panel1
@@ -164,7 +164,7 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(971, 73);
+            this.panel1.Size = new System.Drawing.Size(1194, 73);
             this.panel1.TabIndex = 23;
             // 
             // label7
@@ -183,7 +183,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(971, 515);
+            this.ClientSize = new System.Drawing.Size(1194, 551);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.timkiem);

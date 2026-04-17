@@ -5,19 +5,16 @@ using QuanLyCuaHangGiay.model;
 
 namespace QuanLyCuaHangGiay.controller
 {
+    // Thêm chữ "static" để biến class này thành toàn cục, dùng được ở mọi nơi
+    public static class UserSession
+    {
+        // Giả lập bạn đang đăng nhập bằng tài khoản Staff (Nhân viên)
+        // Bạn có thể đổi chữ "Staff" thành "Admin" để test quyền của Giám đốc nhé!
+        public static string Role = "admin";
+    }
 
     internal class ProductController
     {
-
-
-        // Thêm chữ "static" để biến class này thành toàn cục, dùng được ở mọi nơi
-        public static class UserSession
-        {
-            // Giả lập bạn đang đăng nhập bằng tài khoản Staff (Nhân viên)
-            // Bạn có thể đổi chữ "Staff" thành "Admin" để test quyền của Giám đốc nhé!
-            public static string Role = "admin";
-        }
-
 
         private ProductRepository repo = new ProductRepository();
 
