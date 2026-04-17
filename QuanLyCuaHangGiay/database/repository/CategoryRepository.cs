@@ -79,5 +79,24 @@ namespace QuanLyCuaHangGiay.database.repository
             };
             return DBConnection.ExecuteNonQuery(sql, p);
         }
+
+        //Kiểm tra danh mục có sản phẩm không
+        public bool CheckHasProduct(int idDanhMuc)
+        {
+            string sql = "SELECT COUNT(*) FROM SanPham WHERE danhmucID = @id";
+
+            System.Data.SqlClient.SqlParameter[] p = {
+                new System.Data.SqlClient.SqlParameter("@id", idDanhMuc)
+            };
+
+            DataTable dt = DBConnection.GetDataTable(sql, p);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                int count = Convert.ToInt32(dt.Rows[0][0]);
+                return count > 0; // Nếu count > 0 tức là có sản phẩm (trả về true)
+            }
+            return false;
+        }
     }
 }

@@ -7,22 +7,9 @@ namespace QuanLyCuaHangGiay.controller
 {
     internal class CategoryController
     {
-
-        // Thêm chữ "static" để biến class này thành toàn cục, dùng được ở mọi nơi
-        public static class UserSession
-        {
-            // Giả lập bạn đang đăng nhập bằng tài khoản Staff (Nhân viên)
-            // Bạn có thể đổi chữ "Staff" thành "Admin" để test quyền của Giám đốc nhé!
-            public static string Role = "Staff";
-        }
-
-
-
-
-
         private CategoryRepository repo = new CategoryRepository();
 
-        // Lấy danh sách thể loại
+        //  Lấy danh sách thể loại
         public DataTable GetAllCategories()
         {
             // Nhân viên chỉ xem danh mục Active
@@ -34,22 +21,21 @@ namespace QuanLyCuaHangGiay.controller
             return repo.GetAll();
         }
 
-        // Thêm thể loại mới
+        //  Thêm thể loại mới
         public bool AddCategory(string tenDanhMuc, string trangThai)
         {
-            // Kiểm tra tính hợp lệ của dữ liệu
             if (string.IsNullOrWhiteSpace(tenDanhMuc))
             {
-                return false; // Trả về false nếu tên danh mục trống
+                return false;
             }
 
             Categories cat = new Categories(tenDanhMuc, trangThai);
             int result = repo.Insert(cat);
 
-            return result > 0; // Nếu insert thành công, số dòng tác động > 0
+            return result > 0;
         }
 
-        // Cập nhật thể loại
+        //  Cập nhật thể loại
         public bool UpdateCategory(int id, string tenDanhMuc, string trangThai)
         {
             if (id <= 0 || string.IsNullOrWhiteSpace(tenDanhMuc))
@@ -63,16 +49,34 @@ namespace QuanLyCuaHangGiay.controller
             return result > 0;
         }
 
-        // Xóa thể loại
+        //  XÓA THỂ LOẠI (Đã được nâng cấp kiểm tra ràng buộc)
         public bool DeleteCategory(int id)
         {
             if (id <= 0) return false;
 
-            int result = repo.Delete(id);
-            return result > 0;
+            //  Gọi hàm CheckHasProduct từ Repository
+            if (repo.CheckHasProduct(id))
+            {
+                // Nếu có sản phẩm, ném ra lỗi này để Form bắt được và hiện MessageBox
+                throw new Exception("Không thể thực hiện! Danh mục này vẫn đang chứa sản phẩm.");
+            }
+
+            // NẾU AN TOÀN (Không có sản phẩm) -> Tiến hành xóa
+            if (UserSession.Role == "Staff")
+            {
+                // Nhân viên xóa mềm (đổi trạng thái)
+                int result = repo.ChangeStatus(id, "Inactive");
+                return result > 0;
+            }
+            else
+            {
+                // Admin xóa cứng khỏi database
+                int result = repo.Delete(id);
+                return result > 0;
+            }
         }
 
-        // Tìm kiếm thể loại
+        // 5. Tìm kiếm thể loại
         public DataTable SearchCategory(string keyword)
         {
             if (string.IsNullOrWhiteSpace(keyword))
@@ -82,12 +86,10 @@ namespace QuanLyCuaHangGiay.controller
             return repo.Search(keyword);
         }
 
-        // Hàm mới: Gọi xuống Repository để lấy danh mục Active
+        // 6. Lấy danh mục Active cho ComboBox bên form Sản phẩm
         public DataTable GetActiveCategories()
         {
-            return repo.GetActiveCategories(); // (Nếu biến của bạn tên là repo thì xóa dấu gạch dưới đi nhé)
+            return repo.GetActiveCategories();
         }
-
-
     }
 }

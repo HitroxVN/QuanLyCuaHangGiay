@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
-using System.IO; // Thư viện bắt buộc để xử lý file/thư mục ảnh
+using System.IO; 
 using System.Windows.Forms;
-using QuanLyCuaHangGiay.controller; // Gọi Controller của bạn
+using QuanLyCuaHangGiay.controller; 
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -33,7 +33,7 @@ namespace QuanLyCuaHangGiay.view
             button6.Click += button6_Click; // Tìm kiếm
             dataGridView1.CellClick += dataGridView1_CellClick; // Click vào bảng
 
-            // THÊM DÒNG NÀY VÀO ĐÂY: Bắt sự kiện khi đang gõ chữ tìm kiếm
+            // Bắt sự kiện khi đang gõ chữ tìm kiếm
             timkiem.TextChanged += timkiem_TextChanged;
         }
 
@@ -137,7 +137,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // Nút: Thêm
+        //Thêm
         private void button2_Click(object sender, EventArgs e)
         {
             try
@@ -171,7 +171,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // Nút: Sửa
+        //  Sửa
         private void button3_Click(object sender, EventArgs e)
         {
             if (idSanPhamHienTai <= 0)
@@ -207,7 +207,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // Nút: Xóa
+        // Xóa
         private void button4_Click(object sender, EventArgs e)
         {
             if (idSanPhamHienTai <= 0)
@@ -232,7 +232,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // Nút: Làm mới (Clear Form)
+        //  Làm mới 
         private void button5_Click(object sender, EventArgs e)
         {
             tensp.Clear();
@@ -252,7 +252,7 @@ namespace QuanLyCuaHangGiay.view
             LoadData(); // Load lại toàn bộ bảng (bỏ tìm kiếm)
         }
 
-        // Nút: Tìm kiếm
+        // Tìm kiếm
         private void button6_Click(object sender, EventArgs e)
         {
             string keyword = timkiem.Text;
@@ -272,48 +272,52 @@ namespace QuanLyCuaHangGiay.view
         // Sự kiện: Bấm vào 1 dòng trên DataGridView để hiển thị lên trên
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            //  e.RowIndex >= 0 VÀ không phải là dòng trống cuối cùng (!IsNewRow)
+            if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                idSanPhamHienTai = Convert.ToInt32(row.Cells["id"].Value);
-                tensp.Text = row.Cells["tenSP"].Value.ToString();
-                gia.Text = row.Cells["gia"].Value.ToString();
-                mau.Text = row.Cells["mau"].Value.ToString();
-                kichco.Text = row.Cells["kichco"].Value.ToString();
-
-                // Chọn đúng combobox theo Value (ẩn) hoặc theo chữ (hiển thị)
-                listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
-                listtt.Text = row.Cells["trangthai"].Value.ToString();
-
-                // Hiển thị ảnh
-                // Hiển thị ảnh
-                tenAnhLuuDB = row.Cells["anh"].Value.ToString();
-                duongDanAnhGoc = ""; // Reset đường dẫn gốc vì mình đang load ảnh từ DB lên
-
-                if (!string.IsNullOrEmpty(tenAnhLuuDB))
+                // Chắc chắn rằng ô ID có chứa dữ liệu
+                if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
                 {
-                    // Lùi 2 cấp để tìm ảnh trong thư mục gốc
-                    string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
-                    string duongDanLoadLen = Path.Combine(thuMucGocProject, "Images", tenAnhLuuDB);
+                    idSanPhamHienTai = Convert.ToInt32(row.Cells["id"].Value);
+                    tensp.Text = row.Cells["tenSP"].Value.ToString();
+                    gia.Text = row.Cells["gia"].Value.ToString();
+                    mau.Text = row.Cells["mau"].Value.ToString();
+                    kichco.Text = row.Cells["kichco"].Value.ToString();
 
-                    if (File.Exists(duongDanLoadLen))
+                    // Chọn đúng combobox theo Value (ẩn) hoặc theo chữ (hiển thị)
+                    listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
+                    listtt.Text = row.Cells["trangthai"].Value.ToString();
+
+                    // Hiển thị ảnh
+                    tenAnhLuuDB = row.Cells["anh"].Value.ToString();
+                    duongDanAnhGoc = ""; // Reset đường dẫn gốc vì mình đang load ảnh từ DB lên
+
+                    if (!string.IsNullOrEmpty(tenAnhLuuDB))
                     {
-                        // Dùng FileStream để không bị lock file khi xóa/sửa
-                        using (FileStream fs = new FileStream(duongDanLoadLen, FileMode.Open, FileAccess.Read))
+                        // Lùi 2 cấp để tìm ảnh trong thư mục gốc
+                        string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
+                        string duongDanLoadLen = Path.Combine(thuMucGocProject, "Images", tenAnhLuuDB);
+
+                        if (File.Exists(duongDanLoadLen))
                         {
-                            picture.Image = Image.FromStream(fs);
+                            // Dùng FileStream để không bị lock file khi xóa/sửa
+                            using (FileStream fs = new FileStream(duongDanLoadLen, FileMode.Open, FileAccess.Read))
+                            {
+                                picture.Image = Image.FromStream(fs);
+                            }
+                            picture.SizeMode = PictureBoxSizeMode.Zoom;
                         }
-                        picture.SizeMode = PictureBoxSizeMode.Zoom;
+                        else
+                        {
+                            picture.Image = null; // Nếu file ảnh bị mất trong ổ cứng thì bỏ trống
+                        }
                     }
                     else
                     {
-                        picture.Image = null; // Nếu file ảnh bị mất trong ổ cứng thì bỏ trống
+                        picture.Image = null;
                     }
-                }
-                else
-                {
-                    picture.Image = null;
                 }
             }
         }

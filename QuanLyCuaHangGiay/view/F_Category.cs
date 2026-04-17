@@ -135,7 +135,7 @@ namespace QuanLyCuaHangGiay.view
                 return;
             }
 
-            DialogResult dialogResult = MessageBox.Show("Bạn có chắc muốn xóa danh mục này? (Lưu ý: Nếu danh mục đã có sản phẩm thì không thể xóa)", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult dialogResult = MessageBox.Show("Bạn có chắc muốn xóa danh mục này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -154,7 +154,8 @@ namespace QuanLyCuaHangGiay.view
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Không thể xóa danh mục này vì đang có sản phẩm thuộc danh mục này!\nChi tiết: " + ex.Message, "Lỗi Ràng Buộc Dữ Liệu");
+                    // Hứng lỗi từ Controller ném ra nếu danh mục đang chứa sản phẩm
+                    MessageBox.Show(ex.Message, "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -177,28 +178,29 @@ namespace QuanLyCuaHangGiay.view
             dataGridView1.DataSource = categoryController.SearchCategory(keyword);
         }
 
-        // Sự kiện: Click vào dòng trên DataGridView
+        // Sự kiện: Click vào dòng trên DataGridView (Đã thêm check DBNull)
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            // Kiểm tra: Phải click vào dòng hợp lệ và không phải dòng trống (IsNewRow)
+            if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                idDanhMucHienTai = Convert.ToInt32(row.Cells["id"].Value);
-                tendm.Text = row.Cells["tenDanhMuc"].Value.ToString();
-                listtt.Text = row.Cells["trangthai"].Value.ToString();
+                // Chắc chắn rằng cột ID có giá trị
+                if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
+                {
+                    idDanhMucHienTai = Convert.ToInt32(row.Cells["id"].Value);
+                    tendm.Text = row.Cells["tenDanhMuc"].Value.ToString();
+                    listtt.Text = row.Cells["trangthai"].Value.ToString();
+                }
             }
         }
 
-        private void label1_Click(object sender, EventArgs e)
+        // Các sự kiện click label dư thừa (Có thể để trống hoặc xóa đi nếu Designer không báo lỗi)
+        private void label1_Click(object sender, EventArgs e) { }
+        private void label2_Click(object sender, EventArgs e) { }
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
 
-        {
-        }
-        private void label2_Click(object sender, EventArgs e)
-
-        {
-
-        }
         #endregion
     }
 }
