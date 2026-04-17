@@ -52,6 +52,8 @@
             this.button6 = new System.Windows.Forms.Button();
             this.timkiem = new System.Windows.Forms.TextBox();
             this.mau = new System.Windows.Forms.TextBox();
+            this.comboBox1 = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picture)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -250,18 +252,19 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(749, 96);
+            this.button6.Location = new System.Drawing.Point(693, 93);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(121, 22);
             this.button6.TabIndex = 18;
             this.button6.Text = "Tìm kiếm";
             this.button6.UseVisualStyleBackColor = true;
+            this.button6.Click += new System.EventHandler(this.button6_Click_1);
             // 
             // timkiem
             // 
             this.timkiem.Location = new System.Drawing.Point(374, 96);
             this.timkiem.Name = "timkiem";
-            this.timkiem.Size = new System.Drawing.Size(348, 22);
+            this.timkiem.Size = new System.Drawing.Size(282, 22);
             this.timkiem.TabIndex = 19;
             // 
             // mau
@@ -271,11 +274,32 @@
             this.mau.Size = new System.Drawing.Size(202, 22);
             this.mau.TabIndex = 8;
             // 
+            // comboBox1
+            // 
+            this.comboBox1.FormattingEnabled = true;
+            this.comboBox1.Location = new System.Drawing.Point(1051, 93);
+            this.comboBox1.Name = "comboBox1";
+            this.comboBox1.Size = new System.Drawing.Size(202, 24);
+            this.comboBox1.TabIndex = 21;
+            this.comboBox1.SelectedIndexChanged += new System.EventHandler(this.comboBox1_SelectedIndexChanged);
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Location = new System.Drawing.Point(877, 99);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(143, 16);
+            this.label8.TabIndex = 20;
+            this.label8.Text = "Lọc theo tên danh mục:";
+            this.label8.Click += new System.EventHandler(this.label8_Click);
+            // 
             // F_Product
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1287, 643);
+            this.Controls.Add(this.comboBox1);
+            this.Controls.Add(this.label8);
             this.Controls.Add(this.timkiem);
             this.Controls.Add(this.button6);
             this.Controls.Add(this.panel1);
@@ -334,5 +358,7 @@
         private System.Windows.Forms.Button button6;
         private System.Windows.Forms.TextBox timkiem;
         private System.Windows.Forms.TextBox mau;
+        private System.Windows.Forms.ComboBox comboBox1;
+        private System.Windows.Forms.Label label8;
     }
 }

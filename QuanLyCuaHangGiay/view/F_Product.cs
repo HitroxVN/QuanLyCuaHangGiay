@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Drawing;
-using System.IO; 
+using System.IO;
 using System.Windows.Forms;
-using QuanLyCuaHangGiay.controller; 
+using QuanLyCuaHangGiay.controller;
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -14,9 +14,9 @@ namespace QuanLyCuaHangGiay.view
         private CategoryController categoryController = new CategoryController();
 
         // Các biến lưu trữ tạm thời
-        private string duongDanAnhGoc = ""; // Lưu đường dẫn tuyệt đối khi chọn ảnh
-        private string tenAnhLuuDB = "";    // Lưu tên ảnh để nạp vào DB
-        private int idSanPhamHienTai = -1;  // Lưu ID sản phẩm khi click vào bảng để Sửa/Xóa
+        private string duongDanAnhGoc = "";
+        private string tenAnhLuuDB = "";
+        private int idSanPhamHienTai = -1;
 
         public F_Product()
         {
@@ -30,17 +30,22 @@ namespace QuanLyCuaHangGiay.view
             button3.Click += button3_Click; // Sửa
             button4.Click += button4_Click; // Xóa
             button5.Click += button5_Click; // Làm mới
-            button6.Click += button6_Click; // Tìm kiếm
-            dataGridView1.CellClick += dataGridView1_CellClick; // Click vào bảng
 
-            // Bắt sự kiện khi đang gõ chữ tìm kiếm
-            timkiem.TextChanged += timkiem_TextChanged;
+            // Nút Tìm kiếm cũng gọi chung hàm Lọc Kép
+            button6.Click += (s, e) => ThucHienLocChung();
+
+            // Click vào bảng
+            dataGridView1.CellClick += dataGridView1_CellClick;
+
+            // Bắt sự kiện khi đang gõ chữ tìm kiếm -> Gọi hàm Lọc Kép
+            timkiem.TextChanged += (s, e) => ThucHienLocChung();
         }
 
         private void F_Product_Load(object sender, EventArgs e)
         {
             LoadComboboxTrangThai();
             LoadComboboxDanhMuc();
+            LoadComboboxLocDanhMuc(); // Nạp dữ liệu cho ô Lọc
             LoadData();
         }
 
@@ -51,47 +56,52 @@ namespace QuanLyCuaHangGiay.view
             listtt.Items.Clear();
             listtt.Items.Add("Active");
             listtt.Items.Add("Inactive");
-            listtt.SelectedIndex = 0; // Mặc định chọn Active
+            listtt.SelectedIndex = 0;
         }
 
         private void LoadComboboxDanhMuc()
         {
             DataTable dt = categoryController.GetActiveCategories();
             listdm.DataSource = dt;
-            listdm.DisplayMember = "tenDanhMuc"; // Cột hiện chữ
-            listdm.ValueMember = "id";           // Cột lấy ID ẩn
+            listdm.DisplayMember = "tenDanhMuc";
+            listdm.ValueMember = "id";
+        }
+
+        // Hàm nạp dữ liệu cho ô Lọc (Có thêm dòng "--- Tất cả ---")
+        private void LoadComboboxLocDanhMuc()
+        {
+            DataTable dtLoc = categoryController.GetActiveCategories();
+
+            DataRow rowAll = dtLoc.NewRow();
+            rowAll["id"] = 0;
+            rowAll["tenDanhMuc"] = "--- Tất cả ---";
+            dtLoc.Rows.InsertAt(rowAll, 0);
+
+            comboBox1.DataSource = dtLoc;
+            comboBox1.DisplayMember = "tenDanhMuc";
+            comboBox1.ValueMember = "id";
         }
 
         private void LoadData()
         {
             dataGridView1.DataSource = productController.GetAllProducts();
 
-            // Đổi tên cột cho đẹp
             if (dataGridView1.Columns.Count > 0)
             {
                 dataGridView1.Columns["id"].HeaderText = "Mã SP";
                 dataGridView1.Columns["tenSP"].HeaderText = "Tên Sản Phẩm";
                 dataGridView1.Columns["gia"].HeaderText = "Giá";
                 dataGridView1.Columns["tenDanhMuc"].HeaderText = "Danh Mục";
-                // Có thể ẩn cột ID danh mục đi cho đỡ rối
-                //dataGridView1.Columns["danhmucID"].Visible = false;
             }
         }
 
-        // Hàm xử lý copy ảnh vào thư mục Project
-        // Hàm xử lý copy ảnh vào thư mục Project gốc
         private string XulyLuuAnh()
         {
-            // Nếu không chọn ảnh mới, giữ nguyên tên ảnh cũ
             if (string.IsNullOrEmpty(duongDanAnhGoc)) return tenAnhLuuDB;
 
-            // Lấy đường dẫn thư mục gốc của Project (Lùi 2 cấp từ bin/Debug)
             string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
-
-            // Trỏ thẳng vào thư mục Images của Project
             string thuMucDich = Path.Combine(thuMucGocProject, "Images");
 
-            // Tạo thư mục nếu chưa có
             if (!Directory.Exists(thuMucDich))
             {
                 Directory.CreateDirectory(thuMucDich);
@@ -102,7 +112,6 @@ namespace QuanLyCuaHangGiay.view
 
             try
             {
-                // Copy đè nếu file đã tồn tại
                 if (duongDanAnhGoc != duongDanMoi)
                 {
                     File.Copy(duongDanAnhGoc, duongDanMoi, true);
@@ -118,9 +127,63 @@ namespace QuanLyCuaHangGiay.view
 
         #endregion
 
-        #region Các sự kiện Nút bấm (Events)
+        #region XỬ LÝ LỌC KÉP (Tìm kiếm + Bộ lọc danh mục)
 
-        // Nút: Chọn Ảnh
+        // HÀM ĐÃ ĐƯỢC SỬA LỖI: Chuyển logic tìm kiếm lên giao diện (Memory)
+        private void ThucHienLocChung()
+        {
+            // Tránh lỗi khi Form đang mở lên, ComboBox chưa kịp có dữ liệu
+            if (comboBox1.SelectedValue == null) return;
+
+            // Bước 1: Lấy TẤT CẢ sản phẩm (Dùng GetAllProducts vì nó chắc chắn có chứa cột tenDanhMuc)
+            DataTable dtProducts = productController.GetAllProducts();
+
+            string stringLoc = "";
+            string keyword = timkiem.Text.Trim();
+
+            // Bước 2: Lọc theo Tên SP (Từ khóa gõ vào ô tìm kiếm)
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                stringLoc = string.Format("tenSP LIKE '%{0}%'", keyword);
+            }
+
+            // Bước 3: Ép thêm bộ Lọc danh mục
+            int idChon;
+            if (int.TryParse(comboBox1.SelectedValue.ToString(), out idChon))
+            {
+                if (idChon != 0) // Nếu KHÔNG PHẢI là "--- Tất cả ---"
+                {
+                    string tenDMLoc = comboBox1.Text;
+
+                    if (string.IsNullOrEmpty(stringLoc))
+                    {
+                        // Nếu chưa có từ khóa tìm kiếm -> Chỉ lọc theo danh mục
+                        stringLoc = string.Format("tenDanhMuc = '{0}'", tenDMLoc);
+                    }
+                    else
+                    {
+                        // Nếu đã có từ khóa -> Nối thêm điều kiện lọc bằng chữ AND
+                        stringLoc += string.Format(" AND tenDanhMuc = '{0}'", tenDMLoc);
+                    }
+                }
+            }
+
+            // Bước 4: Áp dụng bộ lọc kép vào bảng
+            dtProducts.DefaultView.RowFilter = stringLoc;
+            dataGridView1.DataSource = dtProducts.DefaultView;
+        }
+
+        // Sự kiện: Khi chọn danh mục trong ô Lọc -> Gọi hàm Lọc Kép
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            ThucHienLocChung();
+        }
+
+        #endregion
+
+        #region Các sự kiện Nút bấm (CRUD)
+
+        // Chọn Ảnh
         private void button1_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -130,14 +193,14 @@ namespace QuanLyCuaHangGiay.view
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    duongDanAnhGoc = ofd.FileName; // Lưu đường dẫn tuyệt đối
+                    duongDanAnhGoc = ofd.FileName;
                     picture.Image = Image.FromFile(duongDanAnhGoc);
                     picture.SizeMode = PictureBoxSizeMode.Zoom;
                 }
             }
         }
 
-        //Thêm
+        // Thêm
         private void button2_Click(object sender, EventArgs e)
         {
             try
@@ -149,7 +212,6 @@ namespace QuanLyCuaHangGiay.view
                 int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
                 string trangThai = listtt.SelectedItem.ToString();
 
-                // Xử lý lưu ảnh vật lý vào máy và lấy tên file
                 tenAnhLuuDB = XulyLuuAnh();
 
                 bool isSuccess = productController.AddProduct(ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
@@ -158,7 +220,7 @@ namespace QuanLyCuaHangGiay.view
                 {
                     MessageBox.Show("Thêm sản phẩm thành công!");
                     LoadData();
-                    button5_Click(sender, e); // Gọi hàm làm mới form
+                    button5_Click(sender, e);
                 }
                 else
                 {
@@ -171,7 +233,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        //  Sửa
+        // Sửa
         private void button3_Click(object sender, EventArgs e)
         {
             if (idSanPhamHienTai <= 0)
@@ -189,7 +251,6 @@ namespace QuanLyCuaHangGiay.view
                 int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
                 string trangThai = listtt.SelectedItem.ToString();
 
-                // Lưu ảnh mới (nếu có chọn)
                 tenAnhLuuDB = XulyLuuAnh();
 
                 bool isSuccess = productController.UpdateProduct(idSanPhamHienTai, ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
@@ -198,7 +259,7 @@ namespace QuanLyCuaHangGiay.view
                 {
                     MessageBox.Show("Cập nhật thành công!");
                     LoadData();
-                    button5_Click(sender, e); // Xóa trắng form
+                    button5_Click(sender, e);
                 }
             }
             catch (Exception)
@@ -232,7 +293,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        //  Làm mới 
+        // Làm mới 
         private void button5_Click(object sender, EventArgs e)
         {
             tensp.Clear();
@@ -241,43 +302,30 @@ namespace QuanLyCuaHangGiay.view
             kichco.Clear();
             listdm.SelectedIndex = 0;
             listtt.SelectedIndex = 0;
-            timkiem.Clear();
 
-            // Xóa ảnh
+            // Xóa ô tìm kiếm mà không kích hoạt gọi database quá nhiều lần
+            timkiem.TextChanged -= (s, ev) => ThucHienLocChung();
+            timkiem.Clear();
+            timkiem.TextChanged += (s, ev) => ThucHienLocChung();
+
+            // Đặt ô lọc về "Tất cả"
+            if (comboBox1.Items.Count > 0) comboBox1.SelectedIndex = 0;
+
             picture.Image = null;
             duongDanAnhGoc = "";
             tenAnhLuuDB = "";
             idSanPhamHienTai = -1;
 
-            LoadData(); // Load lại toàn bộ bảng (bỏ tìm kiếm)
+            LoadData();
         }
 
-        // Tìm kiếm
-        private void button6_Click(object sender, EventArgs e)
-        {
-            string keyword = timkiem.Text;
-            dataGridView1.DataSource = productController.SearchProduct(keyword);
-        }
-
-        // Sự kiện: Tự động tìm kiếm ngay khi đang gõ từng chữ
-        private void timkiem_TextChanged(object sender, EventArgs e)
-        {
-            // Lấy từ khóa hiện tại trong ô Textbox
-            string keyword = timkiem.Text;
-
-            // Lập tức gọi hàm tìm kiếm và đổ lại dữ liệu vào DataGridView
-            dataGridView1.DataSource = productController.SearchProduct(keyword);
-        }
-
-        // Sự kiện: Bấm vào 1 dòng trên DataGridView để hiển thị lên trên
+        // Bấm vào bảng
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            //  e.RowIndex >= 0 VÀ không phải là dòng trống cuối cùng (!IsNewRow)
             if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // Chắc chắn rằng ô ID có chứa dữ liệu
                 if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
                 {
                     idSanPhamHienTai = Convert.ToInt32(row.Cells["id"].Value);
@@ -286,23 +334,19 @@ namespace QuanLyCuaHangGiay.view
                     mau.Text = row.Cells["mau"].Value.ToString();
                     kichco.Text = row.Cells["kichco"].Value.ToString();
 
-                    // Chọn đúng combobox theo Value (ẩn) hoặc theo chữ (hiển thị)
                     listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
                     listtt.Text = row.Cells["trangthai"].Value.ToString();
 
-                    // Hiển thị ảnh
                     tenAnhLuuDB = row.Cells["anh"].Value.ToString();
-                    duongDanAnhGoc = ""; // Reset đường dẫn gốc vì mình đang load ảnh từ DB lên
+                    duongDanAnhGoc = "";
 
                     if (!string.IsNullOrEmpty(tenAnhLuuDB))
                     {
-                        // Lùi 2 cấp để tìm ảnh trong thư mục gốc
                         string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
                         string duongDanLoadLen = Path.Combine(thuMucGocProject, "Images", tenAnhLuuDB);
 
                         if (File.Exists(duongDanLoadLen))
                         {
-                            // Dùng FileStream để không bị lock file khi xóa/sửa
                             using (FileStream fs = new FileStream(duongDanLoadLen, FileMode.Open, FileAccess.Read))
                             {
                                 picture.Image = Image.FromStream(fs);
@@ -311,7 +355,7 @@ namespace QuanLyCuaHangGiay.view
                         }
                         else
                         {
-                            picture.Image = null; // Nếu file ảnh bị mất trong ổ cứng thì bỏ trống
+                            picture.Image = null;
                         }
                     }
                     else
@@ -321,6 +365,11 @@ namespace QuanLyCuaHangGiay.view
                 }
             }
         }
+
+        // --- Các hàm bắt sự kiện rác trên Form Design (Giữ lại để không lỗi Form) ---
+        private void button6_Click_1(object sender, EventArgs e) { ThucHienLocChung(); }
+        private void label8_Click(object sender, EventArgs e) { }
+
         #endregion
     }
 }
