@@ -21,6 +21,12 @@ namespace QuanLyCuaHangGiay.controller
             return repo.GetAll();
         }
 
+        // Lấy ID tự tăng tiếp theo
+        public int GetNextCategoryId()
+        {
+            return repo.GetNextCategoryId();
+        }
+
         //  Thêm thể loại mới
         public bool AddCategory(string tenDanhMuc, string trangThai)
         {

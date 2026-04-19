@@ -98,5 +98,21 @@ namespace QuanLyCuaHangGiay.database.repository
             }
             return false;
         }
+
+        // Lấy ID tiếp theo sẽ được tạo (MAX + 1)
+        public int GetNextCategoryId()
+        {
+            string sql = "SELECT MAX(id) FROM DanhMuc";
+            DataTable dt = DBConnection.GetDataTable(sql);
+
+            // Nếu có dữ liệu và không bị Null
+            if (dt != null && dt.Rows.Count > 0 && dt.Rows[0][0] != DBNull.Value)
+            {
+                return Convert.ToInt32(dt.Rows[0][0]) + 1;
+            }
+            // Nếu bảng đang trống, ID đầu tiên sẽ là 1
+            return 1;
+        }
+
     }
 }

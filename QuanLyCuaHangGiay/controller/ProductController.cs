@@ -88,5 +88,11 @@ namespace QuanLyCuaHangGiay.controller
             }
             return repo.Search(keyword);
         }
+
+        // Lấy ID tự tăng tiếp theo của Sản phẩm
+        public int GetNextProductId()
+        {
+            return repo.GetNextProductId();
+        }
     }
 }

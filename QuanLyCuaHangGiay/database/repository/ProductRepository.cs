@@ -110,5 +110,18 @@ namespace QuanLyCuaHangGiay.database.repository
             };
             return DBConnection.ExecuteNonQuery(sql, p);
         }
+
+        // Lấy ID tiếp theo sẽ được tạo cho Sản phẩm (MAX + 1)
+        public int GetNextProductId()
+        {
+            string sql = "SELECT MAX(id) FROM SanPham";
+            DataTable dt = DBConnection.GetDataTable(sql);
+
+            if (dt != null && dt.Rows.Count > 0 && dt.Rows[0][0] != DBNull.Value)
+            {
+                return Convert.ToInt32(dt.Rows[0][0]) + 1;
+            }
+            return 1; // Nếu chưa có sản phẩm nào thì bắt đầu từ 1
+        }
     }
 }

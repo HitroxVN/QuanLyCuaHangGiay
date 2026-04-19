@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
-using QuanLyCuaHangGiay.controller; // Gọi Controller
+using QuanLyCuaHangGiay.controller;
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -35,11 +35,26 @@ namespace QuanLyCuaHangGiay.view
 
         private void F_Category_Load(object sender, EventArgs e)
         {
+            // KHÓA Ô ID: Chuyển ô textBox1 thành chỉ đọc (Chỉ xem, không sửa)
+            textBox1.ReadOnly = true;
+            // Hoặc có thể dùng: textBox1.Enabled = false; (Nếu bạn muốn nó mờ đi)
+
             LoadComboboxTrangThai();
             LoadData();
+
+            // Tự động hiển thị ID tiếp theo khi vừa mở Form
+            LoadNextId();
         }
 
-        #region Các hàm hỗ trợ
+        #region Các hàm hỗ trợ nạp dữ liệu
+
+        // HÀM MỚI: Hiển thị ID tiếp theo sẽ được tạo
+        private void LoadNextId()
+        {
+            int nextId = categoryController.GetNextCategoryId();
+            textBox1.Text = nextId.ToString();
+        }
+
         private void LoadComboboxTrangThai()
         {
             listtt.Items.Clear();
@@ -66,31 +81,61 @@ namespace QuanLyCuaHangGiay.view
         }
         #endregion
 
+        #region HÀM KIỂM TRA DỮ LIỆU ĐẦU VÀO (VALIDATION)
+
+        // Trả về true nếu dữ liệu chuẩn, false nếu có lỗi
+        private bool ValidateData()
+        {
+            // 1. Kiểm tra để trống Tên danh mục
+            if (string.IsNullOrWhiteSpace(tendm.Text))
+            {
+                MessageBox.Show("Ô [Tên Danh Mục] đang bị trống!\nVui lòng nhập tên danh mục trước khi lưu.", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tendm.Focus(); // Tự động đưa con trỏ chuột nhấp nháy vào ô bị lỗi
+                return false;
+            }
+
+            // 2. Kiểm tra độ dài Tên danh mục
+            if (tendm.Text.Length > 100)
+            {
+                MessageBox.Show("Ô [Tên Danh Mục] quá dài!\nVui lòng nhập dưới 100 ký tự.", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tendm.Focus();
+                return false;
+            }
+
+            // 3. Kiểm tra Trạng thái
+            if (listtt.SelectedIndex == -1 || listtt.SelectedItem == null)
+            {
+                MessageBox.Show("Bạn chưa chọn [Trạng Thái] cho danh mục này!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                listtt.Focus();
+                return false;
+            }
+
+            return true;
+        }
+
+        #endregion
+
         #region Sự kiện Nút bấm (CRUD)
 
         // Nút: Thêm
         private void button2_Click(object sender, EventArgs e)
         {
-            string ten = tendm.Text;
-            string trangThai = listtt.SelectedItem.ToString();
+            if (!ValidateData()) return;
 
-            if (string.IsNullOrWhiteSpace(ten))
-            {
-                MessageBox.Show("Vui lòng nhập tên danh mục!");
-                return;
-            }
+            string ten = tendm.Text.Trim();
+            string trangThai = listtt.SelectedItem.ToString();
 
             bool isSuccess = categoryController.AddCategory(ten, trangThai);
 
             if (isSuccess)
             {
-                MessageBox.Show("Thêm danh mục thành công!");
+                MessageBox.Show("Thêm danh mục thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadData();
-                button5_Click(sender, e); // Làm mới form
+                button5_Click(sender, e); // Làm mới form (Hàm này cũng sẽ gọi LoadNextId)
             }
             else
             {
-                MessageBox.Show("Thêm thất bại!");
+                MessageBox.Show("Thêm thất bại! Vui lòng thử lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -99,30 +144,26 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idDanhMucHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng chọn một danh mục từ bảng để sửa!");
+                MessageBox.Show("Vui lòng click chọn một danh mục từ bảng bên dưới để sửa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            string ten = tendm.Text;
+            if (!ValidateData()) return;
+
+            string ten = tendm.Text.Trim();
             string trangThai = listtt.SelectedItem.ToString();
-
-            if (string.IsNullOrWhiteSpace(ten))
-            {
-                MessageBox.Show("Tên danh mục không được để trống!");
-                return;
-            }
 
             bool isSuccess = categoryController.UpdateCategory(idDanhMucHienTai, ten, trangThai);
 
             if (isSuccess)
             {
-                MessageBox.Show("Cập nhật danh mục thành công!");
+                MessageBox.Show("Cập nhật danh mục thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadData();
                 button5_Click(sender, e);
             }
             else
             {
-                MessageBox.Show("Cập nhật thất bại!");
+                MessageBox.Show("Cập nhật thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -131,11 +172,11 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idDanhMucHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng chọn một danh mục để xóa!");
+                MessageBox.Show("Vui lòng click chọn một danh mục từ bảng bên dưới để xóa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            DialogResult dialogResult = MessageBox.Show("Bạn có chắc muốn xóa danh mục này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa danh mục này?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (dialogResult == DialogResult.Yes)
             {
@@ -143,19 +184,18 @@ namespace QuanLyCuaHangGiay.view
                 {
                     if (categoryController.DeleteCategory(idDanhMucHienTai))
                     {
-                        MessageBox.Show("Xóa thành công!");
+                        MessageBox.Show("Xóa thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                         LoadData();
                         button5_Click(sender, e);
                     }
                     else
                     {
-                        MessageBox.Show("Xóa thất bại!");
+                        MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
                 catch (Exception ex)
                 {
-                    // Hứng lỗi từ Controller ném ra nếu danh mục đang chứa sản phẩm
-                    MessageBox.Show(ex.Message, "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show(ex.Message, "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
@@ -168,37 +208,41 @@ namespace QuanLyCuaHangGiay.view
             timkiem.Clear();
             idDanhMucHienTai = -1;
 
-            LoadData(); // Nạp lại toàn bộ bảng
+            LoadData(); // Nạp lại bảng
+            LoadNextId(); // GỌI LẠI HÀM NÀY ĐỂ SHOW SỐ ID MỚI NHẤT
         }
 
-        // Sự kiện: Tìm kiếm tự động khi đang gõ
+        // Sự kiện: Tìm kiếm tự động
         private void timkiem_TextChanged(object sender, EventArgs e)
         {
-            string keyword = timkiem.Text;
+            string keyword = timkiem.Text.Trim();
             dataGridView1.DataSource = categoryController.SearchCategory(keyword);
         }
 
-        // Sự kiện: Click vào dòng trên DataGridView (Đã thêm check DBNull)
+        // Sự kiện: Click vào dòng trên DataGridView
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            // Kiểm tra: Phải click vào dòng hợp lệ và không phải dòng trống (IsNewRow)
             if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                // Chắc chắn rằng cột ID có giá trị
                 if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
                 {
                     idDanhMucHienTai = Convert.ToInt32(row.Cells["id"].Value);
+
+                    // HIỂN THỊ ID LÊN TEXTBOX KHI CLICK
+                    textBox1.Text = idDanhMucHienTai.ToString();
+
                     tendm.Text = row.Cells["tenDanhMuc"].Value.ToString();
                     listtt.Text = row.Cells["trangthai"].Value.ToString();
                 }
             }
         }
 
-        // Các sự kiện click label dư thừa (Có thể để trống hoặc xóa đi nếu Designer không báo lỗi)
+        // Các sự kiện rác trên giao diện
         private void label1_Click(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
+        private void label3_Click(object sender, EventArgs e) { }
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
 
         #endregion

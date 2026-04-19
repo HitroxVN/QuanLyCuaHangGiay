@@ -42,6 +42,8 @@
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.panel1.SuspendLayout();
@@ -50,7 +52,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(16, 170);
+            this.label1.Location = new System.Drawing.Point(6, 232);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(98, 16);
             this.label1.TabIndex = 0;
@@ -60,7 +62,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(33, 244);
+            this.label2.Location = new System.Drawing.Point(23, 306);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(73, 16);
             this.label2.TabIndex = 1;
@@ -70,14 +72,14 @@
             // listtt
             // 
             this.listtt.FormattingEnabled = true;
-            this.listtt.Location = new System.Drawing.Point(120, 244);
+            this.listtt.Location = new System.Drawing.Point(110, 306);
             this.listtt.Name = "listtt";
             this.listtt.Size = new System.Drawing.Size(191, 24);
             this.listtt.TabIndex = 2;
             // 
             // tendm
             // 
-            this.tendm.Location = new System.Drawing.Point(120, 167);
+            this.tendm.Location = new System.Drawing.Point(110, 229);
             this.tendm.Name = "tendm";
             this.tendm.Size = new System.Drawing.Size(191, 22);
             this.tendm.TabIndex = 3;
@@ -180,11 +182,31 @@
             this.label7.TabIndex = 0;
             this.label7.Text = "Quản lý thông tin danh mục";
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(110, 174);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(191, 22);
+            this.textBox1.TabIndex = 25;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 177);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(82, 16);
+            this.label3.TabIndex = 24;
+            this.label3.Text = "id danh mục:";
+            this.label3.Click += new System.EventHandler(this.label3_Click);
+            // 
             // F_Category
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1112, 551);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label3);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.timkiem);
@@ -221,5 +243,7 @@
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label3;
     }
 }

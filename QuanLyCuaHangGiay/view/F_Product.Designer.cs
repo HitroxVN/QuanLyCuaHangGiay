@@ -54,6 +54,8 @@
             this.mau = new System.Windows.Forms.TextBox();
             this.comboBox1 = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.label9 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.picture)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -64,7 +66,7 @@
             // 
             this.picture.Location = new System.Drawing.Point(130, 96);
             this.picture.Name = "picture";
-            this.picture.Size = new System.Drawing.Size(176, 123);
+            this.picture.Size = new System.Drawing.Size(176, 102);
             this.picture.TabIndex = 0;
             this.picture.TabStop = false;
             // 
@@ -80,7 +82,7 @@
             // 
             // tensp
             // 
-            this.tensp.Location = new System.Drawing.Point(130, 232);
+            this.tensp.Location = new System.Drawing.Point(137, 268);
             this.tensp.Name = "tensp";
             this.tensp.Size = new System.Drawing.Size(202, 22);
             this.tensp.TabIndex = 2;
@@ -88,7 +90,7 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(19, 238);
+            this.label1.Location = new System.Drawing.Point(26, 274);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(102, 16);
             this.label1.TabIndex = 3;
@@ -97,7 +99,7 @@
             // listdm
             // 
             this.listdm.FormattingEnabled = true;
-            this.listdm.Location = new System.Drawing.Point(130, 280);
+            this.listdm.Location = new System.Drawing.Point(137, 316);
             this.listdm.Name = "listdm";
             this.listdm.Size = new System.Drawing.Size(202, 24);
             this.listdm.TabIndex = 4;
@@ -105,7 +107,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(19, 288);
+            this.label2.Location = new System.Drawing.Point(26, 324);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(87, 16);
             this.label2.TabIndex = 5;
@@ -114,7 +116,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(19, 344);
+            this.label3.Location = new System.Drawing.Point(26, 380);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(34, 16);
             this.label3.TabIndex = 7;
@@ -122,7 +124,7 @@
             // 
             // gia
             // 
-            this.gia.Location = new System.Drawing.Point(130, 338);
+            this.gia.Location = new System.Drawing.Point(137, 374);
             this.gia.Name = "gia";
             this.gia.Size = new System.Drawing.Size(202, 22);
             this.gia.TabIndex = 6;
@@ -130,7 +132,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(19, 392);
+            this.label4.Location = new System.Drawing.Point(26, 428);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(39, 16);
             this.label4.TabIndex = 9;
@@ -139,7 +141,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(19, 448);
+            this.label5.Location = new System.Drawing.Point(26, 484);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(58, 16);
             this.label5.TabIndex = 11;
@@ -147,7 +149,7 @@
             // 
             // kichco
             // 
-            this.kichco.Location = new System.Drawing.Point(130, 442);
+            this.kichco.Location = new System.Drawing.Point(137, 478);
             this.kichco.Name = "kichco";
             this.kichco.Size = new System.Drawing.Size(202, 22);
             this.kichco.TabIndex = 10;
@@ -155,7 +157,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(19, 497);
+            this.label6.Location = new System.Drawing.Point(26, 533);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(76, 16);
             this.label6.TabIndex = 13;
@@ -164,7 +166,7 @@
             // listtt
             // 
             this.listtt.FormattingEnabled = true;
-            this.listtt.Location = new System.Drawing.Point(130, 497);
+            this.listtt.Location = new System.Drawing.Point(137, 533);
             this.listtt.Name = "listtt";
             this.listtt.Size = new System.Drawing.Size(202, 24);
             this.listtt.TabIndex = 14;
@@ -175,7 +177,7 @@
             this.groupBox1.Controls.Add(this.button4);
             this.groupBox1.Controls.Add(this.button3);
             this.groupBox1.Controls.Add(this.button2);
-            this.groupBox1.Location = new System.Drawing.Point(19, 547);
+            this.groupBox1.Location = new System.Drawing.Point(19, 581);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(550, 84);
             this.groupBox1.TabIndex = 15;
@@ -221,12 +223,13 @@
             // dataGridView1
             // 
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Location = new System.Drawing.Point(374, 145);
+            this.dataGridView1.Location = new System.Drawing.Point(374, 165);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(879, 384);
+            this.dataGridView1.Size = new System.Drawing.Size(879, 410);
             this.dataGridView1.TabIndex = 16;
+            this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
             // panel1
             // 
@@ -269,7 +272,7 @@
             // 
             // mau
             // 
-            this.mau.Location = new System.Drawing.Point(130, 386);
+            this.mau.Location = new System.Drawing.Point(137, 422);
             this.mau.Name = "mau";
             this.mau.Size = new System.Drawing.Size(202, 22);
             this.mau.TabIndex = 8;
@@ -293,11 +296,30 @@
             this.label8.Text = "Lọc theo tên danh mục:";
             this.label8.Click += new System.EventHandler(this.label8_Click);
             // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(137, 223);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ReadOnly = true;
+            this.textBox1.Size = new System.Drawing.Size(191, 22);
+            this.textBox1.TabIndex = 27;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(31, 226);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(82, 16);
+            this.label9.TabIndex = 26;
+            this.label9.Text = "id danh mục:";
+            // 
             // F_Product
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1287, 643);
+            this.ClientSize = new System.Drawing.Size(1287, 677);
+            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.label9);
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label8);
             this.Controls.Add(this.timkiem);
@@ -360,5 +382,7 @@
         private System.Windows.Forms.TextBox mau;
         private System.Windows.Forms.ComboBox comboBox1;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label label9;
     }
 }

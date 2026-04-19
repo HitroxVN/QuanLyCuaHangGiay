@@ -22,34 +22,40 @@ namespace QuanLyCuaHangGiay.view
         {
             InitializeComponent();
 
-            // Gắn sự kiện Load form
             this.Load += F_Product_Load;
 
-            // Gắn sự kiện cho các nút bấm
             button2.Click += button2_Click; // Thêm
             button3.Click += button3_Click; // Sửa
             button4.Click += button4_Click; // Xóa
             button5.Click += button5_Click; // Làm mới
 
-            // Nút Tìm kiếm cũng gọi chung hàm Lọc Kép
             button6.Click += (s, e) => ThucHienLocChung();
-
-            // Click vào bảng
             dataGridView1.CellClick += dataGridView1_CellClick;
-
-            // Bắt sự kiện khi đang gõ chữ tìm kiếm -> Gọi hàm Lọc Kép
             timkiem.TextChanged += (s, e) => ThucHienLocChung();
         }
 
         private void F_Product_Load(object sender, EventArgs e)
         {
+            // Khóa ô ID không cho người dùng tự gõ
+            textBox1.ReadOnly = true;
+
             LoadComboboxTrangThai();
             LoadComboboxDanhMuc();
-            LoadComboboxLocDanhMuc(); // Nạp dữ liệu cho ô Lọc
+            LoadComboboxLocDanhMuc();
             LoadData();
+
+            // Hiển thị ID Sản phẩm tiếp theo khi vừa mở Form
+            LoadNextId();
         }
 
         #region Các hàm hỗ trợ nạp dữ liệu (Helpers)
+
+        // HÀM MỚI: Load ID tiếp theo lên giao diện
+        private void LoadNextId()
+        {
+            int nextId = productController.GetNextProductId();
+            textBox1.Text = nextId.ToString();
+        }
 
         private void LoadComboboxTrangThai()
         {
@@ -67,7 +73,6 @@ namespace QuanLyCuaHangGiay.view
             listdm.ValueMember = "id";
         }
 
-        // Hàm nạp dữ liệu cho ô Lọc (Có thêm dòng "--- Tất cả ---")
         private void LoadComboboxLocDanhMuc()
         {
             DataTable dtLoc = categoryController.GetActiveCategories();
@@ -127,53 +132,107 @@ namespace QuanLyCuaHangGiay.view
 
         #endregion
 
+        #region HÀM KIỂM TRA LỖI NHẬP LIỆU (VALIDATION)
+
+        private bool ValidateData()
+        {
+            // 1. Kiểm tra Tên sản phẩm
+            if (string.IsNullOrWhiteSpace(tensp.Text))
+            {
+                MessageBox.Show("Vui lòng nhập [Tên Sản Phẩm]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tensp.Focus();
+                return false;
+            }
+
+            // 2. Kiểm tra Giá tiền (Không để trống + Phải là số hợp lệ + Lớn hơn 0)
+            if (string.IsNullOrWhiteSpace(gia.Text))
+            {
+                MessageBox.Show("Vui lòng nhập [Giá Tiền]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                gia.Focus();
+                return false;
+            }
+
+            decimal checkGia;
+            if (!decimal.TryParse(gia.Text, out checkGia) || checkGia < 0)
+            {
+                MessageBox.Show("Giá tiền phải là một con số hợp lệ và lớn hơn hoặc bằng 0!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                gia.Focus();
+                return false;
+            }
+
+            // 3. Kiểm tra Màu sắc
+            if (string.IsNullOrWhiteSpace(mau.Text))
+            {
+                MessageBox.Show("Vui lòng nhập [Màu Sắc]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                mau.Focus();
+                return false;
+            }
+
+            // 4. Kiểm tra Kích cỡ
+            if (string.IsNullOrWhiteSpace(kichco.Text))
+            {
+                MessageBox.Show("Vui lòng nhập [Kích Cỡ]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                kichco.Focus();
+                return false;
+            }
+
+            // 5. Kiểm tra Chọn Danh Mục
+            if (listdm.SelectedIndex == -1 || listdm.SelectedValue == null)
+            {
+                MessageBox.Show("Vui lòng chọn [Danh Mục] cho sản phẩm!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                listdm.Focus();
+                return false;
+            }
+
+            // 6. Kiểm tra Chọn Trạng Thái
+            if (listtt.SelectedIndex == -1)
+            {
+                MessageBox.Show("Vui lòng chọn [Trạng Thái] cho sản phẩm!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                listtt.Focus();
+                return false;
+            }
+
+            return true; // Dữ liệu hoàn hảo!
+        }
+
+        #endregion
+
         #region XỬ LÝ LỌC KÉP (Tìm kiếm + Bộ lọc danh mục)
 
-        // HÀM ĐÃ ĐƯỢC SỬA LỖI: Chuyển logic tìm kiếm lên giao diện (Memory)
         private void ThucHienLocChung()
         {
-            // Tránh lỗi khi Form đang mở lên, ComboBox chưa kịp có dữ liệu
             if (comboBox1.SelectedValue == null) return;
 
-            // Bước 1: Lấy TẤT CẢ sản phẩm (Dùng GetAllProducts vì nó chắc chắn có chứa cột tenDanhMuc)
             DataTable dtProducts = productController.GetAllProducts();
-
             string stringLoc = "";
             string keyword = timkiem.Text.Trim();
 
-            // Bước 2: Lọc theo Tên SP (Từ khóa gõ vào ô tìm kiếm)
             if (!string.IsNullOrEmpty(keyword))
             {
                 stringLoc = string.Format("tenSP LIKE '%{0}%'", keyword);
             }
 
-            // Bước 3: Ép thêm bộ Lọc danh mục
             int idChon;
             if (int.TryParse(comboBox1.SelectedValue.ToString(), out idChon))
             {
-                if (idChon != 0) // Nếu KHÔNG PHẢI là "--- Tất cả ---"
+                if (idChon != 0)
                 {
                     string tenDMLoc = comboBox1.Text;
-
                     if (string.IsNullOrEmpty(stringLoc))
                     {
-                        // Nếu chưa có từ khóa tìm kiếm -> Chỉ lọc theo danh mục
                         stringLoc = string.Format("tenDanhMuc = '{0}'", tenDMLoc);
                     }
                     else
                     {
-                        // Nếu đã có từ khóa -> Nối thêm điều kiện lọc bằng chữ AND
                         stringLoc += string.Format(" AND tenDanhMuc = '{0}'", tenDMLoc);
                     }
                 }
             }
 
-            // Bước 4: Áp dụng bộ lọc kép vào bảng
             dtProducts.DefaultView.RowFilter = stringLoc;
             dataGridView1.DataSource = dtProducts.DefaultView;
         }
 
-        // Sự kiện: Khi chọn danh mục trong ô Lọc -> Gọi hàm Lọc Kép
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
             ThucHienLocChung();
@@ -203,33 +262,29 @@ namespace QuanLyCuaHangGiay.view
         // Thêm
         private void button2_Click(object sender, EventArgs e)
         {
-            try
+            // BƯỚC CHẶN KIỂM TRA LỖI
+            if (!ValidateData()) return;
+
+            string ten = tensp.Text.Trim();
+            decimal giaTien = decimal.Parse(gia.Text.Trim()); // Đoạn này chắc chắn chạy được vì ValidateData đã kiểm tra là số rồi
+            string mauSac = mau.Text.Trim();
+            string kichThuoc = kichco.Text.Trim();
+            int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
+            string trangThai = listtt.SelectedItem.ToString();
+
+            tenAnhLuuDB = XulyLuuAnh();
+
+            bool isSuccess = productController.AddProduct(ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
+
+            if (isSuccess)
             {
-                string ten = tensp.Text;
-                decimal giaTien = decimal.Parse(gia.Text);
-                string mauSac = mau.Text;
-                string kichThuoc = kichco.Text;
-                int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
-                string trangThai = listtt.SelectedItem.ToString();
-
-                tenAnhLuuDB = XulyLuuAnh();
-
-                bool isSuccess = productController.AddProduct(ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
-
-                if (isSuccess)
-                {
-                    MessageBox.Show("Thêm sản phẩm thành công!");
-                    LoadData();
-                    button5_Click(sender, e);
-                }
-                else
-                {
-                    MessageBox.Show("Thêm thất bại. Vui lòng kiểm tra lại thông tin!");
-                }
+                MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+                button5_Click(sender, e); // Xóa trắng và Load lại ID mới
             }
-            catch (Exception ex)
+            else
             {
-                MessageBox.Show("Vui lòng nhập đúng định dạng số cho Giá! Lỗi: " + ex.Message);
+                MessageBox.Show("Thêm thất bại. Vui lòng kiểm tra lại thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -238,33 +293,29 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idSanPhamHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm từ bảng bên dưới để sửa!");
+                MessageBox.Show("Vui lòng chọn một sản phẩm từ bảng bên dưới để sửa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
-            try
+            // BƯỚC CHẶN KIỂM TRA LỖI
+            if (!ValidateData()) return;
+
+            string ten = tensp.Text.Trim();
+            decimal giaTien = decimal.Parse(gia.Text.Trim());
+            string mauSac = mau.Text.Trim();
+            string kichThuoc = kichco.Text.Trim();
+            int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
+            string trangThai = listtt.SelectedItem.ToString();
+
+            tenAnhLuuDB = XulyLuuAnh();
+
+            bool isSuccess = productController.UpdateProduct(idSanPhamHienTai, ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
+
+            if (isSuccess)
             {
-                string ten = tensp.Text;
-                decimal giaTien = decimal.Parse(gia.Text);
-                string mauSac = mau.Text;
-                string kichThuoc = kichco.Text;
-                int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
-                string trangThai = listtt.SelectedItem.ToString();
-
-                tenAnhLuuDB = XulyLuuAnh();
-
-                bool isSuccess = productController.UpdateProduct(idSanPhamHienTai, ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
-
-                if (isSuccess)
-                {
-                    MessageBox.Show("Cập nhật thành công!");
-                    LoadData();
-                    button5_Click(sender, e);
-                }
-            }
-            catch (Exception)
-            {
-                MessageBox.Show("Lỗi dữ liệu đầu vào. Vui lòng kiểm tra lại!");
+                MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                LoadData();
+                button5_Click(sender, e);
             }
         }
 
@@ -273,7 +324,7 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idSanPhamHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng chọn một sản phẩm để xóa!");
+                MessageBox.Show("Vui lòng chọn một sản phẩm để xóa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -282,13 +333,13 @@ namespace QuanLyCuaHangGiay.view
             {
                 if (productController.DeleteProduct(idSanPhamHienTai))
                 {
-                    MessageBox.Show("Xóa thành công!");
+                    MessageBox.Show("Xóa thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     LoadData();
                     button5_Click(sender, e);
                 }
                 else
                 {
-                    MessageBox.Show("Xóa thất bại!");
+                    MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
@@ -303,12 +354,10 @@ namespace QuanLyCuaHangGiay.view
             listdm.SelectedIndex = 0;
             listtt.SelectedIndex = 0;
 
-            // Xóa ô tìm kiếm mà không kích hoạt gọi database quá nhiều lần
             timkiem.TextChanged -= (s, ev) => ThucHienLocChung();
             timkiem.Clear();
             timkiem.TextChanged += (s, ev) => ThucHienLocChung();
 
-            // Đặt ô lọc về "Tất cả"
             if (comboBox1.Items.Count > 0) comboBox1.SelectedIndex = 0;
 
             picture.Image = null;
@@ -317,6 +366,9 @@ namespace QuanLyCuaHangGiay.view
             idSanPhamHienTai = -1;
 
             LoadData();
+
+            // CẬP NHẬT LẠI ID MỚI VÀO TEXTBOX
+            LoadNextId();
         }
 
         // Bấm vào bảng
@@ -329,6 +381,10 @@ namespace QuanLyCuaHangGiay.view
                 if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
                 {
                     idSanPhamHienTai = Convert.ToInt32(row.Cells["id"].Value);
+
+                    // HIỂN THỊ ID LÊN TEXTBOX KHI CLICK
+                    textBox1.Text = idSanPhamHienTai.ToString();
+
                     tensp.Text = row.Cells["tenSP"].Value.ToString();
                     gia.Text = row.Cells["gia"].Value.ToString();
                     mau.Text = row.Cells["mau"].Value.ToString();
@@ -366,9 +422,10 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // --- Các hàm bắt sự kiện rác trên Form Design (Giữ lại để không lỗi Form) ---
+        // --- Các hàm rác (Giữ lại) ---
         private void button6_Click_1(object sender, EventArgs e) { ThucHienLocChung(); }
         private void label8_Click(object sender, EventArgs e) { }
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
 
         #endregion
     }
