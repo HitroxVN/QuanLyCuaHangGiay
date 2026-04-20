@@ -292,5 +292,43 @@ namespace QuanLyCuaHangGiay.database.repository
                 }
             }
         }
+
+        //test
+        public DataTable GetPhieuNhap(DateTime time, int nccID)
+        {
+            string query = @"
+                    SELECT 
+                        pn.id AS PhieuNhapID,
+                        pn.thoiGian,
+
+                        ncc.tenNCC,
+                        ncc.diaChi,
+                        ncc.sdt,
+
+                        sp.tenSP,
+                        sp.mau,
+                        sp.kichco,
+                        dm.tenDanhMuc,
+
+                        pn.soLuong,
+                        pn.giaDonNhap,
+                        (pn.soLuong * pn.giaDonNhap) AS ThanhTien
+
+                    FROM PhieuNhap pn
+                    JOIN NhaCungCap ncc ON pn.nhacungcapID = ncc.id
+                    JOIN SanPham sp ON pn.sanphamID = sp.id
+                    JOIN DanhMuc dm ON sp.danhmucID = dm.id
+
+                    WHERE CONVERT(date, pn.thoiGian) = CONVERT(date, @thoiGian)
+                    AND pn.nhacungcapID = @nccID
+                ";
+
+            SqlParameter[] pa = {
+                new SqlParameter("@thoiGian", time),
+                new SqlParameter("@nccID", nccID)
+            };
+
+            return DBConnection.GetDataTable(query, pa);
+        }
     }
 }

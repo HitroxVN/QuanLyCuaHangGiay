@@ -62,5 +62,10 @@ namespace QuanLyCuaHangGiay.controller
 
             return repo.delete(id);
         }
+
+        public DataTable GetPhieuNhapReport(DateTime time, int nccID)
+        {
+            return repo.GetPhieuNhap(time, nccID);
+        }
     }
 }
