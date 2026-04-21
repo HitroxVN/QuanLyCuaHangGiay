@@ -1,4 +1,6 @@
-﻿using System;
+﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.util;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -48,5 +50,43 @@ namespace QuanLyCuaHangGiay.view
         {
             OpenForm(new frmNCC());
         }
+
+        private void quảnLýTàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new faccount());
+        }
+
+        private void đổiMậtKhẩuToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new fChangePasswords());
+        }
+
+        private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            AuthController auth = new AuthController();
+            auth.logout();
+            this.Hide();
+            flogin f = new flogin();
+            f.ShowDialog();
+            this.Close();
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            if (Session.user == null)
+            {
+                MessageBox.Show("Bạn chưa đăng nhập!");
+                this.Close();
+            }
+
+            labelName.Text = Session.user.hoTen.ToString();
+
+            // giới hạn quyền staff
+            if (Session.user.quyen == "staff") { 
+                //hệThốngToolStripMenuItem.DropDownItems.Remove(quảnLýTàiKhoảnToolStripMenuItem);
+                hệThốngToolStripMenuItem.Enabled = false;
+            }
+        }
+
     }
 }
