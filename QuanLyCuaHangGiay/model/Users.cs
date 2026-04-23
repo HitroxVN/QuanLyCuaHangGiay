@@ -9,13 +9,13 @@ namespace QuanLyCuaHangGiay.model
     internal class Users
     {
         public int id { get; set; }
-        public string full_name { get; set; }
+        public string hoTen { get; set; }
         public string email { get; set; }
-        public string password { get; set; }
-        public string phone { get; set; }
-        public string address { get; set; }
-        public string role { get; set; }
-        public string created_at { get; set; }
-        public string status { get; set; }
+        public string matKhau { get; set; }
+        public string sdt { get; set; }
+        public string diaChi { get; set; }
+        public string quyen { get; set; }
+        public DateTime ngayTao { get; set; }
+        public string trangThai { get; set; }
     }
 }

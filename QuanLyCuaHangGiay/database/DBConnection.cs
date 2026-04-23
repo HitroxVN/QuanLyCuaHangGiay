@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.Configuration;
 
 namespace QuanLyCuaHangGiay.Database
 {
     internal class DBConnection
     {
-        private static readonly String connectionString = @"Data Source=.\SQLEXPRESS;Initial Catalog=QL_Giay;Integrated Security=True;TrustServerCertificate=True";
+        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["MyDB"].ConnectionString;
 
         public static SqlConnection GetDBConnection()
         {

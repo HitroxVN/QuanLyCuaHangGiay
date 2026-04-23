@@ -17,7 +17,7 @@ namespace QuanLyCuaHangGiay
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new F_Product());
+            Application.Run(new view.flogin());
         }
     }
 }
