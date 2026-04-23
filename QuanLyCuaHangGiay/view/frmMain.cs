@@ -1,4 +1,13 @@
-﻿using System;
+﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.util;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace QuanLyCuaHangGiay.view
@@ -8,87 +17,81 @@ namespace QuanLyCuaHangGiay.view
         public frmMain()
         {
             InitializeComponent();
+            this.IsMdiContainer = true;
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void OpenForm(Form f)
         {
-            // Nếu có tên người dùng đăng nhập thì gán vào đây
-            // labelName.Text = "Tên người dùng";
-        }
-
-        private void thốngKêToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            frmThongKe f = new frmThongKe();
-            f.ShowDialog();
-        }
-
-        private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DialogResult rs = MessageBox.Show(
-                "Bạn có chắc muốn đăng xuất không?",
-                "Xác nhận",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Question);
-
-            if (rs == DialogResult.Yes)
+            foreach (Form frm in this.MdiChildren)
             {
-                this.Close();
+                if (frm.GetType() == f.GetType())
+                {
+                    frm.Activate();
+                    return;
+                }
             }
-        }
 
-        private void đổiMậtKhẩuToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng đổi mật khẩu chưa cài đặt.");
-        }
-
-        private void quảnLýTàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng quản lý tài khoản chưa cài đặt.");
-        }
-
-        private void danhMụcSảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng danh mục sản phẩm chưa cài đặt.");
-        }
-
-        private void sảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng sản phẩm chưa cài đặt.");
-        }
-
-        private void nhàCungCấpToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            MessageBox.Show("Chức năng nhà cung cấp chưa cài đặt.");
+            f.MdiParent = this;
+            f.WindowState = FormWindowState.Maximized;
+            f.Show();
         }
 
         private void nhậpKhoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng nhập kho chưa cài đặt.");
+            OpenForm(new frmPhieuNhap());
         }
 
         private void xemTồnKhoToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng xem tồn kho chưa cài đặt.");
+            OpenForm(new frmKho());
         }
 
-        private void tạoĐơnHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        private void nhàCungCấpToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng tạo đơn hàng chưa cài đặt.");
+            OpenForm(new frmNCC());
         }
 
-        private void danhSáchĐơnHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        private void quảnLýTàiKhoảnToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng danh sách đơn hàng chưa cài đặt.");
+            OpenForm(new faccount());
         }
 
-        private void hướngDẫnToolStripMenuItem_Click(object sender, EventArgs e)
+        private void đổiMậtKhẩuToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Chức năng hướng dẫn chưa cài đặt.");
+            OpenForm(new fChangePasswords());
         }
 
-        private void giớiThiệuToolStripMenuItem_Click(object sender, EventArgs e)
+        private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Phần mềm quản lý cửa hàng giày.");
+            AuthController auth = new AuthController();
+            auth.logout();
+            this.Hide();
+            flogin f = new flogin();
+            f.ShowDialog();
+            this.Close();
+        }
+
+        private void frmMain_Load(object sender, EventArgs e)
+        {
+            if (Session.user == null)
+            {
+                MessageBox.Show("Bạn chưa đăng nhập!");
+                this.Close();
+            }
+
+            labelName.Text = Session.user.hoTen.ToString();
+
+            // giới hạn quyền staff
+            if (Session.user.quyen == "staff")
+            {
+                //hệThốngToolStripMenuItem.DropDownItems.Remove(quảnLýTàiKhoảnToolStripMenuItem);
+                hệThốngToolStripMenuItem.Enabled = false;
+            }
+        }
+
+        private void thốngKêToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmThongKe());
         }
     }
 }
