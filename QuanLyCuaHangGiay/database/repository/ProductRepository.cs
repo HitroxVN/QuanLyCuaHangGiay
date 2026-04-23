@@ -57,14 +57,22 @@ namespace QuanLyCuaHangGiay.database.repository
         }
 
         // 4. Xóa sản phẩm
+
         public int Delete(int id)
+
         {
             string sql = "DELETE FROM SanPham WHERE id = @id";
+
             SqlParameter[] parameters = new SqlParameter[]
+
             {
+
                 new SqlParameter("@id", id)
+
             };
+
             return DBConnection.ExecuteNonQuery(sql, parameters);
+
         }
 
         // 5. Tìm kiếm sản phẩm theo tên

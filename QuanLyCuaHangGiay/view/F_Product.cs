@@ -260,13 +260,22 @@ namespace QuanLyCuaHangGiay.view
         }
 
         // Thêm
+        // Thêm
         private void button2_Click(object sender, EventArgs e)
         {
-            // BƯỚC CHẶN KIỂM TRA LỖI
+            // --- BƯỚC CHẶN 1: KIỂM TRA TRẠNG THÁI FORM ---
+            // Nếu idSanPhamHienTai > 0 nghĩa là người dùng đang click chọn 1 sản phẩm cũ trong bảng
+            if (idSanPhamHienTai > 0)
+            {
+                MessageBox.Show("Bạn đang chọn một sản phẩm đã có sẵn!\n- Nếu muốn thay đổi thông tin, hãy bấm nút [Sửa].\n- Nếu muốn thêm sản phẩm mới hoàn toàn, hãy bấm nút [Làm mới] trước khi thêm.", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return; // Dừng lại luôn, không chạy code thêm bên dưới nữa
+            }
+
+            // --- BƯỚC CHẶN 2: KIỂM TRA LỖI NHẬP LIỆU (VALIDATION) ---
             if (!ValidateData()) return;
 
             string ten = tensp.Text.Trim();
-            decimal giaTien = decimal.Parse(gia.Text.Trim()); // Đoạn này chắc chắn chạy được vì ValidateData đã kiểm tra là số rồi
+            decimal giaTien = decimal.Parse(gia.Text.Trim());
             string mauSac = mau.Text.Trim();
             string kichThuoc = kichco.Text.Trim();
             int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);

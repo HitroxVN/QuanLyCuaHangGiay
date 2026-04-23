@@ -120,6 +120,14 @@ namespace QuanLyCuaHangGiay.view
         // Nút: Thêm
         private void button2_Click(object sender, EventArgs e)
         {
+            // BƯỚC CHẶN 1: Nếu đang chọn danh mục cũ thì không cho thêm
+            if (idDanhMucHienTai > 0)
+            {
+                MessageBox.Show("Bạn đang chọn một danh mục đã có sẵn!\n- Nếu muốn thay đổi thông tin, hãy bấm nút [Sửa].\n- Nếu muốn thêm mới hoàn toàn, hãy bấm nút [Làm mới] trước khi thêm.", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            // BƯỚC CHẶN 2: Validation
             if (!ValidateData()) return;
 
             string ten = tendm.Text.Trim();
@@ -131,11 +139,11 @@ namespace QuanLyCuaHangGiay.view
             {
                 MessageBox.Show("Thêm danh mục thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadData();
-                button5_Click(sender, e); // Làm mới form (Hàm này cũng sẽ gọi LoadNextId)
+                button5_Click(sender, e); // Xóa trắng và Load lại ID mới
             }
             else
             {
-                MessageBox.Show("Thêm thất bại! Vui lòng thử lại.", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Thêm thất bại. Vui lòng kiểm tra lại thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -246,5 +254,10 @@ namespace QuanLyCuaHangGiay.view
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
 
         #endregion
+
+        private void button4_Click_1(object sender, EventArgs e)
+        {
+
+        }
     }
 }
