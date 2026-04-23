@@ -71,7 +71,7 @@ namespace QuanLyCuaHangGiay.controller
             if (UserSession.Role == "Staff")
             {
                 // Nhân viên xóa mềm (đổi trạng thái)
-                int result = repo.ChangeStatus(id, "Inactive");
+                int result = repo.ChangeStatus(id, "inactive");
                 return result > 0;
             }
             else

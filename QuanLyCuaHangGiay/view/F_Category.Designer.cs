@@ -114,7 +114,6 @@
             this.button4.TabIndex = 2;
             this.button4.Text = "Xóa";
             this.button4.UseVisualStyleBackColor = true;
-            this.button4.Click += new System.EventHandler(this.button4_Click_1);
             // 
             // button3
             // 

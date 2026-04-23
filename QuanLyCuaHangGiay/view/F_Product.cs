@@ -60,8 +60,8 @@ namespace QuanLyCuaHangGiay.view
         private void LoadComboboxTrangThai()
         {
             listtt.Items.Clear();
-            listtt.Items.Add("Active");
-            listtt.Items.Add("Inactive");
+            listtt.Items.Add("active");
+            listtt.Items.Add("inactive");
             listtt.SelectedIndex = 0;
         }
 

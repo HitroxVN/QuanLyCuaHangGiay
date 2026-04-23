@@ -93,5 +93,15 @@ namespace QuanLyCuaHangGiay.view
         {
             OpenForm(new frmThongKe());
         }
+
+        private void sảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new F_Product());
+        }
+
+        private void danhMụcSảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new F_Category());
+        }
     }
 }

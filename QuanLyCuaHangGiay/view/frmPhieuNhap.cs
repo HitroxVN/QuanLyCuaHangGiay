@@ -1,5 +1,6 @@
 ﻿using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.Database;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -177,7 +178,7 @@ namespace QuanLyCuaHangGiay.view
                 decimal gia = decimal.Parse(txtGiaNhap.Text);
                 string ghiChu = txtGhiChu.Text;
 
-                int userID = 1; // sau này dùng Session
+                int userID = Session.user.id; 
 
                 bool result = _controller.Insert(spID, nccID, soLuong, gia, userID, ghiChu);
 

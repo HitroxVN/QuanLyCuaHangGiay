@@ -58,8 +58,8 @@ namespace QuanLyCuaHangGiay.view
         private void LoadComboboxTrangThai()
         {
             listtt.Items.Clear();
-            listtt.Items.Add("Active");
-            listtt.Items.Add("Inactive");
+            listtt.Items.Add("active");
+            listtt.Items.Add("inactive");
             listtt.SelectedIndex = 0; // Mặc định chọn Active
         }
 
@@ -255,9 +255,5 @@ namespace QuanLyCuaHangGiay.view
 
         #endregion
 
-        private void button4_Click_1(object sender, EventArgs e)
-        {
-
-        }
     }
 }
