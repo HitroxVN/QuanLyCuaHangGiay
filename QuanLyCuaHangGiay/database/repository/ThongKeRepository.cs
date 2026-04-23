@@ -21,16 +21,22 @@ namespace QuanLyCuaHangGiay.database.repository
                     SELECT 
                         (SELECT COUNT(*) FROM SanPham) AS TongSanPham,
                         (SELECT COUNT(*) FROM NhaCungCap) AS TongNhaCungCap,
-                        (SELECT COUNT(*) FROM DonHang WHERE ngayTao BETWEEN @TuNgay AND @DenNgay) AS TongDonHang,
-                        (SELECT COUNT(*) FROM PhieuNhap WHERE thoiGian BETWEEN @TuNgay AND @DenNgay) AS TongPhieuNhap,
+                        (SELECT COUNT(*) 
+                         FROM DonHang 
+                         WHERE ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)) AS TongDonHang,
+                        (SELECT COUNT(*) 
+                         FROM PhieuNhap 
+                         WHERE thoiGian >= @TuNgay AND thoiGian < DATEADD(DAY, 1, @DenNgay)) AS TongPhieuNhap,
                         (SELECT ISNULL(SUM(soLuong), 0) FROM Kho) AS TongSoLuongTon,
-                        (SELECT ISNULL(SUM(tongTien), 0) FROM DonHang WHERE ngayTao BETWEEN @TuNgay AND @DenNgay) AS TongDoanhThu
+                        (SELECT ISNULL(SUM(tongTien), 0) 
+                         FROM DonHang 
+                         WHERE ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)) AS TongDoanhThu
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
-                    cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
+                    cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -62,7 +68,7 @@ namespace QuanLyCuaHangGiay.database.repository
                     SELECT MONTH(ngayTao) AS Thang, ISNULL(SUM(tongTien), 0) AS DoanhThu
                     FROM DonHang
                     WHERE YEAR(ngayTao) = @Nam 
-                    AND ngayTao BETWEEN @TuNgay AND @DenNgay
+                      AND ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)
                     GROUP BY MONTH(ngayTao)
                     ORDER BY MONTH(ngayTao)
                 ";
@@ -70,8 +76,8 @@ namespace QuanLyCuaHangGiay.database.repository
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Nam", nam);
-                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
-                    cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
+                    cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -102,7 +108,7 @@ namespace QuanLyCuaHangGiay.database.repository
                     SELECT MONTH(thoiGian) AS Thang, ISNULL(SUM(soLuong), 0) AS TongNhap
                     FROM PhieuNhap
                     WHERE YEAR(thoiGian) = @Nam 
-                    AND thoiGian BETWEEN @TuNgay AND @DenNgay
+                      AND thoiGian >= @TuNgay AND thoiGian < DATEADD(DAY, 1, @DenNgay)
                     GROUP BY MONTH(thoiGian)
                     ORDER BY MONTH(thoiGian)
                 ";
@@ -110,8 +116,8 @@ namespace QuanLyCuaHangGiay.database.repository
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
                     cmd.Parameters.AddWithValue("@Nam", nam);
-                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
-                    cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
+                    cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -143,15 +149,15 @@ namespace QuanLyCuaHangGiay.database.repository
                     FROM ChiTietDonHang ct
                     INNER JOIN DonHang dh ON ct.donhangID = dh.id
                     INNER JOIN SanPham sp ON ct.sanphamID = sp.id
-                    WHERE dh.ngayTao BETWEEN @TuNgay AND @DenNgay
+                    WHERE dh.ngayTao >= @TuNgay AND dh.ngayTao < DATEADD(DAY, 1, @DenNgay)
                     GROUP BY sp.tenSP
                     ORDER BY TongBan DESC
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay);
-                    cmd.Parameters.AddWithValue("@DenNgay", denNgay);
+                    cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
+                    cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
                     using (SqlDataReader reader = cmd.ExecuteReader())
                     {
@@ -173,19 +179,19 @@ namespace QuanLyCuaHangGiay.database.repository
         public DataTable LayBangTopSanPhamBanChay(DateTime tuNgay, DateTime denNgay)
         {
             string sql = @"
-                SELECT TOP 5 sp.tenSP AS 'Sản phẩm', SUM(ct.soLuong) AS 'Số lượng bán'
+                SELECT TOP 5 sp.tenSP AS N'Sản phẩm', SUM(ct.soLuong) AS N'Số lượng bán'
                 FROM ChiTietDonHang ct
                 INNER JOIN DonHang dh ON ct.donhangID = dh.id
                 INNER JOIN SanPham sp ON ct.sanphamID = sp.id
-                WHERE dh.ngayTao BETWEEN @TuNgay AND @DenNgay
+                WHERE dh.ngayTao >= @TuNgay AND dh.ngayTao < DATEADD(DAY, 1, @DenNgay)
                 GROUP BY sp.tenSP
                 ORDER BY SUM(ct.soLuong) DESC
             ";
 
             SqlParameter[] pa = new SqlParameter[]
             {
-                new SqlParameter("@TuNgay", tuNgay),
-                new SqlParameter("@DenNgay", denNgay)
+                new SqlParameter("@TuNgay", tuNgay.Date),
+                new SqlParameter("@DenNgay", denNgay.Date)
             };
 
             return DBConnection.GetDataTable(sql, pa);
