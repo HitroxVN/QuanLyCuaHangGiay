@@ -231,7 +231,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowHeadersWidth = 51;
             this.dataGridView1.RowTemplate.Height = 24;
-            this.dataGridView1.Size = new System.Drawing.Size(875, 563);
+            this.dataGridView1.Size = new System.Drawing.Size(875, 548);
             this.dataGridView1.TabIndex = 16;
             this.dataGridView1.CellContentClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             // 
@@ -259,7 +259,7 @@
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(693, 93);
+            this.button6.Location = new System.Drawing.Point(715, 96);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(121, 22);
             this.button6.TabIndex = 18;
@@ -269,7 +269,7 @@
             // 
             // timkiem
             // 
-            this.timkiem.Location = new System.Drawing.Point(374, 96);
+            this.timkiem.Location = new System.Drawing.Point(396, 99);
             this.timkiem.Name = "timkiem";
             this.timkiem.Size = new System.Drawing.Size(282, 22);
             this.timkiem.TabIndex = 19;
@@ -284,7 +284,7 @@
             // comboBox1
             // 
             this.comboBox1.FormattingEnabled = true;
-            this.comboBox1.Location = new System.Drawing.Point(1051, 93);
+            this.comboBox1.Location = new System.Drawing.Point(1073, 96);
             this.comboBox1.Name = "comboBox1";
             this.comboBox1.Size = new System.Drawing.Size(202, 24);
             this.comboBox1.TabIndex = 21;
@@ -293,7 +293,7 @@
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(877, 99);
+            this.label8.Location = new System.Drawing.Point(899, 102);
             this.label8.Name = "label8";
             this.label8.Size = new System.Drawing.Size(143, 16);
             this.label8.TabIndex = 20;
@@ -321,7 +321,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1309, 830);
+            this.ClientSize = new System.Drawing.Size(1309, 815);
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.comboBox1);

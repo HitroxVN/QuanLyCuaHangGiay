@@ -136,14 +136,14 @@
             // 
             // timkiem
             // 
-            this.timkiem.Location = new System.Drawing.Point(328, 102);
+            this.timkiem.Location = new System.Drawing.Point(350, 102);
             this.timkiem.Name = "timkiem";
             this.timkiem.Size = new System.Drawing.Size(348, 22);
             this.timkiem.TabIndex = 21;
             // 
             // button6
             // 
-            this.button6.Location = new System.Drawing.Point(703, 102);
+            this.button6.Location = new System.Drawing.Point(725, 102);
             this.button6.Name = "button6";
             this.button6.Size = new System.Drawing.Size(121, 22);
             this.button6.TabIndex = 20;

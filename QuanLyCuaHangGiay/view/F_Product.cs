@@ -329,6 +329,7 @@ namespace QuanLyCuaHangGiay.view
         }
 
         // Xóa
+        // Xóa
         private void button4_Click(object sender, EventArgs e)
         {
             if (idSanPhamHienTai <= 0)
@@ -340,15 +341,56 @@ namespace QuanLyCuaHangGiay.view
             DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa sản phẩm này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
             if (dialogResult == DialogResult.Yes)
             {
-                if (productController.DeleteProduct(idSanPhamHienTai))
+                try
                 {
-                    MessageBox.Show("Xóa thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    LoadData();
-                    button5_Click(sender, e);
+                    // BƯỚC 1: TIẾN HÀNH XÓA SẢN PHẨM TRONG DATABASE TRƯỚC
+                    if (productController.DeleteProduct(idSanPhamHienTai))
+                    {
+                        // BƯỚC 2: NẾU DB XÓA THÀNH CÔNG -> TIẾN HÀNH XÓA ẢNH VẬT LÝ
+                        if (!string.IsNullOrEmpty(tenAnhLuuDB))
+                        {
+                            // 2.1: Gỡ ảnh ra khỏi PictureBox trước để Windows cho phép xóa file
+                            if (picture.Image != null)
+                            {
+                                picture.Image.Dispose();
+                                picture.Image = null;
+                            }
+
+                            // 2.2: Tìm đường dẫn tới bức ảnh đó trong thư mục Images
+                            string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
+                            string duongDanAnhCuaSP = Path.Combine(thuMucGocProject, "Images", tenAnhLuuDB);
+
+                            // 2.3: Nếu file tồn tại thì xóa nó đi
+                            if (File.Exists(duongDanAnhCuaSP))
+                            {
+                                File.Delete(duongDanAnhCuaSP);
+                            }
+                        }
+
+                        MessageBox.Show("Xóa thành công sản phẩm và dọn sạch ảnh trong thư mục!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        LoadData();
+                        button5_Click(sender, e);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
                 }
-                else
+                catch (System.Data.SqlClient.SqlException sqlEx)
                 {
-                    MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // Lỗi 547: Sản phẩm đã nằm trong hóa đơn
+                    if (sqlEx.Number == 547)
+                    {
+                        MessageBox.Show("Không thể xóa sản phẩm này vì nó đã phát sinh Giao dịch / Nằm trong Đơn hàng cũ!\n\nGiải pháp: Hãy chọn nút [Sửa] và đổi Trạng thái thành Inactive (Ngừng kinh doanh).", "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    }
+                    else
+                    {
+                        MessageBox.Show("Lỗi cơ sở dữ liệu: " + sqlEx.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show("Lỗi hệ thống: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
