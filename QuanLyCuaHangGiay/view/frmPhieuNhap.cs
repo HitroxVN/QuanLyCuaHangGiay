@@ -329,5 +329,39 @@ namespace QuanLyCuaHangGiay.view
             string tienChu = DocSoThanhChu((long)tongTien);
             lblThanhTien.Text = char.ToUpper(tienChu[0]) + tienChu.Substring(1);
         }
+
+        private void btnXuatExcel_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (dgvDanhSach.CurrentRow == null)
+                {
+                    MessageBox.Show("Vui lòng chọn phiếu!");
+                    return;
+                }
+
+                DateTime time = Convert.ToDateTime(dgvDanhSach.CurrentRow.Cells["thoiGian"].Value);
+                int nccID = Convert.ToInt32(dgvDanhSach.CurrentRow.Cells["nhacungcapID"].Value);
+
+                DataTable dt = _controller.GetPhieuNhapReport(time, nccID);
+
+                if (dt.Rows.Count == 0)
+                {
+                    MessageBox.Show("Không có dữ liệu để in!");
+                    return;
+                }
+
+                frmReport frm = new frmReport(
+                    "QuanLyCuaHangGiay.ReportPhieuNhap.rdlc",
+                    dt
+                );
+
+                frm.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi in phiếu: " + ex.Message);
+            }
+        }
     }
 }

@@ -250,6 +250,7 @@
             this.btnXuatExcel.TabIndex = 14;
             this.btnXuatExcel.Text = "Xuất danh sách";
             this.btnXuatExcel.UseVisualStyleBackColor = false;
+            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
             // 
             // btnHoanThanh
             // 
