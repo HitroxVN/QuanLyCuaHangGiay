@@ -1,5 +1,6 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.Database;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -13,6 +14,19 @@ namespace QuanLyCuaHangGiay.controller
 {
     public class PhieuNhapController
     {
+
+        public PhieuNhapController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
         private PhieuNhapRepository repo = new PhieuNhapRepository();
 
         public DataTable GetAll()

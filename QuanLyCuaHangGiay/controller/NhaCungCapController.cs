@@ -1,5 +1,6 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.model;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,18 @@ namespace QuanLyCuaHangGiay.controller
 {
     internal class NhaCungCapController
     {
+        public NhaCungCapController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
         private NhaCungCapRepository repo = new NhaCungCapRepository();
 
         // ================= ADD =================

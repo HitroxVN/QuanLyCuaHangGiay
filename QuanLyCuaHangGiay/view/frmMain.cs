@@ -73,7 +73,7 @@ namespace QuanLyCuaHangGiay.view
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            if (Session.user == null)
+            if (!Authorization.Logged())
             {
                 MessageBox.Show("Bạn chưa đăng nhập!");
                 this.Close();
@@ -81,8 +81,8 @@ namespace QuanLyCuaHangGiay.view
 
             labelName.Text = Session.user.hoTen.ToString();
 
-            // giới hạn quyền staff
-            if (Session.user.quyen == "staff")
+            // giới hạn quyền staff (CHỈ UI)
+            if (Authorization.IsStaff())
             {
                 //hệThốngToolStripMenuItem.DropDownItems.Remove(quảnLýTàiKhoảnToolStripMenuItem);
                 hệThốngToolStripMenuItem.Enabled = false;

@@ -35,8 +35,6 @@ namespace QuanLyCuaHangGiay.view
                 MessageBox.Show("Sai email hoặc mật khẩu!");
             } else
             {
-                Session.user = u; // lưu session
-
                 MessageBox.Show("Đăng nhập thành công!");
 
                 // phân quyền form

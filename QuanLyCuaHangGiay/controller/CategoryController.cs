@@ -2,6 +2,7 @@
 using System.Data;
 using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.model;
+using QuanLyCuaHangGiay.util;
 
 namespace QuanLyCuaHangGiay.controller
 {
@@ -13,7 +14,7 @@ namespace QuanLyCuaHangGiay.controller
         public DataTable GetAllCategories()
         {
             // Nhân viên chỉ xem danh mục Active
-            if (UserSession.Role == "Staff")
+            if (Authorization.IsStaff())
             {
                 return repo.GetActiveCategories();
             }
@@ -68,7 +69,7 @@ namespace QuanLyCuaHangGiay.controller
             }
 
             // NẾU AN TOÀN (Không có sản phẩm) -> Tiến hành xóa
-            if (UserSession.Role == "Staff")
+            if (Authorization.IsStaff())
             {
                 // Nhân viên xóa mềm (đổi trạng thái)
                 int result = repo.ChangeStatus(id, "inactive");

@@ -22,7 +22,11 @@ namespace QuanLyCuaHangGiay.controller
             if(u.trangThai.ToLower() != "active") return null;
 
             string hashed = HashPassword.hashPassword(password);
-            if (u.matKhau == hashed) return u;
+            if (u.matKhau == hashed)
+            {
+                Session.user = u;
+                return u;
+            }
 
             return null;
         }
@@ -48,16 +52,9 @@ namespace QuanLyCuaHangGiay.controller
 
             u.matKhau = HashPassword.hashPassword(u.matKhau);
 
-            if(repo.addUser(u))
-            {
-                m = "Đăng ký thành công";
-                return true;
-            }
-            else
-            {
-                m = "Đăng ký thất bại";
-                return false;
-            }
+            bool rs = repo.addUser(u);
+            m = rs ? "Đăng ký thành công" : "Đăng ký thất bại";
+            return rs;
         }
 
         public void logout()

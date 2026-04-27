@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace QuanLyCuaHangGiay.controller
 {
@@ -16,7 +17,13 @@ namespace QuanLyCuaHangGiay.controller
 
         public bool addUser(Users u, out string m)
         {
-            if(!validate.validateForAdd(u, out m))
+            if(!Authorization.IsAdmin())
+                {
+                m = "Bạn không có quyền thực hiện hành động này.";
+                return false;
+            }
+
+            if (!validate.validateForAdd(u, out m))
             {
                 return false;
             }
@@ -31,41 +38,36 @@ namespace QuanLyCuaHangGiay.controller
 
             u.matKhau = HashPassword.hashPassword(u.matKhau);
 
-            if(repo.addUser(u))
-            {
-                m = "Thêm người dùng thành công.";
-                return true;
-            }
-            else
-            {
-                m = "Thêm người dùng thất bại.";
-                return false;
-            }
-            //return repo.addUser(u);
+            bool rs = repo.addUser(u);
+            m = rs ? "Thêm người dùng thành công." : "Thêm người dùng thất bại.";
+            return rs;
         }
 
         public bool updateUser(Users u, out string m)
         {
-            if(!validate.validateForUpdate(u, out m))
+            if (!Authorization.IsAdmin())
+            {
+                m = "Bạn không có quyền thực hiện hành động này.";
+                return false;
+            }
+            if (!validate.validateForUpdate(u, out m))
             {
                 return false;
             }
 
-            if (repo.updateUser(u))
-            {
-                m = "Cập nhật người dùng thành công.";
-                return true;
-
-            }
-            else
-            {
-                m = "Cập nhật người dùng thất bại.";
-                return false;
-            }
+            bool rs = repo.updateUser(u);
+            m = rs ? "Cập nhật người dùng thành công." : "Cập nhật người dùng thất bại.";
+            return rs;
         }
 
         public bool deleteUser(int id)
         {
+            if (!Authorization.IsAdmin())
+            {
+                MessageBox.Show("Bạn không có quyền thực hiện hành động này.");
+                return false;
+            }
+
             if (id <= 0) return false;
 
             return repo.removeUser(id);
@@ -86,16 +88,9 @@ namespace QuanLyCuaHangGiay.controller
                 return false;
             }
             
-            if (repo.changePassword(id, newhashed))
-            {
-                m = "Đổi mật khẩu thành công.";
-                return true;
-            }
-            else
-            {
-                m = "Đổi mật khẩu thất bại.";
-                return false;
-            }
+            bool rs = repo.changePassword(id, newhashed);
+            m = rs ? "Đổi mật khẩu thành công." : "Đổi mật khẩu thất bại.";
+            return rs;
         }
 
         public List<Users> getAllUsers()

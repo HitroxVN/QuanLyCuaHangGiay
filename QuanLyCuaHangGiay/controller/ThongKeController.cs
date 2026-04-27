@@ -3,11 +3,25 @@ using System.Collections.Generic;
 using System.Data;
 using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.model;
+using QuanLyCuaHangGiay.util;
 
 namespace QuanLyCuaHangGiay.controller
 {
     public class ThongKeController
     {
+
+        // constructor check quyền
+        public ThongKeController()
+        {
+            if (
+                !Authorization.IsAdmin()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền xem thống kê"
+                );
+            }
+        }
         private ThongKeRepository repository = new ThongKeRepository();
 
         public ThongKe LayTongQuan(DateTime tuNgay, DateTime denNgay)

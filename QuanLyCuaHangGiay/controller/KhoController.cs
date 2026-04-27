@@ -1,5 +1,6 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.Database;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -12,6 +13,18 @@ namespace QuanLyCuaHangGiay.controller
 {
     public class KhoController
     {
+        public KhoController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
         private KhoRepository repo = new KhoRepository();
 
         public DataTable GetAllKho()
