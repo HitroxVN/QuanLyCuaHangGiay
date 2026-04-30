@@ -15,36 +15,15 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.GetDataTable(sql);
         }
 
-        // 2. Thêm sản phẩm mới
+        // 2. Thêm sản phẩm mới 
         public int Insert(Products sp)
         {
-            string sql = @"INSERT INTO SanPham (tenSP, gia, anh, mau, kichco, danhmucID, trangthai) 
-                           VALUES (@tenSP, @gia, @anh, @mau, @kichco, @danhmucID, @trangthai)";
+            // MẶC ĐỊNH BẰNG 0: Mình truyền cứng số 0 vào câu SQL luôn để đảm bảo khi thêm mới chắc chắn số lượng là 0
+            string sql = @"INSERT INTO SanPham (tenSP, gia, anh, mau, kichco, danhmucID, trangthai, soLuong) 
+                           VALUES (@tenSP, @gia, @anh, @mau, @kichco, @danhmucID, @trangthai, 0)";
 
             SqlParameter[] parameters = new SqlParameter[]
             {
-                new SqlParameter("@tenSP", sp.TenSP),
-                new SqlParameter("@gia", sp.Gia),
-                new SqlParameter("@anh", (object)sp.Anh ?? DBNull.Value), // Xử lý nếu không có ảnh
-                new SqlParameter("@mau", sp.Mau),
-                new SqlParameter("@kichco", sp.KichCo),
-                new SqlParameter("@danhmucID", sp.DanhMucID),
-                new SqlParameter("@trangthai", sp.TrangThai)
-            };
-            return DBConnection.ExecuteNonQuery(sql, parameters);
-        }
-
-        // 3. Cập nhật thông tin sản phẩm
-        public int Update(Products sp)
-        {
-            string sql = @"UPDATE SanPham 
-                           SET tenSP = @tenSP, gia = @gia, anh = @anh, mau = @mau, 
-                               kichco = @kichco, danhmucID = @danhmucID, trangthai = @trangthai 
-                           WHERE id = @id";
-
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@id", sp.Id),
                 new SqlParameter("@tenSP", sp.TenSP),
                 new SqlParameter("@gia", sp.Gia),
                 new SqlParameter("@anh", (object)sp.Anh ?? DBNull.Value),
@@ -56,23 +35,41 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
-        // 4. Xóa sản phẩm
-
-        public int Delete(int id)
-
+        // 3. Cập nhật thông tin sản phẩm
+        public int Update(Products sp)
         {
-            string sql = "DELETE FROM SanPham WHERE id = @id";
+            // Đã bổ sung soLuong = @soLuong để sau này làm chức năng nhập kho
+            string sql = @"UPDATE SanPham 
+                           SET tenSP = @tenSP, gia = @gia, anh = @anh, mau = @mau, 
+                               kichco = @kichco, danhmucID = @danhmucID, trangthai = @trangthai, soLuong = @soLuong 
+                           WHERE id = @id";
 
             SqlParameter[] parameters = new SqlParameter[]
-
             {
-
-                new SqlParameter("@id", id)
-
+                new SqlParameter("@id", sp.Id),
+                new SqlParameter("@tenSP", sp.TenSP),
+                new SqlParameter("@gia", sp.Gia),
+                new SqlParameter("@anh", (object)sp.Anh ?? DBNull.Value),
+                new SqlParameter("@mau", sp.Mau),
+                new SqlParameter("@kichco", sp.KichCo),
+                new SqlParameter("@danhmucID", sp.DanhMucID),
+                new SqlParameter("@trangthai", sp.TrangThai),
+                
+                // Thuộc tính sp.SoLuong này sẽ lấy từ class model Products
+                new SqlParameter("@soLuong", sp.SoLuong)
             };
-
             return DBConnection.ExecuteNonQuery(sql, parameters);
+        }
 
+        // 4. Xóa sản phẩm
+        public int Delete(int id)
+        {
+            string sql = "DELETE FROM SanPham WHERE id = @id";
+            SqlParameter[] parameters = new SqlParameter[]
+            {
+                new SqlParameter("@id", id)
+            };
+            return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
         // 5. Tìm kiếm sản phẩm theo tên
@@ -86,25 +83,26 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.GetDataTable(sql, parameters);
         }
 
-        // 6. Lấy danh sách sản phẩm kèm tên danh mục (Dùng để hiển thị lên View cho đẹp)
+        // 6. Lấy danh sách sản phẩm kèm tên danh mục
         public DataTable GetAllWithCategoryName()
         {
-            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, 
+            // BỔ SUNG: sp.soLuong vào câu SELECT để hiển thị lên bảng
+            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, sp.soLuong, 
                                   sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
                            FROM SanPham sp
                            INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id";
             return DBConnection.GetDataTable(sql);
         }
 
-
         // Hàm 1: Chỉ lấy sản phẩm Active (dành cho Staff)
         public DataTable GetActiveProductsWithCategoryName()
         {
-            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, 
+            // BỔ SUNG: sp.soLuong vào câu SELECT để hiển thị lên bảng
+            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, sp.soLuong, 
                                   sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
                            FROM SanPham sp
                            INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id
-                           WHERE sp.trangthai = 'Active'";
+                           WHERE sp.trangthai = 'active'";
             return DBConnection.GetDataTable(sql);
         }
 
@@ -129,7 +127,7 @@ namespace QuanLyCuaHangGiay.database.repository
             {
                 return Convert.ToInt32(dt.Rows[0][0]) + 1;
             }
-            return 1; // Nếu chưa có sản phẩm nào thì bắt đầu từ 1
+            return 1;
         }
     }
 }

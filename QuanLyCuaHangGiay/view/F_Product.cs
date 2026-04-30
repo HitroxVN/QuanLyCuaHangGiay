@@ -36,8 +36,10 @@ namespace QuanLyCuaHangGiay.view
 
         private void F_Product_Load(object sender, EventArgs e)
         {
-            // Khóa ô ID không cho người dùng tự gõ
+            // Khóa ô ID và ô Số lượng không cho người dùng tự gõ
             textBox1.ReadOnly = true;
+            soluong.ReadOnly = true;
+            soluong.Text = "0"; // Mặc định hiển thị là 0
 
             LoadComboboxTrangThai();
             LoadComboboxDanhMuc();
@@ -50,7 +52,6 @@ namespace QuanLyCuaHangGiay.view
 
         #region Các hàm hỗ trợ nạp dữ liệu (Helpers)
 
-        // HÀM MỚI: Load ID tiếp theo lên giao diện
         private void LoadNextId()
         {
             int nextId = productController.GetNextProductId();
@@ -89,14 +90,29 @@ namespace QuanLyCuaHangGiay.view
 
         private void LoadData()
         {
+            // 1. Đổ dữ liệu từ SQL vào bảng
             dataGridView1.DataSource = productController.GetAllProducts();
 
+            // 2. Tiến hành đổi tên cột (Viết Tiếng Việt có dấu)
             if (dataGridView1.Columns.Count > 0)
             {
+                // Cú pháp: dataGridView1.Columns["Tên_cột_trong_SQL"].HeaderText = "Tên hiển thị trên giao diện";
                 dataGridView1.Columns["id"].HeaderText = "Mã SP";
                 dataGridView1.Columns["tenSP"].HeaderText = "Tên Sản Phẩm";
-                dataGridView1.Columns["gia"].HeaderText = "Giá";
+                dataGridView1.Columns["gia"].HeaderText = "Giá Tiền";
+                dataGridView1.Columns["mau"].HeaderText = "Màu Sắc";
+                dataGridView1.Columns["kichco"].HeaderText = "Kích Cỡ";
+                dataGridView1.Columns["trangthai"].HeaderText = "Trạng Thái";
+                dataGridView1.Columns["ngayTao"].HeaderText = "Ngày Tạo";
                 dataGridView1.Columns["tenDanhMuc"].HeaderText = "Danh Mục";
+                dataGridView1.Columns["anh"].HeaderText = "Tên Ảnh ";
+
+                // Cột số lượng (Kiểm tra xem CSDL đã có cột này chưa rồi mới đổi tên để tránh lỗi)
+                if (dataGridView1.Columns.Contains("soLuong"))
+                {
+                    dataGridView1.Columns["soLuong"].HeaderText = "Số Lượng";
+                }
+
             }
         }
 
@@ -144,16 +160,9 @@ namespace QuanLyCuaHangGiay.view
                 return false;
             }
 
-            // 2. Kiểm tra Giá tiền (Không để trống + Phải là số hợp lệ + Lớn hơn 0)
-            if (string.IsNullOrWhiteSpace(gia.Text))
-            {
-                MessageBox.Show("Vui lòng nhập [Giá Tiền]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                gia.Focus();
-                return false;
-            }
-
+            // 2. Kiểm tra Giá tiền
             decimal checkGia;
-            if (!decimal.TryParse(gia.Text, out checkGia) || checkGia < 0)
+            if (string.IsNullOrWhiteSpace(gia.Text) || !decimal.TryParse(gia.Text, out checkGia) || checkGia < 0)
             {
                 MessageBox.Show("Giá tiền phải là một con số hợp lệ và lớn hơn hoặc bằng 0!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 gia.Focus();
@@ -168,13 +177,24 @@ namespace QuanLyCuaHangGiay.view
                 return false;
             }
 
-            // 4. Kiểm tra Kích cỡ
-            if (string.IsNullOrWhiteSpace(kichco.Text))
+            // 4. Kiểm tra Kích Cỡ (Khoảng 20-50, cho phép thập phân)
+            decimal checkKichCo;
+            if (string.IsNullOrWhiteSpace(kichco.Text) || !decimal.TryParse(kichco.Text.Trim(), out checkKichCo) || checkKichCo < 20 || checkKichCo > 50)
             {
-                MessageBox.Show("Vui lòng nhập [Kích Cỡ]!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Kích cỡ giày không hợp lệ!\nVui lòng nhập số trong khoảng từ 20 đến 50 (VD: 39 hoặc 39.5).", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 kichco.Focus();
                 return false;
             }
+
+            //  Ràng buộc nghiêm ngặt chỉ cho phép tối đa 1 số sau dấu phẩy
+            int decimalPlaces = BitConverter.GetBytes(decimal.GetBits(checkKichCo)[3])[2];
+            if (decimalPlaces > 1)
+            {
+                MessageBox.Show("Kích cỡ chỉ được phép có tối đa 1 số sau dấu phẩy (VD: 39.5)!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                kichco.Focus();
+                return false;
+            }
+            
 
             // 5. Kiểm tra Chọn Danh Mục
             if (listdm.SelectedIndex == -1 || listdm.SelectedValue == null)
@@ -192,7 +212,7 @@ namespace QuanLyCuaHangGiay.view
                 return false;
             }
 
-            return true; // Dữ liệu hoàn hảo!
+            return true;
         }
 
         #endregion
@@ -242,7 +262,6 @@ namespace QuanLyCuaHangGiay.view
 
         #region Các sự kiện Nút bấm (CRUD)
 
-        // Chọn Ảnh
         private void button1_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog())
@@ -260,18 +279,14 @@ namespace QuanLyCuaHangGiay.view
         }
 
         // Thêm
-        // Thêm
         private void button2_Click(object sender, EventArgs e)
         {
-            // --- BƯỚC CHẶN 1: KIỂM TRA TRẠNG THÁI FORM ---
-            // Nếu idSanPhamHienTai > 0 nghĩa là người dùng đang click chọn 1 sản phẩm cũ trong bảng
             if (idSanPhamHienTai > 0)
             {
                 MessageBox.Show("Bạn đang chọn một sản phẩm đã có sẵn!\n- Nếu muốn thay đổi thông tin, hãy bấm nút [Sửa].\n- Nếu muốn thêm sản phẩm mới hoàn toàn, hãy bấm nút [Làm mới] trước khi thêm.", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return; // Dừng lại luôn, không chạy code thêm bên dưới nữa
+                return;
             }
 
-            // --- BƯỚC CHẶN 2: KIỂM TRA LỖI NHẬP LIỆU (VALIDATION) ---
             if (!ValidateData()) return;
 
             string ten = tensp.Text.Trim();
@@ -289,7 +304,7 @@ namespace QuanLyCuaHangGiay.view
             {
                 MessageBox.Show("Thêm sản phẩm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 LoadData();
-                button5_Click(sender, e); // Xóa trắng và Load lại ID mới
+                button5_Click(sender, e);
             }
             else
             {
@@ -306,7 +321,6 @@ namespace QuanLyCuaHangGiay.view
                 return;
             }
 
-            // BƯỚC CHẶN KIỂM TRA LỖI
             if (!ValidateData()) return;
 
             string ten = tensp.Text.Trim();
@@ -316,9 +330,17 @@ namespace QuanLyCuaHangGiay.view
             int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
             string trangThai = listtt.SelectedItem.ToString();
 
+            // ĐỌC LẠI SỐ LƯỢNG TỪ Ô TEXTBOX ĐỂ TRUYỀN XUỐNG CONTROLLER
+            int soLuongCu = 0;
+            if (!string.IsNullOrEmpty(soluong.Text))
+            {
+                soLuongCu = Convert.ToInt32(soluong.Text);
+            }
+
             tenAnhLuuDB = XulyLuuAnh();
 
-            bool isSuccess = productController.UpdateProduct(idSanPhamHienTai, ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai);
+            // GỌI HÀM UPDATE VÀ TRUYỀN THÊM soLuongCu VÀO CUỐI
+            bool isSuccess = productController.UpdateProduct(idSanPhamHienTai, ten, giaTien, tenAnhLuuDB, mauSac, kichThuoc, idDanhMuc, trangThai, soLuongCu);
 
             if (isSuccess)
             {
@@ -328,7 +350,6 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        // Xóa
         // Xóa
         private void button4_Click(object sender, EventArgs e)
         {
@@ -343,24 +364,19 @@ namespace QuanLyCuaHangGiay.view
             {
                 try
                 {
-                    // BƯỚC 1: TIẾN HÀNH XÓA SẢN PHẨM TRONG DATABASE TRƯỚC
                     if (productController.DeleteProduct(idSanPhamHienTai))
                     {
-                        // BƯỚC 2: NẾU DB XÓA THÀNH CÔNG -> TIẾN HÀNH XÓA ẢNH VẬT LÝ
                         if (!string.IsNullOrEmpty(tenAnhLuuDB))
                         {
-                            // 2.1: Gỡ ảnh ra khỏi PictureBox trước để Windows cho phép xóa file
                             if (picture.Image != null)
                             {
                                 picture.Image.Dispose();
                                 picture.Image = null;
                             }
 
-                            // 2.2: Tìm đường dẫn tới bức ảnh đó trong thư mục Images
                             string thuMucGocProject = Directory.GetParent(Application.StartupPath).Parent.FullName;
                             string duongDanAnhCuaSP = Path.Combine(thuMucGocProject, "Images", tenAnhLuuDB);
 
-                            // 2.3: Nếu file tồn tại thì xóa nó đi
                             if (File.Exists(duongDanAnhCuaSP))
                             {
                                 File.Delete(duongDanAnhCuaSP);
@@ -378,7 +394,6 @@ namespace QuanLyCuaHangGiay.view
                 }
                 catch (System.Data.SqlClient.SqlException sqlEx)
                 {
-                    // Lỗi 547: Sản phẩm đã nằm trong hóa đơn
                     if (sqlEx.Number == 547)
                     {
                         MessageBox.Show("Không thể xóa sản phẩm này vì nó đã phát sinh Giao dịch / Nằm trong Đơn hàng cũ!\n\nGiải pháp: Hãy chọn nút [Sửa] và đổi Trạng thái thành Inactive (Ngừng kinh doanh).", "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
@@ -405,6 +420,9 @@ namespace QuanLyCuaHangGiay.view
             listdm.SelectedIndex = 0;
             listtt.SelectedIndex = 0;
 
+            // LÀM MỚI SỐ LƯỢNG VỀ 0
+            soluong.Text = "0";
+
             timkiem.TextChanged -= (s, ev) => ThucHienLocChung();
             timkiem.Clear();
             timkiem.TextChanged += (s, ev) => ThucHienLocChung();
@@ -417,8 +435,6 @@ namespace QuanLyCuaHangGiay.view
             idSanPhamHienTai = -1;
 
             LoadData();
-
-            // CẬP NHẬT LẠI ID MỚI VÀO TEXTBOX
             LoadNextId();
         }
 
@@ -433,9 +449,7 @@ namespace QuanLyCuaHangGiay.view
                 {
                     idSanPhamHienTai = Convert.ToInt32(row.Cells["id"].Value);
 
-                    // HIỂN THỊ ID LÊN TEXTBOX KHI CLICK
                     textBox1.Text = idSanPhamHienTai.ToString();
-
                     tensp.Text = row.Cells["tenSP"].Value.ToString();
                     gia.Text = row.Cells["gia"].Value.ToString();
                     mau.Text = row.Cells["mau"].Value.ToString();
@@ -443,6 +457,12 @@ namespace QuanLyCuaHangGiay.view
 
                     listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
                     listtt.Text = row.Cells["trangthai"].Value.ToString();
+
+                    // HIỂN THỊ SỐ LƯỢNG LÊN Ô TEXTBOX
+                    if (row.Cells["soLuong"].Value != null)
+                    {
+                        soluong.Text = row.Cells["soLuong"].Value.ToString();
+                    }
 
                     tenAnhLuuDB = row.Cells["anh"].Value.ToString();
                     duongDanAnhGoc = "";
@@ -477,6 +497,7 @@ namespace QuanLyCuaHangGiay.view
         private void button6_Click_1(object sender, EventArgs e) { ThucHienLocChung(); }
         private void label8_Click(object sender, EventArgs e) { }
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+        private void label10_Click(object sender, EventArgs e) { }
 
         #endregion
     }

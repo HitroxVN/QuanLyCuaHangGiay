@@ -83,10 +83,24 @@ namespace QuanLyCuaHangGiay.controller
             return repo.Search(keyword);
         }
 
-        // Lấy ID tự tăng tiếp theo của Sản phẩm
         public int GetNextProductId()
         {
             return repo.GetNextProductId();
+        }
+
+        // Cập nhật sản phẩm (Thêm tham số int soLuong vào cuối)
+        public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai, int soLuong)
+        {
+            if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
+            {
+                return false;
+            }
+
+            // Đưa thêm soLuong vào để truyền xuống Repository
+            Products sp = new Products(id, tenSP, gia, anh, mau, kichCo, danhMucID, trangThai, DateTime.Now, soLuong);
+            int result = repo.Update(sp);
+
+            return result > 0;
         }
     }
 }
