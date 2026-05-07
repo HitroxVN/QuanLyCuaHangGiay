@@ -96,7 +96,6 @@ namespace QuanLyCuaHangGiay.view
             // 2. Tiến hành đổi tên cột (Viết Tiếng Việt có dấu)
             if (dataGridView1.Columns.Count > 0)
             {
-                // Cú pháp: dataGridView1.Columns["Tên_cột_trong_SQL"].HeaderText = "Tên hiển thị trên giao diện";
                 dataGridView1.Columns["id"].HeaderText = "Mã SP";
                 dataGridView1.Columns["tenSP"].HeaderText = "Tên Sản Phẩm";
                 dataGridView1.Columns["gia"].HeaderText = "Giá Tiền";
@@ -105,14 +104,16 @@ namespace QuanLyCuaHangGiay.view
                 dataGridView1.Columns["trangthai"].HeaderText = "Trạng Thái";
                 dataGridView1.Columns["ngayTao"].HeaderText = "Ngày Tạo";
                 dataGridView1.Columns["tenDanhMuc"].HeaderText = "Danh Mục";
-                dataGridView1.Columns["anh"].HeaderText = "Tên Ảnh ";
 
-                // Cột số lượng (Kiểm tra xem CSDL đã có cột này chưa rồi mới đổi tên để tránh lỗi)
+                if (dataGridView1.Columns.Contains("anh"))
+                {
+                    dataGridView1.Columns["anh"].HeaderText = "Tên Ảnh ";
+                }
+
                 if (dataGridView1.Columns.Contains("soLuong"))
                 {
                     dataGridView1.Columns["soLuong"].HeaderText = "Số Lượng";
                 }
-
             }
         }
 
@@ -194,7 +195,6 @@ namespace QuanLyCuaHangGiay.view
                 kichco.Focus();
                 return false;
             }
-            
 
             // 5. Kiểm tra Chọn Danh Mục
             if (listdm.SelectedIndex == -1 || listdm.SelectedValue == null)
@@ -293,6 +293,23 @@ namespace QuanLyCuaHangGiay.view
             decimal giaTien = decimal.Parse(gia.Text.Trim());
             string mauSac = mau.Text.Trim();
             string kichThuoc = kichco.Text.Trim();
+
+            // ==========================================================
+            // TÍNH NĂNG MỚI: KIỂM TRA TRÙNG LẶP (Tên + Màu + Size)
+            // ==========================================================
+            DataTable dtAll = productController.GetAllProducts();
+            foreach (DataRow row in dtAll.Rows)
+            {
+                if (row["tenSP"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase) &&
+                    row["mau"].ToString().Equals(mauSac, StringComparison.OrdinalIgnoreCase) &&
+                    row["kichco"].ToString().Equals(kichThuoc, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Sản phẩm này (cùng Tên, Màu sắc và Kích cỡ) ĐÃ TỒN TẠI!\n\nGiải pháp: Vui lòng tìm sản phẩm đó và tạo [Phiếu Nhập Kho] để tăng số lượng thay vì tạo mã mới.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; // Dừng lại ngay, chặn không cho Insert
+                }
+            }
+            // ==========================================================
+
             int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
             string trangThai = listtt.SelectedItem.ToString();
 
@@ -327,6 +344,25 @@ namespace QuanLyCuaHangGiay.view
             decimal giaTien = decimal.Parse(gia.Text.Trim());
             string mauSac = mau.Text.Trim();
             string kichThuoc = kichco.Text.Trim();
+
+            // TÍNH NĂNG MỚI: KIỂM TRA TRÙNG LẶP KHI SỬA
+            DataTable dtAll = productController.GetAllProducts();
+            foreach (DataRow row in dtAll.Rows)
+            {
+                // Bỏ qua chính đôi giày đang sửa
+                if (Convert.ToInt32(row["id"]) == idSanPhamHienTai) continue;
+
+                // Nếu thông tin vừa sửa lại bị trùng với 1 đôi giày KHÁC
+                if (row["tenSP"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase) &&
+                    row["mau"].ToString().Equals(mauSac, StringComparison.OrdinalIgnoreCase) &&
+                    row["kichco"].ToString().Equals(kichThuoc, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Thông tin bạn vừa sửa ĐÃ TRÙNG với một sản phẩm khác có sẵn (cùng Tên, Màu, Size)!\nVui lòng kiểm tra lại để tránh nhầm lẫn.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return; // Chặn không cho Update
+                }
+            }
+            // ==========================================================
+
             int idDanhMuc = Convert.ToInt32(listdm.SelectedValue);
             string trangThai = listtt.SelectedItem.ToString();
 
@@ -500,5 +536,26 @@ namespace QuanLyCuaHangGiay.view
         private void label10_Click(object sender, EventArgs e) { }
 
         #endregion
+
+        private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
+        {
+            // Kiểm tra xem bảng có cột 'soLuong' không và đang ở dòng dữ liệu hợp lệ
+            if (dataGridView1.Columns.Contains("soLuong") && e.RowIndex >= 0)
+            {
+                var cellValue = dataGridView1.Rows[e.RowIndex].Cells["soLuong"].Value;
+                if (cellValue != DBNull.Value && cellValue != null)
+                {
+                    int sl = Convert.ToInt32(cellValue);
+
+                    // NẾU SỐ LƯỢNG < 5 THÌ TÔ MÀU NỀN ĐỎ NHẠT, CHỮ ĐỎ ĐẬM
+                    if (sl < 10)
+                    {
+                        dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
+                        dataGridView1.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.DarkRed;
+                        dataGridView1.Rows[e.RowIndex].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                    }
+                }
+            }
+        }
     }
 }

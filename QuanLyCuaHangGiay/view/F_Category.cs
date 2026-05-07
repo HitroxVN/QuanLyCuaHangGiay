@@ -131,6 +131,23 @@ namespace QuanLyCuaHangGiay.view
             if (!ValidateData()) return;
 
             string ten = tendm.Text.Trim();
+
+            // ==========================================================
+            // TÍNH NĂNG MỚI: BƯỚC CHẶN 3 - KIỂM TRA TRÙNG LẶP
+            // ==========================================================
+            DataTable dtAll = categoryController.GetAllCategories();
+            foreach (DataRow row in dtAll.Rows)
+            {
+                // So sánh không phân biệt hoa/thường (OrdinalIgnoreCase)
+                if (row["tenDanhMuc"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Tên danh mục này ĐÃ TỒN TẠI trong hệ thống!\nVui lòng nhập một tên khác để tránh nhầm lẫn.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    tendm.Focus();
+                    return; // Dừng lại ngay, chặn không cho Insert xuống Database
+                }
+            }
+            // ==========================================================
+
             string trangThai = listtt.SelectedItem.ToString();
 
             bool isSuccess = categoryController.AddCategory(ten, trangThai);
@@ -159,6 +176,26 @@ namespace QuanLyCuaHangGiay.view
             if (!ValidateData()) return;
 
             string ten = tendm.Text.Trim();
+
+            // ==========================================================
+            // TÍNH NĂNG MỚI: KIỂM TRA TRÙNG LẶP KHI SỬA
+            // ==========================================================
+            DataTable dtAll = categoryController.GetAllCategories();
+            foreach (DataRow row in dtAll.Rows)
+            {
+                // Bỏ qua chính cái danh mục mình đang thao tác (kiểm tra qua ID)
+                if (Convert.ToInt32(row["id"]) == idDanhMucHienTai) continue;
+
+                // Nếu tên trùng với một dòng KHÁC trong database
+                if (row["tenDanhMuc"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase))
+                {
+                    MessageBox.Show("Tên danh mục này ĐÃ BỊ TRÙNG với một danh mục khác!\nVui lòng đổi tên khác.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    tendm.Focus();
+                    return; // Chặn không cho Update
+                }
+            }
+            // ==========================================================
+
             string trangThai = listtt.SelectedItem.ToString();
 
             bool isSuccess = categoryController.UpdateCategory(idDanhMucHienTai, ten, trangThai);
