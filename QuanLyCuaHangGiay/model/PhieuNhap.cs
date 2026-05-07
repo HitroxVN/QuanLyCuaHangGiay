@@ -15,10 +15,11 @@ namespace QuanLyCuaHangGiay.model
         public decimal giaNhap { get; set; }
         public DateTime thoiGian { get; set; }
         public string ghiChu { get; set; }
+        public int? khoID { get; set; }
 
         public PhieuNhap() { }
 
-        public PhieuNhap(int id, int sanPhamID, int nhaCungCapID, int soLuong, decimal giaNhap, DateTime thoiGian, string ghiChu)
+        public PhieuNhap(int id, int sanPhamID, int nhaCungCapID, int soLuong, decimal giaNhap, DateTime thoiGian, string ghiChu, int? khoID)
         {
             this.id = id;
             this.sanPhamID = sanPhamID;
@@ -27,6 +28,7 @@ namespace QuanLyCuaHangGiay.model
             this.giaNhap = giaNhap;
             this.thoiGian = thoiGian;
             this.ghiChu = ghiChu;
+            this.khoID = khoID;
         }
     }
 }

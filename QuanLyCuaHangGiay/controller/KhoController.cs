@@ -13,6 +13,7 @@ namespace QuanLyCuaHangGiay.controller
 {
     public class KhoController
     {
+        private KhoRepository _repo;
         public KhoController()
         {
             if (
@@ -24,32 +25,29 @@ namespace QuanLyCuaHangGiay.controller
                     "Không có quyền"
                 );
             }
-        }
-        private KhoRepository repo = new KhoRepository();
-
-        public DataTable GetAllKho()
-        {
-            return repo.getAllKho();
+            _repo = new KhoRepository();
         }
 
-        public DataTable FilterByDanhMuc(int danhMucID)
+        public DataTable LayDanhSachKho()
         {
-            return repo.filterByDanhMuc(danhMucID);
+            return _repo.GetTenKhoDuyNhat();
         }
 
-        public DataTable Search(string keyword)
+        public DataTable LayChiTietTonKho(string tenKho = "Tất cả")
         {
-            return repo.search(keyword);
+            return _repo.GetTonKhoChiTiet(tenKho);
         }
 
-        public DataTable GetDanhMuc()
+        public string CapNhatDiaChi(int idKho, string diaChiMoi)
         {
-            return repo.getDanhMuc();
-        }
+            if (idKho <= 0)
+                return "Vui lòng chọn một dòng sản phẩm trong kho để cập nhật!";
 
-        public DataTable GetLowStock(int threshold = 5)
-        {
-            return repo.getLowStock(threshold);
+            if (string.IsNullOrWhiteSpace(diaChiMoi))
+                return "Vui lòng nhập địa chỉ mới!";
+
+            bool isSuccess = _repo.CapNhatDiaChi(idKho, diaChiMoi);
+            return isSuccess ? "Success" : "Có lỗi khi cập nhật địa chỉ trong cơ sở dữ liệu.";
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.Database;
 using QuanLyCuaHangGiay.util;
+using QuanLyCuaHangGiay.model;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -17,248 +18,37 @@ namespace QuanLyCuaHangGiay.view
     public partial class frmPhieuNhap : Form
     {
         PhieuNhapController _controller = new PhieuNhapController();
+        private DataTable _dtThongTinNhap;
 
-        int selectedID = -1;
-        bool isLoading = true;
+        // Giả sử có biến cục bộ lưu ID nhân viên đang đăng nhập hệ thống
+        //private int _nhanVienDangNhapID = 1;
+
         public frmPhieuNhap()
         {
             InitializeComponent();
+            TaoBangTam();
         }
 
-        private void frmKho_Load(object sender, EventArgs e)
+        private void TaoBangTam()
         {
-            isLoading = true;
-            
-            LoadDanhMuc();
-            LoadComboBox();
-            LoadData();
-            cbDanhMuc.SelectedIndex = -1;
-            cbNCC.SelectedIndex = -1;
-            cbSanPham.DataSource = null;
+            _dtThongTinNhap = new DataTable();
+            _dtThongTinNhap.Columns.Add("Mã SP", typeof(int));
+            _dtThongTinNhap.Columns.Add("Tên SP", typeof(string));
+            _dtThongTinNhap.Columns.Add("Số Lượng", typeof(int));
+            _dtThongTinNhap.Columns.Add("Đơn Giá", typeof(decimal));
+            _dtThongTinNhap.Columns.Add("Thành Tiền", typeof(decimal));
 
-            txtMau.Clear();
-            txtSize.Clear();
-            isLoading = false;
-        }
-
-        private void LoadData()
-        {
-            dgvDanhSach.DataSource = _controller.GetAll();
-            dgvDanhSach.Columns["sanphamID"].Visible = false;
-            dgvDanhSach.Columns["nhacungcapID"].Visible = false;
-            dgvDanhSach.Columns["danhmucID"].Visible = false;
-            TinhTien1Dong();
-        }
-
-        private void LoadDanhMuc()
-        {
-            cbDanhMuc.DataSource = _controller.GetDanhMuc();
-            cbDanhMuc.DisplayMember = "tenDanhMuc";
-            cbDanhMuc.ValueMember = "id";
-        }
-
-        private void LoadSanPhamByDanhMuc(int danhMucID)
-        {
-            cbSanPham.DataSource = _controller.GetSanPhamByDanhMuc(danhMucID);
-            cbSanPham.DisplayMember = "tenSP";
-            cbSanPham.ValueMember = "id";
-            cbSanPham.SelectedIndex = -1;
-        }
-
-        private void LoadComboBox()
-        {
-
-            cbNCC.DataSource = _controller.GetNhaCungCap();
-            cbNCC.DisplayMember = "tenNCC";
-            cbNCC.ValueMember = "id";
-        }
-
-        private void btnLoc_Click(object sender, EventArgs e)
-        {
-            dgvDanhSach.DataSource = _controller.Filter(dtFrom.Value, dtTo.Value);
+            dgvDanhSachNhap.DataSource = _dtThongTinNhap;
         }
 
         private void ResetForm()
         {
-            isLoading = true;
-
             txtSoLuong.Clear();
             txtGiaNhap.Clear();
             txtGhiChu.Clear();
-
-            cbDanhMuc.SelectedIndex = -1;
-
-            cbSanPham.DataSource = null;
-            cbSanPham.Text = "";
-
+            cbKho.SelectedIndex = -1;
+            cbSanPham.SelectedIndex = -1;
             cbNCC.SelectedIndex = -1;
-
-            txtMau.Clear();
-            txtSize.Clear();
-
-            selectedID = -1;
-
-            isLoading = false;
-        }
-        private void btnTaoMoi_Click(object sender, EventArgs e)
-        {
-            ResetForm();
-            btnHoanThanh.Enabled = true;
-        }
-
-        private void btnLuu_Click(object sender, EventArgs e)
-        {
-            
-            if (selectedID == -1)
-            {
-                MessageBox.Show("Vui lòng chọn dòng để sửa!");
-                return;
-            }
-
-            try
-            {
-                int spID = Convert.ToInt32(cbSanPham.SelectedValue);
-                int nccID = Convert.ToInt32(cbNCC.SelectedValue);
-                int soLuong = int.Parse(txtSoLuong.Text);
-                decimal gia = decimal.Parse(txtGiaNhap.Text);
-                string ghiChu = txtGhiChu.Text;
-                bool result = _controller.Update(selectedID, spID, nccID, soLuong, gia, ghiChu);
-
-                if (result)
-                {
-                    MessageBox.Show("Cập nhật thành công!");
-                    LoadData();
-                    TinhTien1Dong();
-                    ResetForm();
-                }
-                else
-                {
-                    MessageBox.Show("Cập nhật thất bại!");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi: " + ex.Message);
-            }
-        }
-
-        private void btnXoa_Click(object sender, EventArgs e)
-        {
-            if (selectedID == -1)
-            {
-                MessageBox.Show("Vui lòng chọn dòng!");
-                return;
-            }
-
-            if (MessageBox.Show("Bạn có chắc muốn xóa?", "Xác nhận", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                bool result = _controller.Delete(selectedID);
-
-                if (result)
-                {
-                    MessageBox.Show("Xóa thành công!");
-                    LoadData();
-                    TinhTien1Dong();
-                    ResetForm();
-                }
-                else
-                {
-                    MessageBox.Show("Xóa thất bại!");
-                }
-            }
-        }
-
-        private void btnHoanThanh_Click(object sender, EventArgs e)
-        {
-            try
-            {
-                int spID = Convert.ToInt32(cbSanPham.SelectedValue);
-                int nccID = Convert.ToInt32(cbNCC.SelectedValue);
-                int soLuong = int.Parse(txtSoLuong.Text);
-                decimal gia = decimal.Parse(txtGiaNhap.Text);
-                string ghiChu = txtGhiChu.Text;
-
-                int userID = Session.user.id; 
-
-                bool result = _controller.Insert(spID, nccID, soLuong, gia, userID, ghiChu);
-
-                if (result)
-                {
-                    MessageBox.Show("Nhập kho thành công!");
-                    LoadData();
-                    TinhTien1Dong();
-
-                    ResetForm();
-                }
-                else
-                {
-                    MessageBox.Show("Thất bại!");
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show("Lỗi: " + ex.Message);
-            }
-        }
-
-        private void dgvDanhSach_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-
-            if (e.RowIndex < 0) return;
-
-            btnHoanThanh.Enabled = false;
-            DataGridViewRow row = dgvDanhSach.Rows[e.RowIndex];
-
-            if (row.Cells["id"].Value == null || row.Cells["id"].Value == DBNull.Value)
-                return;
-
-            isLoading = true;
-
-            selectedID = Convert.ToInt32(row.Cells["id"].Value);
-
-            txtSoLuong.Text = row.Cells["soLuong"].Value.ToString();
-            txtGiaNhap.Text = row.Cells["giaDonNhap"].Value.ToString();
-            txtGhiChu.Text = row.Cells["ghiChu"].Value?.ToString();
-
-            int danhMucID = Convert.ToInt32(row.Cells["danhmucID"].Value);
-            cbDanhMuc.SelectedValue = danhMucID;
-
-            LoadSanPhamByDanhMuc(danhMucID);
-
-            int spID = Convert.ToInt32(row.Cells["sanphamID"].Value);
-            cbSanPham.SelectedValue = spID;
-            cbNCC.Text = row.Cells["tenNCC"].Value.ToString();
-            txtSize.Text = row.Cells["kichco"].Value.ToString();
-            txtMau.Text = row.Cells["mau"].Value.ToString();
-
-            isLoading = false;
-
-            TinhTien1Dong();
-        }
-
-        private void cbDanhMuc_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (isLoading) return;
-
-            if (cbDanhMuc.SelectedValue != null)
-            {
-                int danhMucID = Convert.ToInt32(cbDanhMuc.SelectedValue);
-
-                cbSanPham.DataSource = _controller.GetSanPhamByDanhMuc(danhMucID);
-                cbSanPham.DisplayMember = "tenSP";
-                cbSanPham.ValueMember = "id";
-            }
-        }
-
-        private void cbSanPham_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (isLoading) return;
-
-            if (cbSanPham.SelectedItem is DataRowView row)
-            {
-                txtMau.Text = row["mau"].ToString();
-                txtSize.Text = row["kichco"].ToString();
-            }
         }
         private string DocSoThanhChu(long number)
         {
@@ -314,54 +104,193 @@ namespace QuanLyCuaHangGiay.view
 
             return result.Trim() + " đồng";
         }
-
-        private void TinhTien1Dong()
+        private void btnThem_Click(object sender, EventArgs e)
         {
-            if (selectedID == -1) return;
+            if (cbSanPham.SelectedValue == null)
+            {
+                MessageBox.Show("Vui lòng chọn sản phẩm!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
 
-            int sl = int.Parse(txtSoLuong.Text);
-            decimal gia = decimal.Parse(txtGiaNhap.Text);
+            if (string.IsNullOrWhiteSpace(txtSoLuong.Text) || string.IsNullOrWhiteSpace(txtGiaNhap.Text))
+            {
+                MessageBox.Show("Vui lòng nhập đầy đủ Số lượng và Giá nhập!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (!int.TryParse(txtSoLuong.Text, out int soLuong) || soLuong <= 0)
+            {
+                MessageBox.Show("Số lượng phải là số nguyên và lớn hơn 0!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            decimal tongTien = sl * gia;
+            if (!decimal.TryParse(txtGiaNhap.Text, out decimal giaNhap) || giaNhap < 0)
+            {
+                MessageBox.Show("Giá nhập không đúng định dạng số!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return;
+            }
 
-            txtTong.Text = tongTien.ToString("#,##0");
+            int maSp = Convert.ToInt32(cbSanPham.SelectedValue);
+            string tenSp = cbSanPham.Text;
 
-            string tienChu = DocSoThanhChu((long)tongTien);
-            lblThanhTien.Text = char.ToUpper(tienChu[0]) + tienChu.Substring(1);
+            bool daTonTai = false;
+            foreach (DataRow row in _dtThongTinNhap.Rows)
+            {
+                if ((int)row["Mã SP"] == maSp)
+                {
+                    row["Số Lượng"] = (int)row["Số Lượng"] + soLuong;
+                    row["Thành Tiền"] = (int)row["Số Lượng"] * (decimal)row["Đơn Giá"];
+
+                    daTonTai = true;
+                    TinhTongTien();
+                    break;
+                }
+            }
+
+            if (!daTonTai)
+            {
+                _dtThongTinNhap.Rows.Add(maSp, tenSp, soLuong, giaNhap, soLuong * giaNhap);
+                TinhTongTien();
+            }
         }
 
-        private void btnXuatExcel_Click(object sender, EventArgs e)
+        private void btnLuuPhieu_Click(object sender, EventArgs e)
+        {
+            if (_dtThongTinNhap == null || _dtThongTinNhap.Rows.Count == 0)
+            {
+                MessageBox.Show("Chưa có sản phẩm nào trong phiếu để lưu!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+            if (cbNCC.SelectedValue == null || cbNCC.SelectedIndex == -1)
+            {
+                MessageBox.Show("Vui lòng chọn Nhà cung cấp!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbNCC.Focus();
+                return;
+            }
+
+            if (cbKho.SelectedValue == null || cbKho.SelectedIndex == -1 || string.IsNullOrWhiteSpace(cbKho.Text))
+            {
+                MessageBox.Show("Vui lòng chọn Kho để nhập hàng!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                cbKho.Focus();
+                return;
+            }
+
+            DateTime thoiGianLuu = DateTime.Now;
+            int nccID = Convert.ToInt32(cbNCC.SelectedValue);
+
+            // 1. Chuyển DataTable tạm thành List<Model>
+            List<PhieuNhap> danhSachCanNhap = new List<PhieuNhap>();
+            foreach (DataRow row in _dtThongTinNhap.Rows)
+            {
+                PhieuNhap pn = new PhieuNhap
+                {
+                    nhaCungCapID = nccID,
+                    sanPhamID = (int)row["Mã SP"],
+                    soLuong = (int)row["Số Lượng"],
+                    giaNhap = (decimal)row["Đơn Giá"],
+                    ghiChu = txtGhiChu.Text
+                };
+                danhSachCanNhap.Add(pn);
+            }
+
+            string tenKho = cbKho.Text;
+
+            // 2. GỌI CONTROLLER KÈM THỜI GIAN LƯU
+            string ketQua = _controller.LuuPhieuNhap(danhSachCanNhap, tenKho, thoiGianLuu);
+
+            if (ketQua == "Success")
+            {
+                // 3. HỎI NGƯỜI DÙNG CÓ MUỐN IN KHÔNG
+                DialogResult result = MessageBox.Show(
+                    "Nhập hàng và cập nhật kho thành công!\nBạn có muốn in phiếu nhập này không?",
+                    "Thông báo",
+                    MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Information);
+
+                if (result == DialogResult.Yes)
+                {
+                    // Lấy dữ liệu đầy đủ từ DB lên (Bao gồm tên NCC, Địa chỉ...) dựa vào thoiGianLuu
+                    DataTable dtReport = _controller.GetPhieuNhapReport(thoiGianLuu, nccID);
+
+                    if (dtReport != null && dtReport.Rows.Count > 0)
+                    {
+                        frmReport frm = new frmReport("QuanLyCuaHangGiay.ReportPhieuNhap.rdlc", dtReport);
+                        frm.ShowDialog();
+                    }
+                    else
+                    {
+                        MessageBox.Show("Không thể tải dữ liệu để in, có thể dữ liệu chưa được cập nhật kịp thời!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
+
+                _dtThongTinNhap.Clear();
+                ResetForm();
+                txtTong.Clear();
+                lblThanhTien.Text = "";
+            }
+            else
+            {
+                MessageBox.Show(ketQua, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void frmPhieuNhap_Load(object sender, EventArgs e)
+        {
+            LoadAllCombobox();
+        }
+        private void LoadAllCombobox()
         {
             try
             {
-                if (dgvDanhSach.CurrentRow == null)
-                {
-                    MessageBox.Show("Vui lòng chọn phiếu!");
-                    return;
-                }
+                // 1. Load Nhà Cung Cấp
+                cbNCC.DataSource = _controller.LayNCC();
+                cbNCC.DisplayMember = "tenNCC"; 
+                cbNCC.ValueMember = "id";       
+                cbNCC.SelectedIndex = -1;      
 
-                DateTime time = Convert.ToDateTime(dgvDanhSach.CurrentRow.Cells["thoiGian"].Value);
-                int nccID = Convert.ToInt32(dgvDanhSach.CurrentRow.Cells["nhacungcapID"].Value);
+                // 2. Load Sản Phẩm
+                cbSanPham.DataSource = _controller.LaySanPham();
+                cbSanPham.DisplayMember = "tenSP";
+                cbSanPham.ValueMember = "id";
+                cbSanPham.SelectedIndex = -1;
 
-                DataTable dt = _controller.GetPhieuNhapReport(time, nccID);
-
-                if (dt.Rows.Count == 0)
-                {
-                    MessageBox.Show("Không có dữ liệu để in!");
-                    return;
-                }
-
-                frmReport frm = new frmReport(
-                    "QuanLyCuaHangGiay.ReportPhieuNhap.rdlc",
-                    dt
-                );
-
-                frm.ShowDialog();
+                // 3. Load Kho
+                DataTable dtKho = _controller.LayKho();
+                cbKho.DataSource = dtKho;
+                cbKho.DisplayMember = "tenKho";
+                cbKho.ValueMember = "tenKho"; 
+                cbKho.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi in phiếu: " + ex.Message);
+                MessageBox.Show("Lỗi khi tải danh sách: " + ex.Message);
             }
+        }
+        private void TinhTongTien()
+        {
+            decimal tong = 0;
+            foreach (DataRow row in _dtThongTinNhap.Rows)
+            {
+                tong += Convert.ToDecimal(row["Thành Tiền"]);
+            }
+            txtTong.Text = string.Format("{0:N0} VNĐ", tong);
+
+            string tienChu = DocSoThanhChu((long)tong);
+            lblThanhTien.Text = char.ToUpper(tienChu[0]) + tienChu.Substring(1);
+        }
+        private void btnXoa_Click(object sender, EventArgs e)
+        {
+            if (dgvDanhSachNhap.CurrentRow != null)
+            {
+                int rowIndex = dgvDanhSachNhap.CurrentRow.Index;
+                _dtThongTinNhap.Rows.RemoveAt(rowIndex);
+
+                TinhTongTien();
+            }
+        }
+
+        private void btnReset_Click(object sender, EventArgs e)
+        {
+            ResetForm();
         }
     }
 }

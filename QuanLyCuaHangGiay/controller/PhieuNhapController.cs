@@ -1,6 +1,7 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.Database;
 using QuanLyCuaHangGiay.util;
+using QuanLyCuaHangGiay.model;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -9,11 +10,14 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static QuanLyCuaHangGiay.database.repository.PhieuNhapRepository;
 
 namespace QuanLyCuaHangGiay.controller
 {
     public class PhieuNhapController
     {
+
+        private PhieuNhapRepository _repository;
 
         public PhieuNhapController()
         {
@@ -26,60 +30,35 @@ namespace QuanLyCuaHangGiay.controller
                     "Không có quyền"
                 );
             }
-        }
-        private PhieuNhapRepository repo = new PhieuNhapRepository();
-
-        public DataTable GetAll()
-        {
-            return repo.getAll();
+            _repository = new PhieuNhapRepository();
         }
 
-        public DataTable Filter(DateTime from, DateTime to)
+        public string LuuPhieuNhap(List<PhieuNhap> danhSach, string tenKho, DateTime thoiGianLuu)
         {
-            return repo.filter(from, to);
-        }
+            if (danhSach == null || danhSach.Count == 0)
+            {
+                return "Phiếu nhập không có sản phẩm nào!";
+            }
 
-        public DataTable GetNhaCungCap()
-        {
-            return repo.getNCC();
-        }
-
-        public DataTable GetDanhMuc()
-        {
-            return repo.getDanhMuc();
-        }
-
-        public DataTable GetSanPhamByDanhMuc(int dmID)
-        {
-            return repo.getSanPhamByDanhMuc(dmID);
-        }
-
-        public bool Insert(int spID, int nccID, int soLuong, decimal giaNhap, int userID, string ghiChu)
-        {
-            if (spID <= 0 || nccID <= 0 || soLuong <= 0)
-                return false;
-
-            return repo.insert(spID, nccID, soLuong, giaNhap, userID, ghiChu);
-        }
-
-        public bool Update(int id, int spID, int nccID, int soLuong, decimal giaNhap, string ghiChu)
-        {
-            if (id <= 0 || spID <= 0)
-                return false;
-
-            return repo.update(id, spID, nccID, soLuong, giaNhap, ghiChu);
-        }
-
-        public bool Delete(int id)
-        {
-            if (id <= 0) return false;
-
-            return repo.delete(id);
+            try
+            {
+                bool isSuccess = _repository.NhapHangVaoKho(danhSach, tenKho, thoiGianLuu);
+                return isSuccess ? "Success" : "Có lỗi trong quá trình lưu dữ liệu.";
+            }
+            catch (Exception ex)
+            {
+                return ex.Message; 
+            }
         }
 
         public DataTable GetPhieuNhapReport(DateTime time, int nccID)
         {
-            return repo.GetPhieuNhap(time, nccID);
+            return _repository.GetPhieuNhap(time, nccID);
         }
+
+
+        public DataTable LayNCC() => _repository.LoadCbNCC();
+        public DataTable LaySanPham() => _repository.LoadCbSP();
+        public DataTable LayKho() => _repository.GetTenKhoDuyNhat();
     }
 }

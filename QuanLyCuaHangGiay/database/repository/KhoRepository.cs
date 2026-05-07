@@ -11,91 +11,56 @@ namespace QuanLyCuaHangGiay.database.repository
 {
     internal class KhoRepository
     {
-        // ================= GET ALL =================
-        public DataTable getAllKho()
+        public DataTable GetTenKhoDuyNhat()
         {
-            string sql = @"SELECT k.id,
-                                  sp.id AS sanphamID,
-                                  sp.tenSP,
-                                  sp.mau,
-                                  sp.kichco,
-                                  dm.tenDanhMuc,
-                                  k.soLuong
+            string sql = "SELECT DISTINCT tenKho FROM Kho";
+            DataTable dt = DBConnection.GetDataTable(sql);
+
+            // Xử lý thực tế: Nếu hệ thống mới tinh chưa có kho nào trong DB
+            if (dt.Rows.Count == 0)
+            {
+                dt.Columns.Add("tenKho");
+                dt.Rows.Add("Kho Tổng");
+                dt.Rows.Add("Kho Chi Nhánh 1");
+            }
+
+            return dt;
+        }
+
+        /// <summary>
+        /// Lấy chi tiết tồn kho để hiển thị trên Form Quản lý kho.
+        /// Kết hợp với bảng SanPham để lấy tên sản phẩm.
+        /// </summary>
+        public DataTable GetTonKhoChiTiet(string tenKho = "")
+        {
+            string sql = @"SELECT k.id AS [Mã Dòng], 
+                                  k.tenKho AS [Tên Kho], 
+                                  s.tenSP AS [Tên Sản Phẩm], 
+                                  k.soLuongTrongKho AS [Số Lượng], 
+                                  k.diaChi AS [Hà Nội],
+                                  k.ngayCapNhat AS [Ngày Cập Nhật cuối]
                            FROM Kho k
-                           JOIN SanPham sp ON k.sanphamID = sp.id
-                           JOIN DanhMuc dm ON sp.danhmucID = dm.id";
+                           JOIN SanPham s ON k.sanphamID = s.id";
+
+            // Nếu người dùng chọn lọc theo một kho cụ thể
+            if (!string.IsNullOrEmpty(tenKho) && tenKho != "Tất cả")
+            {
+                sql += " WHERE k.tenKho = @tenKho";
+                SqlParameter[] pa = { new SqlParameter("@tenKho", tenKho) };
+                return DBConnection.GetDataTable(sql, pa);
+            }
 
             return DBConnection.GetDataTable(sql);
         }
 
-        // ================= FILTER =================
-        public DataTable filterByDanhMuc(int danhMucID)
+        public bool CapNhatDiaChi(int idKho, string diaChiMoi)
         {
-            string sql = @"SELECT k.id,
-                                  sp.id AS sanphamID,
-                                  sp.tenSP,
-                                  sp.mau,
-                                  sp.kichco,
-                                  dm.tenDanhMuc,
-                                  k.soLuong
-                           FROM Kho k
-                           JOIN SanPham sp ON k.sanphamID = sp.id
-                           JOIN DanhMuc dm ON sp.danhmucID = dm.id
-                           WHERE dm.id = @dm";
-
+            string sql = "UPDATE Kho SET diaChi = @diaChi WHERE id = @id";
             SqlParameter[] pa = {
-                new SqlParameter("@dm", danhMucID)
+                new SqlParameter("@diaChi", diaChiMoi),
+                new SqlParameter("@id", idKho)
             };
-
-            return DBConnection.GetDataTable(sql, pa);
-        }
-
-        // ================= SEARCH =================
-        public DataTable search(string keyword)
-        {
-            string sql = @"SELECT k.id,
-                                  sp.id AS sanphamID,
-                                  sp.tenSP,
-                                  sp.mau,
-                                  sp.kichco,
-                                  dm.tenDanhMuc,
-                                  k.soLuong
-                           FROM Kho k
-                           JOIN SanPham sp ON k.sanphamID = sp.id
-                           JOIN DanhMuc dm ON sp.danhmucID = dm.id
-                           WHERE sp.tenSP LIKE @kw";
-
-            SqlParameter[] pa = {
-                new SqlParameter("@kw", "%" + keyword + "%")
-            };
-
-            return DBConnection.GetDataTable(sql, pa);
-        }
-
-        // ================= DANH MUC =================
-        public DataTable getDanhMuc()
-        {
-            string sql = "SELECT id, tenDanhMuc FROM DanhMuc WHERE trangthai = 'Active'";
-            return DBConnection.GetDataTable(sql);
-        }
-
-        // ================= LOW STOCK =================
-        public DataTable getLowStock(int threshold)
-        {
-            string sql = @"SELECT k.id,
-                                  sp.tenSP,
-                                  sp.mau,
-                                  sp.kichco,
-                                  k.soLuong
-                           FROM Kho k
-                           JOIN SanPham sp ON k.sanphamID = sp.id
-                           WHERE k.soLuong <= @sl";
-
-            SqlParameter[] pa = {
-                new SqlParameter("@sl", threshold)
-            };
-
-            return DBConnection.GetDataTable(sql, pa);
+            return DBConnection.ExecuteNonQuery(sql, pa) > 0;
         }
     }
 }
