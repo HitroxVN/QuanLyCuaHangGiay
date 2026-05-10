@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.model;
 using System;
 using System.Collections.Generic;
@@ -10,13 +10,18 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace QuanLyCuaHangGiay.view
 {
-    public partial class frmThongKe : Form
+    public partial class frmThongKe : Form, util.IBaseForm
     {
         private ThongKeController thongKeController = new ThongKeController();
 
         public frmThongKe()
         {
             InitializeComponent();
+        }
+
+        public void ReloadData()
+        {
+            LoadThongKe();
         }
 
         private void frmThongKe_Load(object sender, EventArgs e)

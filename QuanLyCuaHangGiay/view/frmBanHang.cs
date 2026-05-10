@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.model;
 using QuanLyCuaHangGiay.util;
 using System;
@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace QuanLyCuaHangGiay.view
 {
-    public partial class frmBanHang : Form
+    public partial class frmBanHang : Form, util.IBaseForm
     {
         private int diemKhachHangHienTai = 0;
         private DataTable dtTatCaSanPham;
@@ -74,6 +74,11 @@ namespace QuanLyCuaHangGiay.view
         {
             dgvGioHang.Refresh();
             TinhToanTongTien();
+        }
+
+        public void ReloadData()
+        {
+            LoadDanhSachSanPham();
         }
 
         private void LoadDanhSachSanPham()
@@ -243,6 +248,10 @@ namespace QuanLyCuaHangGiay.view
                         txtGiamGia.Text = "0";
                         chkDungDiem.Checked = false;
                         LoadDanhSachSanPham();
+                        if (this.MdiParent is frmMain mainForm)
+                        {
+                            mainForm.RefreshAllOpenForms();
+                        }
                     }
                 }
                 catch (Exception ex)

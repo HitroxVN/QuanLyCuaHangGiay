@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.Database;
+using QuanLyCuaHangGiay.Database;
 using QuanLyCuaHangGiay.model;
 using System;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace QuanLyCuaHangGiay.database.repository
                         (SELECT COUNT(*) 
                          FROM PhieuNhap 
                          WHERE thoiGian >= @TuNgay AND thoiGian < DATEADD(DAY, 1, @DenNgay)) AS TongPhieuNhap,
-                        (SELECT ISNULL(SUM(soLuong), 0) FROM Kho) AS TongSoLuongTon,
+                        (SELECT ISNULL(SUM(soLuong), 0) FROM SanPham) AS TongSoLuongTon,
                         (SELECT ISNULL(SUM(tongTien), 0) 
                          FROM DonHang 
                          WHERE ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)) AS TongDoanhThu

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.IO;
@@ -7,7 +7,7 @@ using QuanLyCuaHangGiay.controller;
 
 namespace QuanLyCuaHangGiay.view
 {
-    public partial class F_Product : Form
+    public partial class F_Product : Form, QuanLyCuaHangGiay.util.IBaseForm
     {
         // Khởi tạo các Controller
         private ProductController productController = new ProductController();
@@ -86,6 +86,11 @@ namespace QuanLyCuaHangGiay.view
             comboBox1.DataSource = dtLoc;
             comboBox1.DisplayMember = "tenDanhMuc";
             comboBox1.ValueMember = "id";
+        }
+
+        public void ReloadData()
+        {
+            LoadData();
         }
 
         private void LoadData()

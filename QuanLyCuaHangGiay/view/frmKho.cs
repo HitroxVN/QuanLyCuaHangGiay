@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace QuanLyCuaHangGiay.view
 {
-    public partial class frmKho : Form
+    public partial class frmKho : Form, util.IBaseForm
     {
         private KhoController _controller;
         private DataTable _dtTonKho;
@@ -40,6 +40,11 @@ namespace QuanLyCuaHangGiay.view
             cbLocKho.DisplayMember = "tenKho";
             cbLocKho.ValueMember = "tenKho";
             cbLocKho.SelectedIndex = 0; 
+        }
+
+        public void ReloadData()
+        {
+            LoadDataTonKho("Tất cả");
         }
 
         // 2. Tải dữ liệu lên lưới (Có tham số tên kho)
