@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.util;
 using shoe_store.view;
 using System;
@@ -28,6 +28,10 @@ namespace QuanLyCuaHangGiay.view
                 if (frm.GetType() == f.GetType())
                 {
                     frm.Activate();
+                    if (frm is util.IBaseForm refreshable)
+                    {
+                        refreshable.ReloadData();
+                    }
                     return;
                 }
             }
@@ -35,6 +39,17 @@ namespace QuanLyCuaHangGiay.view
             f.MdiParent = this;
             f.WindowState = FormWindowState.Maximized;
             f.Show();
+        }
+
+        public void RefreshAllOpenForms()
+        {
+            foreach (Form frm in this.MdiChildren)
+            {
+                if (frm is util.IBaseForm refreshable)
+                {
+                    refreshable.ReloadData();
+                }
+            }
         }
 
         private void nhậpKhoToolStripMenuItem_Click(object sender, EventArgs e)

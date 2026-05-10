@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.Database;
 using QuanLyCuaHangGiay.util;
 using QuanLyCuaHangGiay.model;
@@ -15,7 +15,7 @@ using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace QuanLyCuaHangGiay.view
 {
-    public partial class frmPhieuNhap : Form
+    public partial class frmPhieuNhap : Form, util.IBaseForm
     {
         PhieuNhapController _controller = new PhieuNhapController();
         private DataTable _dtThongTinNhap;
@@ -226,11 +226,21 @@ namespace QuanLyCuaHangGiay.view
                 ResetForm();
                 txtTong.Clear();
                 lblThanhTien.Text = "";
+
+                if (this.MdiParent is frmMain mainForm)
+                {
+                    mainForm.RefreshAllOpenForms();
+                }
             }
             else
             {
                 MessageBox.Show(ketQua, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        public void ReloadData()
+        {
+            LoadAllCombobox();
         }
 
         private void frmPhieuNhap_Load(object sender, EventArgs e)
