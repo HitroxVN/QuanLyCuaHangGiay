@@ -33,7 +33,7 @@ namespace QuanLyCuaHangGiay.controller
             _repository = new PhieuNhapRepository();
         }
 
-        public string LuuPhieuNhap(List<PhieuNhap> danhSach, string tenKho, DateTime thoiGianLuu)
+        public string LuuPhieuNhap(List<PhieuNhap> danhSach, DateTime thoiGianLuu)
         {
             if (danhSach == null || danhSach.Count == 0)
             {
@@ -42,7 +42,7 @@ namespace QuanLyCuaHangGiay.controller
 
             try
             {
-                bool isSuccess = _repository.NhapHangVaoKho(danhSach, tenKho, thoiGianLuu);
+                bool isSuccess = _repository.NhapHangVaoKho(danhSach, thoiGianLuu);
                 return isSuccess ? "Success" : "Có lỗi trong quá trình lưu dữ liệu.";
             }
             catch (Exception ex)
@@ -59,6 +59,5 @@ namespace QuanLyCuaHangGiay.controller
 
         public DataTable LayNCC() => _repository.LoadCbNCC();
         public DataTable LaySanPham() => _repository.LoadCbSP();
-        public DataTable LayKho() => _repository.GetTenKhoDuyNhat();
     }
 }

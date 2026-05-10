@@ -14,7 +14,7 @@ namespace QuanLyCuaHangGiay.view
     public partial class frmKho : Form, util.IBaseForm
     {
         private KhoController _controller;
-        private DataTable _dtTonKho;
+        private DataTable _dtLichSu;
         public frmKho()
         {
             InitializeComponent();
@@ -23,100 +23,66 @@ namespace QuanLyCuaHangGiay.view
 
         private void frmKho_Load(object sender, EventArgs e)
         {
-            LoadComboboxKho();
-            LoadDataTonKho("Tất cả");
+            dtpTuNgay.Value = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+            dtpDenNgay.Value = DateTime.Now;
+
+            LoadComboboxNhaCungCap();
+            LoadDataLichSu();
         }
 
-        private void LoadComboboxKho()
+        private void LoadComboboxNhaCungCap()
         {
-            DataTable dtKho = _controller.LayDanhSachKho();
+            DataTable dtNCC = _controller.LayDanhSachNhaCungCap();
+            DataRow dr = dtNCC.NewRow();
+            dr["id"] = 0;
+            dr["tenNCC"] = "--- Tất cả Nhà Cung Cấp ---";
+            dtNCC.Rows.InsertAt(dr, 0);
 
-            // Thêm mục "Tất cả" lên đầu danh sách để người dùng dễ lọc
-            DataRow dr = dtKho.NewRow();
-            dr["tenKho"] = "Tất cả";
-            dtKho.Rows.InsertAt(dr, 0);
-
-            cbLocKho.DataSource = dtKho;
-            cbLocKho.DisplayMember = "tenKho";
-            cbLocKho.ValueMember = "tenKho";
-            cbLocKho.SelectedIndex = 0; 
+            cbLocNCC.DataSource = dtNCC;
+            cbLocNCC.DisplayMember = "tenNCC";
+            cbLocNCC.ValueMember = "id";
+            cbLocNCC.SelectedIndex = 0;
         }
 
         public void ReloadData()
         {
-            LoadDataTonKho("Tất cả");
+            LoadDataLichSu();
         }
 
-        // 2. Tải dữ liệu lên lưới (Có tham số tên kho)
-        private void LoadDataTonKho(string tenKhoLoc)
+        private void LoadDataLichSu()
         {
             try
             {
-                _dtTonKho = _controller.LayChiTietTonKho(tenKhoLoc);
-                dgvKho.DataSource = _dtTonKho;
+                DateTime tuNgay = dtpTuNgay.Value;
+                DateTime denNgay = dtpDenNgay.Value;
+                string idNccLoc = cbLocNCC.SelectedValue?.ToString() ?? "0";
+                string tuKhoa = txtSearch.Text.Trim();
+
+                _dtLichSu = _controller.LayLichSuNhapHang(tuNgay, denNgay, idNccLoc, tuKhoa);
+                dgvKho.DataSource = _dtLichSu;
+
+                // Tùy chỉnh cột Thành Tiền và Đơn giá (định dạng tiền tệ)
+                if (dgvKho.Columns["Đơn Giá"] != null)
+                    dgvKho.Columns["Đơn Giá"].DefaultCellStyle.Format = "N0";
+                if (dgvKho.Columns["Thành Tiền"] != null)
+                    dgvKho.Columns["Thành Tiền"].DefaultCellStyle.Format = "N0";
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Lỗi khi tải dữ liệu tồn kho: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void cbLocKho_SelectedIndexChanged(object sender, EventArgs e)
+        private void btnLoc_Click(object sender, EventArgs e)
         {
-            // Tránh lỗi null khi form vừa khởi tạo chưa kịp gán DataSource
-            if (cbLocKho.SelectedValue != null && cbLocKho.SelectedValue is string)
-            {
-                string khoDuocChon = cbLocKho.SelectedValue.ToString();
-                LoadDataTonKho(khoDuocChon);
-            }
+            LoadDataLichSu();
         }
 
-        private void txtSearch_TextChanged(object sender, EventArgs e)
+        private void cbLocNCC_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_dtTonKho != null)
+            if (cbLocNCC.SelectedIndex > -1 && cbLocNCC.ValueMember != "")
             {
-                // Dùng RowFilter để lọc trực tiếp trên DataTable thông qua DataView
-                DataView dv = _dtTonKho.DefaultView;
-                string tuKhoa = txtSearch.Text.Trim().Replace("'", "''"); 
-
-                dv.RowFilter = $"[Tên Sản Phẩm] LIKE '%{tuKhoa}%'";
-            }
-        }
-
-        private void dgvKho_CellClick(object sender, DataGridViewCellEventArgs e)
-        {
-            if (e.RowIndex >= 0)
-            {
-                DataGridViewRow row = dgvKho.Rows[e.RowIndex];
-                txtIdKho.Text = row.Cells["Mã Dòng"].Value.ToString();
-
-                
-                txtDiaChi.Text = row.Cells["Hà Nội"].Value != DBNull.Value ? row.Cells["Hà Nội"].Value.ToString() : "";
-            }
-        }
-
-        private void btnCapNhat_Click(object sender, EventArgs e)
-        {
-            if (string.IsNullOrEmpty(txtIdKho.Text))
-            {
-                MessageBox.Show("Vui lòng chọn một dòng sản phẩm để cập nhật địa chỉ!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            int idKho = Convert.ToInt32(txtIdKho.Text);
-            string viTriMoi = txtDiaChi.Text.Trim();
-
-            string ketQua = _controller.CapNhatDiaChi(idKho, viTriMoi);
-
-            if (ketQua == "Success")
-            {
-                MessageBox.Show("Cập nhật địa chỉ thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                // Load lại dữ liệu lưới với bộ lọc hiện tại để thấy sự thay đổi
-                LoadDataTonKho(cbLocKho.SelectedValue.ToString());
-            }
-            else
-            {
-                MessageBox.Show(ketQua, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                LoadDataLichSu();
             }
         }
     }

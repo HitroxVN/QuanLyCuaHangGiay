@@ -11,56 +11,55 @@ namespace QuanLyCuaHangGiay.database.repository
 {
     internal class KhoRepository
     {
-        public DataTable GetTenKhoDuyNhat()
+        // 1. Lấy danh sách Nhà cung cấp đổ vào ComboBox
+        public DataTable GetDanhSachNhaCungCap()
         {
-            string sql = "SELECT DISTINCT tenKho FROM Kho";
-            DataTable dt = DBConnection.GetDataTable(sql);
-
-            // Xử lý thực tế: Nếu hệ thống mới tinh chưa có kho nào trong DB
-            if (dt.Rows.Count == 0)
-            {
-                dt.Columns.Add("tenKho");
-                dt.Rows.Add("Kho Tổng");
-                dt.Rows.Add("Kho Chi Nhánh 1");
-            }
-
-            return dt;
-        }
-
-        /// <summary>
-        /// Lấy chi tiết tồn kho để hiển thị trên Form Quản lý kho.
-        /// Kết hợp với bảng SanPham để lấy tên sản phẩm.
-        /// </summary>
-        public DataTable GetTonKhoChiTiet(string tenKho = "")
-        {
-            string sql = @"SELECT k.id AS [Mã Dòng], 
-                                  k.tenKho AS [Tên Kho], 
-                                  s.tenSP AS [Tên Sản Phẩm], 
-                                  k.soLuongTrongKho AS [Số Lượng], 
-                                  k.diaChi AS [Hà Nội],
-                                  k.ngayCapNhat AS [Ngày Cập Nhật cuối]
-                           FROM Kho k
-                           JOIN SanPham s ON k.sanphamID = s.id";
-
-            // Nếu người dùng chọn lọc theo một kho cụ thể
-            if (!string.IsNullOrEmpty(tenKho) && tenKho != "Tất cả")
-            {
-                sql += " WHERE k.tenKho = @tenKho";
-                SqlParameter[] pa = { new SqlParameter("@tenKho", tenKho) };
-                return DBConnection.GetDataTable(sql, pa);
-            }
-
+            string sql = "SELECT id, tenNCC FROM NhaCungCap";
             return DBConnection.GetDataTable(sql);
         }
 
-        public bool CapNhatDiaChi(int idKho, string diaChiMoi)
+        // 2. Lấy lịch sử nhập hàng theo các tiêu chí lọc
+        public DataTable GetLichSuNhapHang(DateTime tuNgay, DateTime denNgay, string nhaCungCapID, string tuKhoa)
         {
-            string sql = "UPDATE Kho SET diaChi = @diaChi WHERE id = @id";
-            SqlParameter[] pa = {
-                new SqlParameter("@diaChi", diaChiMoi),
-                new SqlParameter("@id", idKho)
+            // Thiết lập đến cuối ngày của mốc "Đến ngày" để lấy trọn vẹn dữ liệu
+            denNgay = denNgay.Date.AddHours(23).AddMinutes(59).AddSeconds(59);
+
+            string sql = @"SELECT pn.id AS [Mã Phiếu], 
+                                  pn.thoiGian AS [Ngày Nhập], 
+                                  sp.tenSP AS [Tên Sản Phẩm], 
+                                  ncc.tenNCC AS [Nhà Cung Cấp], 
+                                  pn.soLuong AS [Số Lượng Nhập], 
+                                  pn.giaDonNhap AS [Đơn Giá],
+                                  (pn.soLuong * pn.giaDonNhap) AS [Thành Tiền],
+                                  pn.ghiChu AS [Ghi Chú]
+                           FROM PhieuNhap pn
+                           JOIN SanPham sp ON pn.sanphamID = sp.id
+                           JOIN NhaCungCap ncc ON pn.nhacungcapID = ncc.id
+                           WHERE pn.thoiGian >= @tuNgay AND pn.thoiGian <= @denNgay";
+
+            List<SqlParameter> parameters = new List<SqlParameter>()
+            {
+                new SqlParameter("@tuNgay", tuNgay),
+                new SqlParameter("@denNgay", denNgay)
             };
-            return DBConnection.ExecuteNonQuery(sql, pa) > 0;
+
+            // Lọc theo nhà cung cấp nếu có chọn (khác "Tất cả")
+            if (!string.IsNullOrEmpty(nhaCungCapID) && nhaCungCapID != "0")
+            {
+                sql += " AND pn.nhacungcapID = @nccID";
+                parameters.Add(new SqlParameter("@nccID", nhaCungCapID));
+            }
+
+            // Lọc theo tên sản phẩm nếu có nhập từ khóa
+            if (!string.IsNullOrEmpty(tuKhoa))
+            {
+                sql += " AND sp.tenSP LIKE @tuKhoa";
+                parameters.Add(new SqlParameter("@tuKhoa", "%" + tuKhoa + "%"));
+            }
+
+            sql += " ORDER BY pn.thoiGian DESC"; 
+
+            return DBConnection.GetDataTable(sql, parameters.ToArray());
         }
     }
 }

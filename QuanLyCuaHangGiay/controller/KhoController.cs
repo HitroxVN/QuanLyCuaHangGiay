@@ -28,26 +28,19 @@ namespace QuanLyCuaHangGiay.controller
             _repo = new KhoRepository();
         }
 
-        public DataTable LayDanhSachKho()
+        public DataTable LayDanhSachNhaCungCap()
         {
-            return _repo.GetTenKhoDuyNhat();
+            return _repo.GetDanhSachNhaCungCap();
         }
 
-        public DataTable LayChiTietTonKho(string tenKho = "Tất cả")
+        public DataTable LayLichSuNhapHang(DateTime tuNgay, DateTime denNgay, string nhaCungCapID, string tuKhoa)
         {
-            return _repo.GetTonKhoChiTiet(tenKho);
-        }
+            if (tuNgay.Date > denNgay.Date)
+            {
+                throw new ArgumentException("Thời gian 'Từ ngày' không thể lớn hơn 'Đến ngày'.");
+            }
 
-        public string CapNhatDiaChi(int idKho, string diaChiMoi)
-        {
-            if (idKho <= 0)
-                return "Vui lòng chọn một dòng sản phẩm trong kho để cập nhật!";
-
-            if (string.IsNullOrWhiteSpace(diaChiMoi))
-                return "Vui lòng nhập địa chỉ mới!";
-
-            bool isSuccess = _repo.CapNhatDiaChi(idKho, diaChiMoi);
-            return isSuccess ? "Success" : "Có lỗi khi cập nhật địa chỉ trong cơ sở dữ liệu.";
+            return _repo.GetLichSuNhapHang(tuNgay, denNgay, nhaCungCapID, tuKhoa);
         }
     }
 }

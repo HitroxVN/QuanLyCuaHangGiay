@@ -14,7 +14,7 @@ namespace QuanLyCuaHangGiay.database.repository
     public class PhieuNhapRepository
     {
         // Hàm này nhận vào một danh sách các mặt hàng cần nhập và tên kho đích đến
-        public bool NhapHangVaoKho(List<PhieuNhap> danhSachNhap, string tenKho, DateTime thoiGianLuu)
+        public bool NhapHangVaoKho(List<PhieuNhap> danhSachNhap, DateTime thoiGianLuu)
         {
             using (SqlConnection conn = DBConnection.GetDBConnection())
             {
@@ -25,40 +25,37 @@ namespace QuanLyCuaHangGiay.database.repository
                     {
                         foreach (var item in danhSachNhap)
                         {
-                            int idKhoHienTai = 0;
 
-                            string checkKhoSql = "SELECT id FROM Kho WHERE tenKho = @tenKho AND sanphamID = @spID";
-                            using (SqlCommand cmdCheck = new SqlCommand(checkKhoSql, conn, trans))
-                            {
-                                cmdCheck.Parameters.AddWithValue("@tenKho", tenKho);
-                                cmdCheck.Parameters.AddWithValue("@spID", item.sanPhamID);
-                                object result = cmdCheck.ExecuteScalar();
+                            //string checkKhoSql = "SELECT id FROM Kho WHERE tenKho = @tenKho AND sanphamID = @spID";
+                            //using (SqlCommand cmdCheck = new SqlCommand(checkKhoSql, conn, trans))
+                            //{
+                            //    cmdCheck.Parameters.AddWithValue("@spID", item.sanPhamID);
+                            //    object result = cmdCheck.ExecuteScalar();
 
-                                if (result != null)
-                                {
-                                    idKhoHienTai = Convert.ToInt32(result);
-                                    string updateKhoSql = "UPDATE Kho SET soLuongTrongKho = soLuongTrongKho + @sl WHERE id = @idKho";
-                                    using (SqlCommand cmdUpdKho = new SqlCommand(updateKhoSql, conn, trans))
-                                    {
-                                        cmdUpdKho.Parameters.AddWithValue("@sl", item.soLuong);
-                                        cmdUpdKho.Parameters.AddWithValue("@idKho", idKhoHienTai);
-                                        cmdUpdKho.ExecuteNonQuery();
-                                    }
-                                }
-                                else
-                                {
-                                    string insertKhoSql = "INSERT INTO Kho (tenKho, sanphamID, soLuongTrongKho) OUTPUT INSERTED.id VALUES (@tenKho, @spID, @sl)";
-                                    using (SqlCommand cmdInsKho = new SqlCommand(insertKhoSql, conn, trans))
-                                    {
-                                        cmdInsKho.Parameters.AddWithValue("@tenKho", tenKho);
-                                        cmdInsKho.Parameters.AddWithValue("@spID", item.sanPhamID);
-                                        cmdInsKho.Parameters.AddWithValue("@sl", item.soLuong);
-                                        idKhoHienTai = (int)cmdInsKho.ExecuteScalar();
-                                    }
-                                }
-                            }
+                            //    if (result != null)
+                            //    {
+                            //        idKhoHienTai = Convert.ToInt32(result);
+                            //        string updateKhoSql = "UPDATE Kho SET soLuongTrongKho = soLuongTrongKho + @sl WHERE id = @idKho";
+                            //        using (SqlCommand cmdUpdKho = new SqlCommand(updateKhoSql, conn, trans))
+                            //        {
+                            //            cmdUpdKho.Parameters.AddWithValue("@sl", item.soLuong);
+                            //            cmdUpdKho.Parameters.AddWithValue("@idKho", idKhoHienTai);
+                            //            cmdUpdKho.ExecuteNonQuery();
+                            //        }
+                            //    }
+                            //    else
+                            //    {
+                            //        string insertKhoSql = "INSERT INTO Kho (tenKho, sanphamID, soLuongTrongKho) OUTPUT INSERTED.id VALUES (@tenKho, @spID, @sl)";
+                            //        using (SqlCommand cmdInsKho = new SqlCommand(insertKhoSql, conn, trans))
+                            //        {
+                            //            cmdInsKho.Parameters.AddWithValue("@spID", item.sanPhamID);
+                            //            cmdInsKho.Parameters.AddWithValue("@sl", item.soLuong);
+                            //            idKhoHienTai = (int)cmdInsKho.ExecuteScalar();
+                            //        }
+                            //    }
+                            //}
 
-                            string insertPhieuSql = "INSERT INTO PhieuNhap (thoiGian, soLuong, giaDonNhap, nhacungcapID, sanphamID, ghiChu, khoID) VALUES (@tg, @sl, @gia, @nccID, @spID, @ghiChu, @khoID)";
+                            string insertPhieuSql = "INSERT INTO PhieuNhap (thoiGian, soLuong, giaDonNhap, nhacungcapID, sanphamID, ghiChu) VALUES (@tg, @sl, @gia, @nccID, @spID, @ghiChu)";
                             using (SqlCommand cmdInsPhieu = new SqlCommand(insertPhieuSql, conn, trans))
                             {
                                 cmdInsPhieu.Parameters.AddWithValue("@tg", thoiGianLuu);
@@ -67,7 +64,6 @@ namespace QuanLyCuaHangGiay.database.repository
                                 cmdInsPhieu.Parameters.AddWithValue("@nccID", item.nhaCungCapID);
                                 cmdInsPhieu.Parameters.AddWithValue("@spID", item.sanPhamID);
                                 cmdInsPhieu.Parameters.AddWithValue("@ghiChu", string.IsNullOrEmpty(item.ghiChu) ? (object)DBNull.Value : item.ghiChu);
-                                cmdInsPhieu.Parameters.AddWithValue("@khoID", idKhoHienTai);
                                 cmdInsPhieu.ExecuteNonQuery();
                             }
 
@@ -101,13 +97,6 @@ namespace QuanLyCuaHangGiay.database.repository
         public DataTable LoadCbSP()
         {
             return DBConnection.GetDataTable("SELECT id, tenSP FROM SanPham");
-        }
-
-
-        public DataTable GetTenKhoDuyNhat()
-        {
-            // Lấy danh sách các tên kho không trùng lặp
-            return DBConnection.GetDataTable("SELECT DISTINCT tenKho FROM Kho");
         }
 
         public DataTable GetPhieuNhap(DateTime time, int nccID)

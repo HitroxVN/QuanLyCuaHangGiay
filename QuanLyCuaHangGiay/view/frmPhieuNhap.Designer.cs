@@ -36,8 +36,6 @@
             this.btnXoa = new System.Windows.Forms.Button();
             this.btnThem = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.cbKho = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbSanPham = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -145,8 +143,6 @@
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label8);
-            this.groupBox1.Controls.Add(this.cbKho);
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.cbSanPham);
             this.groupBox1.Controls.Add(this.label3);
@@ -159,29 +155,10 @@
             this.groupBox1.Controls.Add(this.label5);
             this.groupBox1.Location = new System.Drawing.Point(24, 34);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(549, 258);
+            this.groupBox1.Size = new System.Drawing.Size(549, 245);
             this.groupBox1.TabIndex = 12;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Thông tin sản phẩm";
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label8.Location = new System.Drawing.Point(81, 116);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(48, 20);
-            this.label8.TabIndex = 10;
-            this.label8.Text = "Kho :";
-            // 
-            // cbKho
-            // 
-            this.cbKho.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.cbKho.FormattingEnabled = true;
-            this.cbKho.Location = new System.Drawing.Point(163, 113);
-            this.cbKho.Name = "cbKho";
-            this.cbKho.Size = new System.Drawing.Size(347, 28);
-            this.cbKho.TabIndex = 11;
             // 
             // label2
             // 
@@ -215,7 +192,7 @@
             // txtGhiChu
             // 
             this.txtGhiChu.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGhiChu.Location = new System.Drawing.Point(163, 211);
+            this.txtGhiChu.Location = new System.Drawing.Point(163, 174);
             this.txtGhiChu.Name = "txtGhiChu";
             this.txtGhiChu.Size = new System.Drawing.Size(347, 27);
             this.txtGhiChu.TabIndex = 9;
@@ -233,7 +210,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label6.Location = new System.Drawing.Point(54, 211);
+            this.label6.Location = new System.Drawing.Point(54, 174);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(77, 20);
             this.label6.TabIndex = 8;
@@ -243,7 +220,7 @@
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label4.Location = new System.Drawing.Point(47, 182);
+            this.label4.Location = new System.Drawing.Point(47, 145);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(84, 20);
             this.label4.TabIndex = 4;
@@ -252,7 +229,7 @@
             // txtGiaNhap
             // 
             this.txtGiaNhap.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtGiaNhap.Location = new System.Drawing.Point(163, 147);
+            this.txtGiaNhap.Location = new System.Drawing.Point(163, 110);
             this.txtGiaNhap.Name = "txtGiaNhap";
             this.txtGiaNhap.Size = new System.Drawing.Size(347, 27);
             this.txtGiaNhap.TabIndex = 7;
@@ -260,7 +237,7 @@
             // txtSoLuong
             // 
             this.txtSoLuong.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtSoLuong.Location = new System.Drawing.Point(163, 179);
+            this.txtSoLuong.Location = new System.Drawing.Point(163, 142);
             this.txtSoLuong.Name = "txtSoLuong";
             this.txtSoLuong.Size = new System.Drawing.Size(347, 27);
             this.txtSoLuong.TabIndex = 5;
@@ -269,7 +246,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label5.Location = new System.Drawing.Point(45, 150);
+            this.label5.Location = new System.Drawing.Point(45, 113);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(86, 20);
             this.label5.TabIndex = 6;
@@ -424,7 +401,5 @@
         private System.Windows.Forms.Button btnReset;
         private System.Windows.Forms.Button btnLuuPhieu;
         private System.Windows.Forms.DataGridView dgvDanhSachNhap;
-        private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ComboBox cbKho;
     }
 }

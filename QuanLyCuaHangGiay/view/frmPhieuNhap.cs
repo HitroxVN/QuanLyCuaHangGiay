@@ -46,7 +46,6 @@ namespace QuanLyCuaHangGiay.view
             txtSoLuong.Clear();
             txtGiaNhap.Clear();
             txtGhiChu.Clear();
-            cbKho.SelectedIndex = -1;
             cbSanPham.SelectedIndex = -1;
             cbNCC.SelectedIndex = -1;
         }
@@ -167,12 +166,6 @@ namespace QuanLyCuaHangGiay.view
                 return;
             }
 
-            if (cbKho.SelectedValue == null || cbKho.SelectedIndex == -1 || string.IsNullOrWhiteSpace(cbKho.Text))
-            {
-                MessageBox.Show("Vui lòng chọn Kho để nhập hàng!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                cbKho.Focus();
-                return;
-            }
 
             DateTime thoiGianLuu = DateTime.Now;
             int nccID = Convert.ToInt32(cbNCC.SelectedValue);
@@ -192,10 +185,9 @@ namespace QuanLyCuaHangGiay.view
                 danhSachCanNhap.Add(pn);
             }
 
-            string tenKho = cbKho.Text;
 
             // 2. GỌI CONTROLLER KÈM THỜI GIAN LƯU
-            string ketQua = _controller.LuuPhieuNhap(danhSachCanNhap, tenKho, thoiGianLuu);
+            string ketQua = _controller.LuuPhieuNhap(danhSachCanNhap, thoiGianLuu);
 
             if (ketQua == "Success")
             {
@@ -262,13 +254,6 @@ namespace QuanLyCuaHangGiay.view
                 cbSanPham.DisplayMember = "tenSP";
                 cbSanPham.ValueMember = "id";
                 cbSanPham.SelectedIndex = -1;
-
-                // 3. Load Kho
-                DataTable dtKho = _controller.LayKho();
-                cbKho.DataSource = dtKho;
-                cbKho.DisplayMember = "tenKho";
-                cbKho.ValueMember = "tenKho"; 
-                cbKho.SelectedIndex = -1;
             }
             catch (Exception ex)
             {
