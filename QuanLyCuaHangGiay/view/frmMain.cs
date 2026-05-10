@@ -1,5 +1,6 @@
 ﻿using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.util;
+using shoe_store.view;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -102,6 +103,21 @@ namespace QuanLyCuaHangGiay.view
         private void danhMụcSảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenForm(new F_Category());
+        }
+
+        private void tạoĐơnHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmBanHang());
+        }
+
+        private void danhSáchĐơnHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmQuanLyDonHang());
+        }
+
+        private void danhSáchKháchHàngToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmQuanLyKhachHang());
         }
     }
 }
