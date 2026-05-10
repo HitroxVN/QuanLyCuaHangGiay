@@ -46,6 +46,7 @@
             this.thốngKêToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.label1 = new System.Windows.Forms.Label();
             this.labelName = new System.Windows.Forms.Label();
+            this.danhSáchKháchHàngToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -155,7 +156,8 @@
             // 
             this.bánHàngToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.tạoĐơnHàngToolStripMenuItem,
-            this.danhSáchĐơnHàngToolStripMenuItem});
+            this.danhSáchĐơnHàngToolStripMenuItem,
+            this.danhSáchKháchHàngToolStripMenuItem});
             this.bánHàngToolStripMenuItem.Name = "bánHàngToolStripMenuItem";
             this.bánHàngToolStripMenuItem.Size = new System.Drawing.Size(97, 27);
             this.bánHàngToolStripMenuItem.Text = "Bán hàng";
@@ -163,14 +165,16 @@
             // tạoĐơnHàngToolStripMenuItem
             // 
             this.tạoĐơnHàngToolStripMenuItem.Name = "tạoĐơnHàngToolStripMenuItem";
-            this.tạoĐơnHàngToolStripMenuItem.Size = new System.Drawing.Size(253, 28);
+            this.tạoĐơnHàngToolStripMenuItem.Size = new System.Drawing.Size(268, 28);
             this.tạoĐơnHàngToolStripMenuItem.Text = "Tạo đơn hàng";
+            this.tạoĐơnHàngToolStripMenuItem.Click += new System.EventHandler(this.tạoĐơnHàngToolStripMenuItem_Click);
             // 
             // danhSáchĐơnHàngToolStripMenuItem
             // 
             this.danhSáchĐơnHàngToolStripMenuItem.Name = "danhSáchĐơnHàngToolStripMenuItem";
-            this.danhSáchĐơnHàngToolStripMenuItem.Size = new System.Drawing.Size(253, 28);
+            this.danhSáchĐơnHàngToolStripMenuItem.Size = new System.Drawing.Size(268, 28);
             this.danhSáchĐơnHàngToolStripMenuItem.Text = "Danh sách đơn hàng";
+            this.danhSáchĐơnHàngToolStripMenuItem.Click += new System.EventHandler(this.danhSáchĐơnHàngToolStripMenuItem_Click);
             // 
             // thốngKêToolStripMenuItem
             // 
@@ -197,6 +201,13 @@
             this.labelName.Size = new System.Drawing.Size(79, 18);
             this.labelName.TabIndex = 2;
             this.labelName.Text = "Xin chào ";
+            // 
+            // danhSáchKháchHàngToolStripMenuItem
+            // 
+            this.danhSáchKháchHàngToolStripMenuItem.Name = "danhSáchKháchHàngToolStripMenuItem";
+            this.danhSáchKháchHàngToolStripMenuItem.Size = new System.Drawing.Size(268, 28);
+            this.danhSáchKháchHàngToolStripMenuItem.Text = "Danh sách khách hàng";
+            this.danhSáchKháchHàngToolStripMenuItem.Click += new System.EventHandler(this.danhSáchKháchHàngToolStripMenuItem_Click);
             // 
             // frmMain
             // 
@@ -238,5 +249,6 @@
         private System.Windows.Forms.ToolStripMenuItem thốngKêToolStripMenuItem;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label labelName;
+        private System.Windows.Forms.ToolStripMenuItem danhSáchKháchHàngToolStripMenuItem;
     }
 }
