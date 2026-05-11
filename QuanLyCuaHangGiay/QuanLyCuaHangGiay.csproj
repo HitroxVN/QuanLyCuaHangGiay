@@ -242,6 +242,9 @@
     <EmbeddedResource Include="view\frmQuanLyDonHang.resx">
       <DependentUpon>frmQuanLyDonHang.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="view\frmThemKhachHang.resx">
+      <DependentUpon>frmThemKhachHang.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="view\F_Category.resx">
       <DependentUpon>F_Category.cs</DependentUpon>
     </EmbeddedResource>

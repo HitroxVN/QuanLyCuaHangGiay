@@ -18,27 +18,48 @@ namespace QuanLyCuaHangGiay.view
         public frmMain()
         {
             InitializeComponent();
-            this.IsMdiContainer = true;
+            //this.IsMdiContainer = true;
         }
 
         private void OpenForm(Form f)
         {
-            foreach (Form frm in this.MdiChildren)
-            {
-                if (frm.GetType() == f.GetType())
-                {
-                    frm.Activate();
-                    if (frm is util.IBaseForm refreshable)
-                    {
-                        refreshable.ReloadData();
-                    }
-                    return;
-                }
-            }
+            //foreach (Form frm in this.MdiChildren)
+            //{
+            //    if (frm.GetType() == f.GetType())
+            //    {
+            //        frm.Activate();
+            //        if (frm is util.IBaseForm refreshable)
+            //        {
+            //            refreshable.ReloadData();
+            //        }
+            //        return;
+            //    }
+            //}
 
-            f.MdiParent = this;
+            //f.MdiParent = this;
+            //f.WindowState = FormWindowState.Maximized;
+            //f.Show();
+
+            //this.Hide();
+
+            //f.StartPosition = FormStartPosition.CenterScreen;
+
+            //f.FormClosed += (s, args) =>
+            //{
+            //    this.Show();
+            //    f.Dispose(); 
+            //};
+
+            //f.Show();
+
+            this.Hide();
             f.WindowState = FormWindowState.Maximized;
-            f.Show();
+            f.StartPosition = FormStartPosition.CenterScreen;
+
+            f.ShowDialog();
+
+            this.Show(); 
+            f.Dispose();
         }
 
         public void RefreshAllOpenForms()
@@ -75,12 +96,15 @@ namespace QuanLyCuaHangGiay.view
 
         private void đăngXuấtToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AuthController auth = new AuthController();
-            auth.logout();
-            this.Hide();
-            flogin f = new flogin();
-            f.ShowDialog();
-            this.Close();
+            if (MessageBox.Show("Bạn có muốn đăng xuất?", "Thông báo", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                AuthController auth = new AuthController();
+                auth.logout();
+                this.Hide();
+                flogin f = new flogin();
+                f.ShowDialog();
+                this.Close();
+            }
         }
 
         private void frmMain_Load(object sender, EventArgs e)
@@ -90,8 +114,14 @@ namespace QuanLyCuaHangGiay.view
                 MessageBox.Show("Bạn chưa đăng nhập!");
                 this.Close();
             }
-
-            labelName.Text = Session.user.hoTen.ToString();
+            foreach (Control ctl in this.Controls)
+            {
+                if (ctl is MdiClient)
+                {
+                    ctl.BackColor = Color.White;
+                }
+            }
+            //labelName.Text = Session.user.hoTen.ToString();
 
             // giới hạn quyền staff (CHỈ UI)
             if (Authorization.IsStaff())
@@ -134,6 +164,11 @@ namespace QuanLyCuaHangGiay.view
         private void xemTồnKhoToolStripMenuItem_Click(object sender, EventArgs e)
         {
             OpenForm(new frmKho());
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            OpenForm(new frmBanHang());
         }
     }
 }

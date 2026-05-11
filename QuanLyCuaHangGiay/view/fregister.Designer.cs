@@ -88,7 +88,7 @@
             // 
             // menuStrip1
             // 
-            this.menuStrip1.BackColor = System.Drawing.SystemColors.ActiveCaption;
+            this.menuStrip1.BackColor = System.Drawing.Color.DarkRed;
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.đăngNhậpToolStripMenuItem});
@@ -102,6 +102,7 @@
             // 
             this.đăngNhậpToolStripMenuItem.Checked = true;
             this.đăngNhậpToolStripMenuItem.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.đăngNhậpToolStripMenuItem.ForeColor = System.Drawing.Color.White;
             this.đăngNhậpToolStripMenuItem.Name = "đăngNhậpToolStripMenuItem";
             this.đăngNhậpToolStripMenuItem.Size = new System.Drawing.Size(96, 24);
             this.đăngNhậpToolStripMenuItem.Text = "Đăng nhập";
@@ -519,6 +520,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.menuStrip1);
             this.Name = "fregister";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "fregister";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();

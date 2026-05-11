@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(faccount));
-            this.label1 = new System.Windows.Forms.Label();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.cbTrangThai = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -63,18 +62,17 @@
             this.label4 = new System.Windows.Forms.Label();
             this.cbLocTheoQuyen = new System.Windows.Forms.ComboBox();
             this.label9 = new System.Windows.Forms.Label();
+            this.panel1 = new System.Windows.Forms.Panel();
+            this.label10 = new System.Windows.Forms.Label();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            resources.ApplyResources(this.label1, "label1");
-            this.label1.Name = "label1";
             // 
             // groupBox1
             // 
+            this.groupBox1.BackColor = System.Drawing.Color.White;
             this.groupBox1.Controls.Add(this.cbTrangThai);
             this.groupBox1.Controls.Add(this.label8);
             this.groupBox1.Controls.Add(this.cbQuyen);
@@ -96,8 +94,8 @@
             // cbTrangThai
             // 
             this.cbTrangThai.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbTrangThai.FormattingEnabled = true;
             resources.ApplyResources(this.cbTrangThai, "cbTrangThai");
+            this.cbTrangThai.FormattingEnabled = true;
             this.cbTrangThai.Name = "cbTrangThai";
             // 
             // label8
@@ -108,8 +106,8 @@
             // cbQuyen
             // 
             this.cbQuyen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbQuyen.FormattingEnabled = true;
             resources.ApplyResources(this.cbQuyen, "cbQuyen");
+            this.cbQuyen.FormattingEnabled = true;
             this.cbQuyen.Name = "cbQuyen";
             // 
             // label3
@@ -180,30 +178,38 @@
             // 
             // btnRefresh
             // 
+            this.btnRefresh.BackColor = System.Drawing.Color.DarkRed;
             resources.ApplyResources(this.btnRefresh, "btnRefresh");
+            this.btnRefresh.ForeColor = System.Drawing.Color.White;
             this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.UseVisualStyleBackColor = false;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // btnDelete
             // 
+            this.btnDelete.BackColor = System.Drawing.Color.DarkRed;
             resources.ApplyResources(this.btnDelete, "btnDelete");
+            this.btnDelete.ForeColor = System.Drawing.Color.White;
             this.btnDelete.Name = "btnDelete";
-            this.btnDelete.UseVisualStyleBackColor = true;
+            this.btnDelete.UseVisualStyleBackColor = false;
             this.btnDelete.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // btnEdit
             // 
+            this.btnEdit.BackColor = System.Drawing.Color.DarkRed;
             resources.ApplyResources(this.btnEdit, "btnEdit");
+            this.btnEdit.ForeColor = System.Drawing.Color.White;
             this.btnEdit.Name = "btnEdit";
-            this.btnEdit.UseVisualStyleBackColor = true;
+            this.btnEdit.UseVisualStyleBackColor = false;
             this.btnEdit.Click += new System.EventHandler(this.btnEdit_Click);
             // 
             // btnAdd
             // 
+            this.btnAdd.BackColor = System.Drawing.Color.DarkRed;
             resources.ApplyResources(this.btnAdd, "btnAdd");
+            this.btnAdd.ForeColor = System.Drawing.Color.White;
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.UseVisualStyleBackColor = true;
+            this.btnAdd.UseVisualStyleBackColor = false;
             this.btnAdd.Click += new System.EventHandler(this.btnAdd_Click);
             // 
             // dgvUsers
@@ -286,8 +292,8 @@
             // cbLocTheoQuyen
             // 
             this.cbLocTheoQuyen.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbLocTheoQuyen.FormattingEnabled = true;
             resources.ApplyResources(this.cbLocTheoQuyen, "cbLocTheoQuyen");
+            this.cbLocTheoQuyen.FormattingEnabled = true;
             this.cbLocTheoQuyen.Name = "cbLocTheoQuyen";
             this.cbLocTheoQuyen.SelectedIndexChanged += new System.EventHandler(this.cbLocTheoQuyen_SelectedIndexChanged);
             // 
@@ -295,6 +301,19 @@
             // 
             resources.ApplyResources(this.label9, "label9");
             this.label9.Name = "label9";
+            // 
+            // panel1
+            // 
+            this.panel1.BackColor = System.Drawing.Color.DarkRed;
+            this.panel1.Controls.Add(this.label10);
+            resources.ApplyResources(this.panel1, "panel1");
+            this.panel1.Name = "panel1";
+            // 
+            // label10
+            // 
+            resources.ApplyResources(this.label10, "label10");
+            this.label10.ForeColor = System.Drawing.Color.Lavender;
+            this.label10.Name = "label10";
             // 
             // faccount
             // 
@@ -307,21 +326,21 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.panel1);
             this.Name = "faccount";
             this.Load += new System.EventHandler(this.faccount_Load);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             this.groupBox2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.dgvUsers)).EndInit();
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.TextBox txtDiaChi;
@@ -355,5 +374,7 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox cbLocTheoQuyen;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label10;
     }
 }

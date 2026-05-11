@@ -65,14 +65,14 @@
             this.dangKy});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(932, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(932, 30);
             this.menuStrip1.TabIndex = 4;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // dangKy
             // 
             this.dangKy.Name = "dangKy";
-            this.dangKy.Size = new System.Drawing.Size(77, 24);
+            this.dangKy.Size = new System.Drawing.Size(77, 26);
             this.dangKy.Text = "Đăng ký";
             this.dangKy.Click += new System.EventHandler(this.dangKy_Click);
             // 
@@ -285,6 +285,7 @@
             this.Controls.Add(this.menuStrip1);
             this.MainMenuStrip = this.menuStrip1;
             this.Name = "flogin";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "flogin";
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
