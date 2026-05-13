@@ -1,13 +1,19 @@
+using OfficeOpenXml;
+using OfficeOpenXml;
+using OfficeOpenXml.Style;
+using OfficeOpenXml.Style;
 using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.model;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data;
+using System.Drawing;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-
 namespace QuanLyCuaHangGiay.view
 {
     public partial class frmThongKe : Form, util.IBaseForm
@@ -209,45 +215,108 @@ namespace QuanLyCuaHangGiay.view
             }
 
             SaveFileDialog sfd = new SaveFileDialog();
-            sfd.Filter = "Excel file (*.csv)|*.csv";
-            sfd.FileName = "TopSanPhamBanChay.csv";
+
+            sfd.Filter = "Excel Workbook (*.xlsx)|*.xlsx";
+            sfd.FileName = "BaoCaoThongKe_"
+            + DateTime.Now.ToString("dd-MM-yyyy")
+            + ".xlsx";
 
             if (sfd.ShowDialog() == DialogResult.OK)
             {
-                XuatCSV(dgvTopSanPham, sfd.FileName);
-                MessageBox.Show("Xuất file thành công.");
+                XuatExcel(dgvTopSanPham, sfd.FileName);
+
+                MessageBox.Show("Xuất Excel thành công!");
             }
         }
 
-        private void XuatCSV(DataGridView dgv, string path)
+        private void XuatExcel(DataGridView dgv, string path)
         {
-            StringBuilder sb = new StringBuilder();
 
-            for (int i = 0; i < dgv.Columns.Count; i++)
+            using (ExcelPackage pck = new ExcelPackage())
             {
-                sb.Append(dgv.Columns[i].HeaderText);
-                if (i < dgv.Columns.Count - 1)
-                    sb.Append(",");
-            }
-            sb.AppendLine();
+                ExcelWorksheet ws = pck.Workbook.Worksheets.Add("ThongKe");
 
-            for (int i = 0; i < dgv.Rows.Count; i++)
-            {
-                for (int j = 0; j < dgv.Columns.Count; j++)
+                // Tiêu đề
+                ws.Cells["A1:F1"].Merge = true;
+                ws.Cells["A1"].Value = "BÁO CÁO THỐNG KÊ NGÀY "
+                + DateTime.Now.ToString("dd/MM/yyyy");
+                MessageBox.Show(ws.Cells["A1"].Value.ToString());
+
+                ws.Cells["A1"].Style.Font.Bold = true;
+                ws.Cells["A1"].Style.Font.Size = 18;
+                ws.Cells["A1"].Style.HorizontalAlignment = ExcelHorizontalAlignment.Center;
+                ws.Cells["A1"].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                ws.Cells["A1"].Style.Fill.BackgroundColor.SetColor(Color.DarkRed);
+                ws.Cells["A1"].Style.Font.Color.SetColor(Color.White);
+
+                // Thời gian
+                ws.Cells["A3"].Value = "Từ ngày:";
+                ws.Cells["B3"].Value = dtpTuNgay.Value.ToString("dd/MM/yyyy");
+
+                ws.Cells["A4"].Value = "Đến ngày:";
+                ws.Cells["B4"].Value = dtpDenNgay.Value.ToString("dd/MM/yyyy");
+
+                // Thống kê
+                ws.Cells["A6"].Value = "Tổng sản phẩm";
+                ws.Cells["B6"].Value = lblTongSanPham.Text;
+
+                ws.Cells["A7"].Value = "Tổng nhà cung cấp";
+                ws.Cells["B7"].Value = lblTongNCC.Text;
+
+                ws.Cells["A8"].Value = "Tổng đơn hàng";
+                ws.Cells["B8"].Value = lblTongDonHang.Text;
+
+                ws.Cells["A9"].Value = "Tổng phiếu nhập";
+                ws.Cells["B9"].Value = lblTongPhieuNhap.Text;
+
+                ws.Cells["A10"].Value = "Tổng tồn kho";
+                ws.Cells["B10"].Value = lblTongTonKho.Text;
+
+                ws.Cells["A11"].Value = "Tổng doanh thu";
+                ws.Cells["B11"].Value = lblTongDoanhThu.Text;
+
+                ws.Cells["A6:A11"].Style.Font.Bold = true;
+
+                // Tiêu đề bảng
+                ws.Cells["A13"].Value = "TOP SẢN PHẨM BÁN CHẠY";
+                ws.Cells["A13"].Style.Font.Bold = true;
+                ws.Cells["A13"].Style.Font.Size = 14;
+
+                // Header
+                for (int i = 0; i < dgv.Columns.Count; i++)
                 {
-                    string value = dgv.Rows[i].Cells[j].Value == null
-                        ? ""
-                        : dgv.Rows[i].Cells[j].Value.ToString().Replace(",", " ");
+                    ws.Cells[15, i + 1].Value = dgv.Columns[i].HeaderText;
 
-                    sb.Append(value);
+                    ws.Cells[15, i + 1].Style.Font.Bold = true;
+                    ws.Cells[15, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                    ws.Cells[15, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
 
-                    if (j < dgv.Columns.Count - 1)
-                        sb.Append(",");
+                    ws.Cells[15, i + 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                    ws.Cells[15, i + 1].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                    ws.Cells[15, i + 1].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                    ws.Cells[15, i + 1].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
                 }
-                sb.AppendLine();
-            }
 
-            File.WriteAllText(path, sb.ToString(), Encoding.UTF8);
+                // Data
+                for (int i = 0; i < dgv.Rows.Count; i++)
+                {
+                    for (int j = 0; j < dgv.Columns.Count; j++)
+                    {
+                        ws.Cells[i + 16, j + 1].Value =
+                            dgv.Rows[i].Cells[j].Value?.ToString();
+
+                        ws.Cells[i + 16, j + 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[i + 16, j + 1].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[i + 16, j + 1].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                        ws.Cells[i + 16, j + 1].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
+                    }
+                }
+
+                ws.Cells.AutoFitColumns();
+
+                FileInfo fi = new FileInfo(path);
+                pck.SaveAs(fi);
+            }
         }
     }
 }

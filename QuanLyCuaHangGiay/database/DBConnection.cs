@@ -7,7 +7,7 @@ namespace QuanLyCuaHangGiay.Database
 {
     internal class DBConnection
     {
-        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["MyDB"].ConnectionString;
+        private static readonly string connectionString = ConfigurationManager.ConnectionStrings["shoe_store"].ConnectionString;
 
         public static SqlConnection GetDBConnection()
         {
