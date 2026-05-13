@@ -14,7 +14,8 @@ namespace QuanLyCuaHangGiay.controller
         public ThongKeController()
         {
             if (
-                !Authorization.IsAdmin()
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
                )
             {
                 throw new UnauthorizedAccessException(

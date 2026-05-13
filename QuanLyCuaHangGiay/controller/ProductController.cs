@@ -9,6 +9,18 @@ namespace QuanLyCuaHangGiay.controller
 
     internal class ProductController
     {
+        public ProductController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
 
         private ProductRepository repo = new ProductRepository();
 
@@ -27,6 +39,11 @@ namespace QuanLyCuaHangGiay.controller
         // Thêm sản phẩm mới
         public bool AddProduct(string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
         {
+            if (!Authorization.IsAdmin())
+            {
+                MessageBox.Show("Không có quyền thêm danh mục.");
+                return false;
+            }
             // Kiểm tra dữ liệu đầu vào bắt buộc
             if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
             {
@@ -42,6 +59,11 @@ namespace QuanLyCuaHangGiay.controller
         // Cập nhật sản phẩm
         public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
         {
+            if (!Authorization.IsAdmin())
+            {
+                MessageBox.Show("Không có quyền cập nhật danh mục.");
+                return false;
+            }
             if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
             {
                 return false;

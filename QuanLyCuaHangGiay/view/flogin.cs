@@ -24,7 +24,6 @@ namespace QuanLyCuaHangGiay.view
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            //MessageBox.Show("Login: " + txtEmail.Text + "\nPassword: " + txtPassword.Text);
             string email = txtEmail.Text.Trim();
             string password = txtPassword.Text.Trim();
 
@@ -35,12 +34,10 @@ namespace QuanLyCuaHangGiay.view
                 MessageBox.Show("Sai email hoặc mật khẩu!");
             } else
             {
-                MessageBox.Show("Đăng nhập thành công!");
-
                 // phân quyền form
-                // test
                 if(Session.user.quyen == "admin" || Session.user.quyen == "staff")
                 {
+                    MessageBox.Show("Đăng nhập thành công!");
                     frmMain f = new frmMain();
                     this.Hide();
                     f.ShowDialog();

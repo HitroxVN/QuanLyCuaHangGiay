@@ -1,4 +1,5 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Data;
 
@@ -6,6 +7,19 @@ namespace QuanLyCuaHangGiay.controller
 {
     public class KhachHangController
     {
+        public KhachHangController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
+
         private KhachHangRepository repo = new KhachHangRepository();
 
         public DataTable GetDanhSachKhachHang(string tuKhoa)

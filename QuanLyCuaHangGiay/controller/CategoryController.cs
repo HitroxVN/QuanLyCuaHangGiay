@@ -8,6 +8,19 @@ namespace QuanLyCuaHangGiay.controller
 {
     internal class CategoryController
     {
+        public CategoryController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
+
         private CategoryRepository repo = new CategoryRepository();
 
         //  Lấy danh sách thể loại
@@ -31,6 +44,11 @@ namespace QuanLyCuaHangGiay.controller
         //  Thêm thể loại mới
         public bool AddCategory(string tenDanhMuc, string trangThai)
         {
+            if (!Authorization.IsAdmin())
+            {
+                MessageBox.Show("Không có quyền thêm danh mục.");
+                return false;
+            }
             if (string.IsNullOrWhiteSpace(tenDanhMuc))
             {
                 return false;
@@ -45,6 +63,11 @@ namespace QuanLyCuaHangGiay.controller
         //  Cập nhật thể loại
         public bool UpdateCategory(int id, string tenDanhMuc, string trangThai)
         {
+            if (!Authorization.IsAdmin())
+            {
+                MessageBox.Show("Không có quyền cập nhật danh mục.");
+                return false;
+            }
             if (id <= 0 || string.IsNullOrWhiteSpace(tenDanhMuc))
             {
                 return false;

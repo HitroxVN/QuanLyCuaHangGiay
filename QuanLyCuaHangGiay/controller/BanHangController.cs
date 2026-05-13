@@ -1,4 +1,5 @@
 ﻿using QuanLyCuaHangGiay.database.repository;
+using QuanLyCuaHangGiay.util;
 using QuanLyCuaHangGiay.model;
 using System;
 using System.ComponentModel;
@@ -8,6 +9,19 @@ namespace QuanLyCuaHangGiay.controller
 {
     public class BanHangController
     {
+        public BanHangController()
+        {
+            if (
+                !Authorization.IsAdmin() &&
+                !Authorization.IsStaff()
+               )
+            {
+                throw new UnauthorizedAccessException(
+                    "Không có quyền"
+                );
+            }
+        }
+        
         private BanHangRepository repo = new BanHangRepository();
 
         public DataTable LayDanhSachSanPhamBan()

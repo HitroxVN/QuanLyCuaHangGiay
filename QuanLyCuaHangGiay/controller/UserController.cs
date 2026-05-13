@@ -95,16 +95,28 @@ namespace QuanLyCuaHangGiay.controller
 
         public List<Users> getAllUsers()
         {
+            if (!Authorization.IsAdmin())
+            {
+                throw new UnauthorizedAccessException("Không có quyền xem danh sách người dùng.");
+            }
             return repo.getAllUsers();
         }
 
         public List<Users> searchUsers(string keyword)
         {
+            if (!Authorization.IsAdmin())
+            {
+                throw new UnauthorizedAccessException("Không có quyền tìm kiếm người dùng.");
+            }
             return repo.searchUsers(keyword);
         }
 
         public List<Users> filterUsersByRole(string role)
         {
+            if (!Authorization.IsAdmin())
+            {
+                throw new UnauthorizedAccessException("Không có quyền lọc người dùng.");
+            }
             return repo.filterByRole(role);
         }
     }
