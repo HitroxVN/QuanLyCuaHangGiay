@@ -63,5 +63,10 @@ namespace QuanLyCuaHangGiay.view
                 MessageBox.Show(m);
             }
         }
+
+        private void đăngNhậpToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
