@@ -1,6 +1,6 @@
 using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.util;
-using shoe_store.view;
+using QuanLyCuaHangGiay.view;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -127,7 +127,7 @@ namespace QuanLyCuaHangGiay.view
             if (Authorization.IsStaff())
             {
                 //hệThốngToolStripMenuItem.DropDownItems.Remove(quảnLýTàiKhoảnToolStripMenuItem);
-                hệThốngToolStripMenuItem.Enabled = false;
+                quảnLýTàiKhoảnToolStripMenuItem.Enabled = false;
             }
         }
 

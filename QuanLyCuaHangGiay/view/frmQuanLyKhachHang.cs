@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Data;
 using System.Windows.Forms;
-using shoe_store.controller;
+using QuanLyCuaHangGiay.controller;
 
-namespace shoe_store.view
+namespace QuanLyCuaHangGiay.view
 {
     public partial class frmQuanLyKhachHang : Form
     {

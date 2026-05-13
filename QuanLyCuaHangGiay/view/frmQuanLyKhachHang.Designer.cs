@@ -1,4 +1,4 @@
-﻿namespace shoe_store.view
+﻿namespace QuanLyCuaHangGiay.view
 {
     partial class frmQuanLyKhachHang
     {

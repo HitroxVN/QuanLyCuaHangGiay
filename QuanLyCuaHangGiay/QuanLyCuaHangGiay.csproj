@@ -113,6 +113,8 @@
     <Compile Include="database\DBConnection.cs" />
     <Compile Include="database\repository\BanHangRepository.cs" />
     <Compile Include="database\repository\CategoryRepository.cs" />
+    <Compile Include="database\repository\DonHangRepository.cs" />
+    <Compile Include="database\repository\KhachHangRepository.cs" />
     <Compile Include="database\repository\ProductRepository.cs" />
     <Compile Include="model\Categories.cs" />
     <Compile Include="model\ChiTietGioHang.cs" />

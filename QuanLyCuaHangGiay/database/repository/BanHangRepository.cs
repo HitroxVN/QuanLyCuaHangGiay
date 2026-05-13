@@ -130,5 +130,95 @@ namespace QuanLyCuaHangGiay.database.repository
             // Trả về DataTable (nếu có khách sẽ có 1 dòng dữ liệu, nếu không có sẽ rỗng)
             return DBConnection.GetDataTable(sql, pa);
         }
+
+        // =================================================================
+        // HÀM 4: THÊM KHÁCH HÀNG MỚI
+        // =================================================================
+        public void ThemKhachHangMoi(string hoTen, string sdt)
+        {
+            using (SqlConnection conn = DBConnection.GetDBConnection())
+            {
+                conn.Open();
+                string sqlCheck = "SELECT id, trangThai FROM KhachHang WHERE sdt = @sdt";
+                int? idKhach = null;
+                int trangThai = -1;
+
+                using (SqlCommand cmdCheck = new SqlCommand(sqlCheck, conn))
+                {
+                    cmdCheck.Parameters.AddWithValue("@sdt", sdt);
+                    using (SqlDataReader reader = cmdCheck.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            idKhach = Convert.ToInt32(reader["id"]);
+                            trangThai = reader["trangThai"] != DBNull.Value ? Convert.ToInt32(reader["trangThai"]) : 1;
+                        }
+                    }
+                }
+
+                if (idKhach.HasValue)
+                {
+                    if (trangThai == 1)
+                    {
+                        throw new Exception("Số điện thoại này đã tồn tại trong hệ thống!");
+                    }
+                    else
+                    {
+                        string sqlReactivate = @"UPDATE KhachHang 
+                                         SET hoTen = @hoTen, trangThai = 1, diemTichLuy = 0, ngayTao = GETDATE() 
+                                         WHERE id = @id";
+                        using (SqlCommand cmdUpdate = new SqlCommand(sqlReactivate, conn))
+                        {
+                            cmdUpdate.Parameters.AddWithValue("@hoTen", hoTen);
+                            cmdUpdate.Parameters.AddWithValue("@id", idKhach.Value);
+                            cmdUpdate.ExecuteNonQuery();
+                        }
+                    }
+                }
+                else
+                {
+                    string sqlInsert = @"INSERT INTO KhachHang (hoTen, sdt, diemTichLuy, trangThai, ngayTao) 
+                                 VALUES (@hoTen, @sdt, 0, 1, GETDATE())";
+                    using (SqlCommand cmdInsert = new SqlCommand(sqlInsert, conn))
+                    {
+                        cmdInsert.Parameters.AddWithValue("@hoTen", hoTen);
+                        cmdInsert.Parameters.AddWithValue("@sdt", sdt);
+                        cmdInsert.ExecuteNonQuery();
+                    }
+                }
+            }
+        }
+
+        // =================================================================
+        // HÀM 5: TẠO ĐƠN HÀNG MỚI
+        // =================================================================
+        public int TaoDonHangMoi(int taiKhoanID, decimal tongTien, decimal tongGia, string trangThai,
+                                 decimal chietKhau, string pttt, string ghiChu, int khachHangID, int diemSuDung)
+        {
+            string query = @"INSERT INTO DonHang 
+                    (taikhoanID, ngayTao, tongTien, tongGia, trangThai, chietKhau, pttt, ghiChu, khachhangID, diemSuDung) 
+                    VALUES 
+                    (@taiKhoanID, GETDATE(), @tongTien, @tongGia, @trangThai, @chietKhau, @pttt, @ghiChu, @khachHangID, @diemSuDung);
+                    SELECT SCOPE_IDENTITY();";
+
+            SqlParameter[] pa = new SqlParameter[]
+            {
+        new SqlParameter("@taiKhoanID", taiKhoanID),
+        new SqlParameter("@tongTien", tongTien),
+        new SqlParameter("@tongGia", tongGia),
+        new SqlParameter("@trangThai", trangThai),
+        new SqlParameter("@chietKhau", chietKhau),
+        new SqlParameter("@pttt", pttt),
+        new SqlParameter("@ghiChu", string.IsNullOrEmpty(ghiChu) ? "" : ghiChu), 
+        new SqlParameter("@khachHangID", khachHangID > 0 ? (object)khachHangID : DBNull.Value),
+        new SqlParameter("@diemSuDung", diemSuDung)
+            };
+            DataTable dt = DBConnection.GetDataTable(query, pa);
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                return Convert.ToInt32(dt.Rows[0][0]); 
+            }
+            return -1; 
+        }
     }
 }

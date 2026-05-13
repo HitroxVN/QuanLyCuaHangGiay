@@ -1,10 +1,10 @@
 ﻿using QuanLyCuaHangGiay.view;
-using shoe_store.controller; // Sếp kiểm tra lại namespace controller của mình nhé
+using QuanLyCuaHangGiay.controller;
 using System;
 using System.Data;
 using System.Windows.Forms;
 
-namespace shoe_store.view
+namespace QuanLyCuaHangGiay.view
 {
     public partial class frmQuanLyDonHang : Form
     {
