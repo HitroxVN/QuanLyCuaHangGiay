@@ -1,6 +1,4 @@
 using OfficeOpenXml;
-using OfficeOpenXml;
-using OfficeOpenXml.Style;
 using OfficeOpenXml.Style;
 using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.model;
@@ -8,7 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.Drawing;
 using System.IO;
 using System.Text;
