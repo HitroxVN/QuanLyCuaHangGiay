@@ -46,8 +46,7 @@ namespace QuanLyCuaHangGiay.controller
         {
             if (!Authorization.IsAdmin())
             {
-                MessageBox.Show("Không có quyền thêm danh mục.");
-                return false;
+                throw new UnauthorizedAccessException("Không có quyền thêm danh mục.");
             }
             if (string.IsNullOrWhiteSpace(tenDanhMuc))
             {
@@ -65,8 +64,7 @@ namespace QuanLyCuaHangGiay.controller
         {
             if (!Authorization.IsAdmin())
             {
-                MessageBox.Show("Không có quyền cập nhật danh mục.");
-                return false;
+                throw new UnauthorizedAccessException("Không có quyền cập nhật danh mục.");
             }
             if (id <= 0 || string.IsNullOrWhiteSpace(tenDanhMuc))
             {

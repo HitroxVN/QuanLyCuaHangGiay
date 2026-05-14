@@ -41,8 +41,7 @@ namespace QuanLyCuaHangGiay.controller
         {
             if (!Authorization.IsAdmin())
             {
-                MessageBox.Show("Không có quyền thêm danh mục.");
-                return false;
+                throw new UnauthorizedAccessException("Không có quyền thêm sản phẩm.");
             }
             // Kiểm tra dữ liệu đầu vào bắt buộc
             if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
@@ -61,8 +60,7 @@ namespace QuanLyCuaHangGiay.controller
         {
             if (!Authorization.IsAdmin())
             {
-                MessageBox.Show("Không có quyền cập nhật danh mục.");
-                return false;
+                throw new UnauthorizedAccessException("Không có quyền cập nhật sản phẩm.");
             }
             if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
             {
