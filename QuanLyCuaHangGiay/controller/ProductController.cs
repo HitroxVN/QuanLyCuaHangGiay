@@ -6,21 +6,14 @@ using QuanLyCuaHangGiay.util;
 
 namespace QuanLyCuaHangGiay.controller
 {
-
     internal class ProductController
     {
-
         private ProductRepository repo = new ProductRepository();
 
         // Lấy danh sách sản phẩm (Sử dụng hàm Join để hiển thị tên danh mục thay vì ID)
         public DataTable GetAllProducts()
         {
-            // Nếu là Nhân viên -> Chỉ cho xem sản phẩm Active
-            if (Authorization.IsStaff())
-            {
-                return repo.GetActiveProductsWithCategoryName();
-            }
-            // Nếu là Admin -> Cho xem tất cả
+            // ĐÃ SỬA: Xóa bỏ IF chặn quyền. Bây giờ cả Admin và Staff đều xem được TẤT CẢ sản phẩm
             return repo.GetAllWithCategoryName();
         }
 
@@ -67,7 +60,6 @@ namespace QuanLyCuaHangGiay.controller
             else
             {
                 // Admin -> Xóa cứng (Mất luôn khỏi CSDL)
-                // (Hoặc bạn có thể cho Admin xóa mềm luôn nếu muốn giữ lịch sử dữ liệu)
                 int result = repo.Delete(id);
                 return result > 0;
             }

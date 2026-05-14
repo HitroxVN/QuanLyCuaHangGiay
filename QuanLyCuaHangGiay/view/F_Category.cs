@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
 using QuanLyCuaHangGiay.controller;
 
@@ -7,52 +8,61 @@ namespace QuanLyCuaHangGiay.view
 {
     public partial class F_Category : Form
     {
-        // Khởi tạo Controller
         private CategoryController categoryController = new CategoryController();
-
-        // Biến lưu ID danh mục khi click vào bảng để Sửa/Xóa
         private int idDanhMucHienTai = -1;
 
-        public F_Category()
+        // BIẾN LƯU QUYỀN
+        private string _quyen = "";
+
+        // HÀM KHỞI TẠO CÓ NHẬN 1 THAM SỐ (ĐỂ SỬA LỖI CS1729)
+        public F_Category(string quyenDangNhap = "admin")
         {
             InitializeComponent();
 
-            // Gắn sự kiện Load form
+            _quyen = quyenDangNhap.ToLower();
+
             this.Load += F_Category_Load;
-
-            // Gắn sự kiện cho các nút bấm
-            button2.Click += button2_Click; // Thêm
-            button3.Click += button3_Click; // Sửa
-            button4.Click += button4_Click; // Xóa
-            button5.Click += button5_Click; // Làm mới
-
-            // Tìm kiếm tự động ngay khi gõ
+            button2.Click += button2_Click;
+            button3.Click += button3_Click;
+            button4.Click += button4_Click;
+            button5.Click += button5_Click;
             timkiem.TextChanged += timkiem_TextChanged;
-
-            // Sự kiện click vào bảng
             dataGridView1.CellClick += dataGridView1_CellClick;
         }
 
         private void F_Category_Load(object sender, EventArgs e)
         {
-            // KHÓA Ô ID: Chuyển ô textBox1 thành chỉ đọc (Chỉ xem, không sửa)
             textBox1.ReadOnly = true;
-            // Hoặc có thể dùng: textBox1.Enabled = false; (Nếu bạn muốn nó mờ đi)
+
+            // CHIẾN THUẬT MỚI: Nếu không phải "admin" thì cấm đụng vào mọi thứ
+            if (_quyen != "admin")
+            {
+                // 1. Khóa luôn các ô nhập liệu để cấm gõ
+                tendm.Enabled = false;
+                listtt.Enabled = false;
+
+                // 2. Tắt chức năng của các nút
+                button2.Enabled = false; // Khóa Thêm
+                button3.Enabled = false; // Khóa Sửa
+                button4.Enabled = false; // Khóa Xóa
+                button5.Enabled = false; // Khóa Xóa
+
+                // 3. Đổi màu nút thành xám xịt cho người dùng biết là đã bị cấm
+                button2.BackColor = Color.LightGray;
+                button3.BackColor = Color.LightGray;
+                button4.BackColor = Color.LightGray;
+            }
 
             LoadComboboxTrangThai();
             LoadData();
-
-            // Tự động hiển thị ID tiếp theo khi vừa mở Form
             LoadNextId();
         }
 
-        #region Các hàm hỗ trợ nạp dữ liệu
+        #region Nạp dữ liệu
 
-        // HÀM MỚI: Hiển thị ID tiếp theo sẽ được tạo
         private void LoadNextId()
         {
-            int nextId = categoryController.GetNextCategoryId();
-            textBox1.Text = nextId.ToString();
+            textBox1.Text = categoryController.GetNextCategoryId().ToString();
         }
 
         private void LoadComboboxTrangThai()
@@ -60,231 +70,165 @@ namespace QuanLyCuaHangGiay.view
             listtt.Items.Clear();
             listtt.Items.Add("active");
             listtt.Items.Add("inactive");
-            listtt.SelectedIndex = 0; // Mặc định chọn Active
+            listtt.SelectedIndex = 0;
         }
 
         private void LoadData()
         {
             dataGridView1.DataSource = categoryController.GetAllCategories();
-
-            // Đổi tên cột cho đẹp
             if (dataGridView1.Columns.Count > 0)
             {
                 dataGridView1.Columns["id"].HeaderText = "Mã Danh Mục";
                 dataGridView1.Columns["tenDanhMuc"].HeaderText = "Tên Danh Mục";
                 dataGridView1.Columns["ngayTao"].HeaderText = "Ngày Tạo";
                 dataGridView1.Columns["trangthai"].HeaderText = "Trạng Thái";
-
-                // Chỉnh độ rộng cột cho đẹp
                 dataGridView1.Columns["tenDanhMuc"].Width = 200;
             }
         }
+
         #endregion
 
-        #region HÀM KIỂM TRA DỮ LIỆU ĐẦU VÀO (VALIDATION)
+        #region Validation
 
-        // Trả về true nếu dữ liệu chuẩn, false nếu có lỗi
         private bool ValidateData()
         {
-            // 1. Kiểm tra để trống Tên danh mục
             if (string.IsNullOrWhiteSpace(tendm.Text))
             {
-                MessageBox.Show("Ô [Tên Danh Mục] đang bị trống!\nVui lòng nhập tên danh mục trước khi lưu.", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                tendm.Focus(); // Tự động đưa con trỏ chuột nhấp nháy vào ô bị lỗi
-                return false;
-            }
-
-            // 2. Kiểm tra độ dài Tên danh mục
-            if (tendm.Text.Length > 100)
-            {
-                MessageBox.Show("Ô [Tên Danh Mục] quá dài!\nVui lòng nhập dưới 100 ký tự.", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Ô [Tên Danh Mục] đang bị trống!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 tendm.Focus();
                 return false;
             }
-
-            // 3. Kiểm tra Trạng thái
-            if (listtt.SelectedIndex == -1 || listtt.SelectedItem == null)
+            if (tendm.Text.Length > 100)
             {
-                MessageBox.Show("Bạn chưa chọn [Trạng Thái] cho danh mục này!", "Cảnh báo nhập liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Tên danh mục quá dài (tối đa 100 ký tự)!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                tendm.Focus();
+                return false;
+            }
+            if (listtt.SelectedIndex == -1)
+            {
+                MessageBox.Show("Vui lòng chọn Trạng Thái!", "Cảnh báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 listtt.Focus();
                 return false;
             }
-
             return true;
         }
 
         #endregion
 
-        #region Sự kiện Nút bấm (CRUD)
+        #region Sự kiện nút bấm
 
-        // Nút: Thêm
         private void button2_Click(object sender, EventArgs e)
         {
-            // BƯỚC CHẶN 1: Nếu đang chọn danh mục cũ thì không cho thêm
             if (idDanhMucHienTai > 0)
             {
-                MessageBox.Show("Bạn đang chọn một danh mục đã có sẵn!\n- Nếu muốn thay đổi thông tin, hãy bấm nút [Sửa].\n- Nếu muốn thêm mới hoàn toàn, hãy bấm nút [Làm mới] trước khi thêm.", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Đang chọn danh mục cũ. Bấm [Làm mới] nếu muốn thêm mới.", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
-            // BƯỚC CHẶN 2: Validation
             if (!ValidateData()) return;
 
             string ten = tendm.Text.Trim();
-
-            // ==========================================================
-            // TÍNH NĂNG MỚI: BƯỚC CHẶN 3 - KIỂM TRA TRÙNG LẶP
-            // ==========================================================
-            DataTable dtAll = categoryController.GetAllCategories();
-            foreach (DataRow row in dtAll.Rows)
+            foreach (DataRow row in categoryController.GetAllCategories().Rows)
             {
-                // So sánh không phân biệt hoa/thường (OrdinalIgnoreCase)
                 if (row["tenDanhMuc"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase))
                 {
-                    MessageBox.Show("Tên danh mục này ĐÃ TỒN TẠI trong hệ thống!\nVui lòng nhập một tên khác để tránh nhầm lẫn.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Tên danh mục đã tồn tại!", "Trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tendm.Focus();
-                    return; // Dừng lại ngay, chặn không cho Insert xuống Database
+                    return;
                 }
             }
-            // ==========================================================
 
-            string trangThai = listtt.SelectedItem.ToString();
-
-            bool isSuccess = categoryController.AddCategory(ten, trangThai);
-
-            if (isSuccess)
+            if (categoryController.AddCategory(ten, listtt.SelectedItem.ToString()))
             {
-                MessageBox.Show("Thêm danh mục thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
-                button5_Click(sender, e); // Xóa trắng và Load lại ID mới
+                MessageBox.Show("Thêm thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                button5_Click(sender, e);
             }
             else
-            {
-                MessageBox.Show("Thêm thất bại. Vui lòng kiểm tra lại thông tin!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+                MessageBox.Show("Thêm thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        // Nút: Sửa
         private void button3_Click(object sender, EventArgs e)
         {
             if (idDanhMucHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng click chọn một danh mục từ bảng bên dưới để sửa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Vui lòng chọn một danh mục từ bảng để sửa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
             if (!ValidateData()) return;
 
             string ten = tendm.Text.Trim();
-
-            // ==========================================================
-            // TÍNH NĂNG MỚI: KIỂM TRA TRÙNG LẶP KHI SỬA
-            // ==========================================================
-            DataTable dtAll = categoryController.GetAllCategories();
-            foreach (DataRow row in dtAll.Rows)
+            foreach (DataRow row in categoryController.GetAllCategories().Rows)
             {
-                // Bỏ qua chính cái danh mục mình đang thao tác (kiểm tra qua ID)
                 if (Convert.ToInt32(row["id"]) == idDanhMucHienTai) continue;
-
-                // Nếu tên trùng với một dòng KHÁC trong database
                 if (row["tenDanhMuc"].ToString().Equals(ten, StringComparison.OrdinalIgnoreCase))
                 {
-                    MessageBox.Show("Tên danh mục này ĐÃ BỊ TRÙNG với một danh mục khác!\nVui lòng đổi tên khác.", "Cảnh báo trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Tên danh mục đã bị trùng!", "Trùng lặp", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     tendm.Focus();
-                    return; // Chặn không cho Update
+                    return;
                 }
             }
-            // ==========================================================
 
-            string trangThai = listtt.SelectedItem.ToString();
-
-            bool isSuccess = categoryController.UpdateCategory(idDanhMucHienTai, ten, trangThai);
-
-            if (isSuccess)
+            if (categoryController.UpdateCategory(idDanhMucHienTai, ten, listtt.SelectedItem.ToString()))
             {
-                MessageBox.Show("Cập nhật danh mục thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                LoadData();
+                MessageBox.Show("Cập nhật thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 button5_Click(sender, e);
             }
             else
-            {
                 MessageBox.Show("Cập nhật thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
-        // Nút: Xóa
         private void button4_Click(object sender, EventArgs e)
         {
             if (idDanhMucHienTai <= 0)
             {
-                MessageBox.Show("Vui lòng click chọn một danh mục từ bảng bên dưới để xóa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Vui lòng chọn một danh mục từ bảng để xóa!", "Hướng dẫn", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
-
-            DialogResult dialogResult = MessageBox.Show("Bạn có chắc chắn muốn xóa danh mục này?", "Xác nhận xóa", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
-
-            if (dialogResult == DialogResult.Yes)
+            if (MessageBox.Show("Bạn có chắc muốn xóa danh mục này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 try
                 {
                     if (categoryController.DeleteCategory(idDanhMucHienTai))
                     {
                         MessageBox.Show("Xóa thành công!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                        LoadData();
                         button5_Click(sender, e);
                     }
                     else
-                    {
                         MessageBox.Show("Xóa thất bại!", "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Lỗi Ràng Buộc Dữ Liệu", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }
 
-        // Nút: Làm mới
         private void button5_Click(object sender, EventArgs e)
         {
             tendm.Clear();
             listtt.SelectedIndex = 0;
             timkiem.Clear();
             idDanhMucHienTai = -1;
-
-            LoadData(); // Nạp lại bảng
-            LoadNextId(); // GỌI LẠI HÀM NÀY ĐỂ SHOW SỐ ID MỚI NHẤT
+            LoadData();
+            LoadNextId();
         }
 
-        // Sự kiện: Tìm kiếm tự động
         private void timkiem_TextChanged(object sender, EventArgs e)
         {
-            string keyword = timkiem.Text.Trim();
-            dataGridView1.DataSource = categoryController.SearchCategory(keyword);
+            dataGridView1.DataSource = categoryController.SearchCategory(timkiem.Text.Trim());
         }
 
-        // Sự kiện: Click vào dòng trên DataGridView
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
-            {
-                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            if (e.RowIndex < 0 || dataGridView1.Rows[e.RowIndex].IsNewRow) return;
+            DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+            if (row.Cells["id"].Value == null || row.Cells["id"].Value == DBNull.Value) return;
 
-                if (row.Cells["id"].Value != DBNull.Value && row.Cells["id"].Value != null)
-                {
-                    idDanhMucHienTai = Convert.ToInt32(row.Cells["id"].Value);
-
-                    // HIỂN THỊ ID LÊN TEXTBOX KHI CLICK
-                    textBox1.Text = idDanhMucHienTai.ToString();
-
-                    tendm.Text = row.Cells["tenDanhMuc"].Value.ToString();
-                    listtt.Text = row.Cells["trangthai"].Value.ToString();
-                }
-            }
+            idDanhMucHienTai = Convert.ToInt32(row.Cells["id"].Value);
+            textBox1.Text = idDanhMucHienTai.ToString();
+            tendm.Text = row.Cells["tenDanhMuc"].Value.ToString();
+            listtt.Text = row.Cells["trangthai"].Value.ToString();
         }
 
-        // Các sự kiện rác trên giao diện
         private void label1_Click(object sender, EventArgs e) { }
         private void label2_Click(object sender, EventArgs e) { }
         private void label3_Click(object sender, EventArgs e) { }

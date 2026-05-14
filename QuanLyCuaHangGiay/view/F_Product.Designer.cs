@@ -28,8 +28,6 @@
             this.label4 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.kichco = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.listtt = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.button5 = new System.Windows.Forms.Button();
             this.button4 = new System.Windows.Forms.Button();
@@ -48,6 +46,8 @@
             this.soluong = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.listtt = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.picture)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
@@ -149,24 +149,6 @@
             this.kichco.Name = "kichco";
             this.kichco.Size = new System.Drawing.Size(200, 27);
             this.kichco.TabIndex = 10;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(20, 395);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(81, 20);
-            this.label6.TabIndex = 13;
-            this.label6.Text = "Trạng Thái:";
-            // 
-            // listtt
-            // 
-            this.listtt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.listtt.FormattingEnabled = true;
-            this.listtt.Location = new System.Drawing.Point(130, 392);
-            this.listtt.Name = "listtt";
-            this.listtt.Size = new System.Drawing.Size(200, 28);
-            this.listtt.TabIndex = 14;
             // 
             // groupBox1
             // 
@@ -320,7 +302,7 @@
             // 
             // soluong
             // 
-            this.soluong.Location = new System.Drawing.Point(130, 432);
+            this.soluong.Location = new System.Drawing.Point(130, 398);
             this.soluong.Name = "soluong";
             this.soluong.ReadOnly = true;
             this.soluong.Size = new System.Drawing.Size(200, 27);
@@ -329,7 +311,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(20, 435);
+            this.label10.Location = new System.Drawing.Point(20, 401);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(72, 20);
             this.label10.TabIndex = 28;
@@ -337,6 +319,8 @@
             // 
             // groupBox2
             // 
+            this.groupBox2.Controls.Add(this.label6);
+            this.groupBox2.Controls.Add(this.listtt);
             this.groupBox2.Controls.Add(this.picture);
             this.groupBox2.Controls.Add(this.button1);
             this.groupBox2.Controls.Add(this.label9);
@@ -351,8 +335,6 @@
             this.groupBox2.Controls.Add(this.mau);
             this.groupBox2.Controls.Add(this.label5);
             this.groupBox2.Controls.Add(this.kichco);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.listtt);
             this.groupBox2.Controls.Add(this.label10);
             this.groupBox2.Controls.Add(this.soluong);
             this.groupBox2.Location = new System.Drawing.Point(12, 79);
@@ -361,6 +343,24 @@
             this.groupBox2.TabIndex = 30;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Thông tin sản phẩm";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(20, 440);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(81, 20);
+            this.label6.TabIndex = 30;
+            this.label6.Text = "Trạng Thái:";
+            // 
+            // listtt
+            // 
+            this.listtt.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.listtt.FormattingEnabled = true;
+            this.listtt.Location = new System.Drawing.Point(130, 437);
+            this.listtt.Name = "listtt";
+            this.listtt.Size = new System.Drawing.Size(200, 28);
+            this.listtt.TabIndex = 31;
             // 
             // F_Product
             // 
@@ -404,8 +404,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox kichco;
-        private System.Windows.Forms.Label label6;
-        private System.Windows.Forms.ComboBox listtt;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.Panel panel1;
@@ -424,5 +422,7 @@
         private System.Windows.Forms.TextBox soluong;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.ComboBox listtt;
     }
 }

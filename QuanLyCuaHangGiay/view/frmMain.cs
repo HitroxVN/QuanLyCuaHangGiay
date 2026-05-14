@@ -96,12 +96,14 @@ namespace QuanLyCuaHangGiay.view
 
         private void sảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenForm(new F_Product());
+            string quyen = Session.user.quyen.ToLower();
+            OpenForm(new F_Product(quyen));
         }
 
         private void danhMụcSảnPhẩmToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            OpenForm(new F_Category());
+            string quyen = Session.user.quyen.ToLower();
+            OpenForm(new F_Category(quyen));
         }
     }
 }
