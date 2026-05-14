@@ -1,8 +1,9 @@
-﻿using System;
+using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using System.IO;
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -139,19 +140,49 @@ namespace QuanLyCuaHangGiay.view
         }
 
         private void LoadAnhVaoKhung(string tenFile)
+{
+    if (string.IsNullOrEmpty(tenFile)) return;
+
+    try
+    {
+        // Try bin\Debug\Images first
+        string thuMucAnh = Path.Combine(Application.StartupPath, "Images");
+        string duongDanDayDu = Path.Combine(thuMucAnh, tenFile);
+
+        System.Diagnostics.Debug.WriteLine("Đường dẫn ảnh (thử 1): " + duongDanDayDu);
+
+        if (!File.Exists(duongDanDayDu))
         {
-            if (string.IsNullOrEmpty(tenFile)) return;
-            try
-            {
-                string thuMucGoc = @"C:\BaitapTrenLop\.Net\QL_Giay\QuanLyCuaHangGiay\Images";
-                string duongDanDayDu = System.IO.Path.Combine(thuMucGoc, tenFile);
-                if (System.IO.File.Exists(duongDanDayDu))
-                {
-                    if (picAnh.Image != null) picAnh.Image.Dispose();
-                    picAnh.Image = Image.FromFile(duongDanDayDu);
-                }
-            }
-            catch { }
+            // Fallback to project Images folder
+            thuMucAnh = Path.Combine(Application.StartupPath, @"..\..\Images");
+            duongDanDayDu = Path.Combine(thuMucAnh, tenFile);
+            System.Diagnostics.Debug.WriteLine("Đường dẫn ảnh (thử 2): " + duongDanDayDu);
         }
+
+        if (File.Exists(duongDanDayDu))
+        {
+            if (picAnh.Image != null)
+            {
+                picAnh.Image.Dispose();
+                picAnh.Image = null;
+            }
+
+            using (var imgTemp = Image.FromFile(duongDanDayDu))
+            {
+                picAnh.Image = new Bitmap(imgTemp);
+            }
+
+            System.Diagnostics.Debug.WriteLine("Load ảnh thành công");
+        }
+        else
+        {
+            System.Diagnostics.Debug.WriteLine("Không tìm thấy ảnh");
+        }
+    }
+    catch (Exception ex)
+    {
+        System.Diagnostics.Debug.WriteLine("Lỗi load ảnh: " + ex.Message);
+    }
+}
     }
 }

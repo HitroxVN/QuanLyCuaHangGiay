@@ -1574,7 +1574,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Nguyễn Quang Toàn</Value>
+                  <Value>=Parameters!NguoiTao.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                     <FontSize>12pt</FontSize>
@@ -1608,7 +1608,7 @@
             <Paragraph>
               <TextRuns>
                 <TextRun>
-                  <Value>Nguyễn Quang Toàn</Value>
+                  <Value>=Parameters!NguoiTao.Value</Value>
                   <Style>
                     <FontFamily>times New Roman</FontFamily>
                     <FontSize>12pt</FontSize>
@@ -1724,6 +1724,12 @@
       </rd:DataSetInfo>
     </DataSet>
   </DataSets>
+  <ReportParameters>
+    <ReportParameter Name="NguoiTao">
+      <DataType>String</DataType>
+      <Prompt>Nguoi Tao</Prompt>
+    </ReportParameter>
+  </ReportParameters>
   <rd:ReportUnitType>Inch</rd:ReportUnitType>
   <rd:ReportID>0a79802b-b819-4e6c-9015-2db75770b262</rd:ReportID>
 </Report>

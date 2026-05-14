@@ -1,4 +1,4 @@
-﻿using Microsoft.Reporting.WinForms;
+using Microsoft.Reporting.WinForms;
 using QuanLyCuaHangGiay.database.repository;
 using System;
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ namespace QuanLyCuaHangGiay.view
 {
     public partial class frmReport : Form
     {
-        public frmReport(string reportName, DataTable dt)
+        public frmReport(string reportName, DataTable dt, string nguoiTao = null)
         {
             InitializeComponent();
 
@@ -26,6 +26,12 @@ namespace QuanLyCuaHangGiay.view
 
             reportViewer1.LocalReport.DataSources.Clear();
             reportViewer1.LocalReport.DataSources.Add(rds);
+
+            if (!string.IsNullOrEmpty(nguoiTao))
+            {
+                ReportParameter[] parameters = new ReportParameter[] { new ReportParameter("NguoiTao", nguoiTao) };
+                reportViewer1.LocalReport.SetParameters(parameters);
+            }
 
             reportViewer1.RefreshReport();
         }

@@ -121,6 +121,7 @@ namespace QuanLyCuaHangGiay.view
                 string colAnh = nhom.First().Table.Columns.Contains("Anh") ? "Anh" : "anh";
                 var dongCoAnh = nhom.FirstOrDefault(r => r[colAnh] != DBNull.Value && !string.IsNullOrWhiteSpace(r[colAnh].ToString()));
                 string anhSP = dongCoAnh != null ? dongCoAnh[colAnh].ToString() : "";
+                System.Diagnostics.Debug.WriteLine("Sản phẩm: " + tenGiay + ", Ảnh: " + anhSP);
                 DataRow[] cacBienThe = nhom.ToArray();
                 ucSanPham uc = new ucSanPham();
                 uc.LoadData(tenGiay, anhSP, cacBienThe);

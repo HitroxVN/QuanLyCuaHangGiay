@@ -205,7 +205,8 @@ namespace QuanLyCuaHangGiay.view
 
                     if (dtReport != null && dtReport.Rows.Count > 0)
                     {
-                        frmReport frm = new frmReport("QuanLyCuaHangGiay.ReportPhieuNhap.rdlc", dtReport);
+                        string nguoiTao = Session.user?.hoTen ?? "Người tạo";
+                        frmReport frm = new frmReport("QuanLyCuaHangGiay.ReportPhieuNhap.rdlc", dtReport, nguoiTao);
                         frm.ShowDialog();
                     }
                     else
