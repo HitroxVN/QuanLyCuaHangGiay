@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using QuanLyCuaHangGiay.model;
@@ -8,17 +9,49 @@ namespace QuanLyCuaHangGiay.database.repository
 {
     internal class ProductRepository
     {
-        // 1. Lấy tất cả sản phẩm
-        public DataTable GetAll()
+        public DataTable SearchAndFilter(string keyword, int categoryId, string status)
         {
-            string sql = "SELECT * FROM SanPham";
-            return DBConnection.GetDataTable(sql);
+            // Câu SQL gốc có JOIN để lấy được tên Danh Mục
+            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, sp.soLuong, 
+                                  sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
+                           FROM SanPham sp
+                           INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id
+                           WHERE 1=1"; // 1=1 là mẹo để nối các lệnh AND bên dưới dễ dàng
+
+            List<SqlParameter> paramList = new List<SqlParameter>();
+
+            // Nếu có gõ từ khóa
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                sql += " AND sp.tenSP LIKE @keyword";
+                paramList.Add(new SqlParameter("@keyword", "%" + keyword + "%"));
+            }
+
+            // Nếu có chọn Danh mục (Khác "Tất cả" - mặc định id sẽ > 0)
+            if (categoryId > 0)
+            {
+                sql += " AND sp.danhmucID = @categoryId";
+                paramList.Add(new SqlParameter("@categoryId", categoryId));
+            }
+
+            // Nếu có chọn Trạng thái (Khác "Tất cả")
+            if (status != "Tất cả" && !string.IsNullOrEmpty(status))
+            {
+                sql += " AND sp.trangthai = @status";
+                paramList.Add(new SqlParameter("@status", status));
+            }
+
+            // Sắp xếp mã sản phẩm mới nhất lên đầu tiên
+            sql += " ORDER BY sp.id DESC";
+
+            // Chuyển List parameter thành mảng và thực thi
+            return DBConnection.GetDataTable(sql, paramList.ToArray());
         }
+
 
         // 2. Thêm sản phẩm mới 
         public int Insert(Products sp)
         {
-            // MẶC ĐỊNH BẰNG 0: Mình truyền cứng số 0 vào câu SQL luôn để đảm bảo khi thêm mới chắc chắn số lượng là 0
             string sql = @"INSERT INTO SanPham (tenSP, gia, anh, mau, kichco, danhmucID, trangthai, soLuong) 
                            VALUES (@tenSP, @gia, @anh, @mau, @kichco, @danhmucID, @trangthai, 0)";
 
@@ -38,7 +71,6 @@ namespace QuanLyCuaHangGiay.database.repository
         // 3. Cập nhật thông tin sản phẩm
         public int Update(Products sp)
         {
-            // Đã bổ sung soLuong = @soLuong để sau này làm chức năng nhập kho
             string sql = @"UPDATE SanPham 
                            SET tenSP = @tenSP, gia = @gia, anh = @anh, mau = @mau, 
                                kichco = @kichco, danhmucID = @danhmucID, trangthai = @trangthai, soLuong = @soLuong 
@@ -54,14 +86,12 @@ namespace QuanLyCuaHangGiay.database.repository
                 new SqlParameter("@kichco", sp.KichCo),
                 new SqlParameter("@danhmucID", sp.DanhMucID),
                 new SqlParameter("@trangthai", sp.TrangThai),
-                
-                // Thuộc tính sp.SoLuong này sẽ lấy từ class model Products
                 new SqlParameter("@soLuong", sp.SoLuong)
             };
             return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
-        // 4. Xóa sản phẩm
+        // 4. Xóa cứng sản phẩm
         public int Delete(int id)
         {
             string sql = "DELETE FROM SanPham WHERE id = @id";
@@ -72,41 +102,7 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
-        // 5. Tìm kiếm sản phẩm theo tên
-        public DataTable Search(string keyword)
-        {
-            string sql = "SELECT * FROM SanPham WHERE tenSP LIKE @keyword";
-            SqlParameter[] parameters = new SqlParameter[]
-            {
-                new SqlParameter("@keyword", "%" + keyword + "%")
-            };
-            return DBConnection.GetDataTable(sql, parameters);
-        }
-
-        // 6. Lấy danh sách sản phẩm kèm tên danh mục
-        public DataTable GetAllWithCategoryName()
-        {
-            // BỔ SUNG: sp.soLuong vào câu SELECT để hiển thị lên bảng
-            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, sp.soLuong, 
-                                  sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
-                           FROM SanPham sp
-                           INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id";
-            return DBConnection.GetDataTable(sql);
-        }
-
-        // Hàm 1: Chỉ lấy sản phẩm Active (dành cho Staff)
-        public DataTable GetActiveProductsWithCategoryName()
-        {
-            // BỔ SUNG: sp.soLuong vào câu SELECT để hiển thị lên bảng
-            string sql = @"SELECT sp.id, sp.tenSP, sp.gia, sp.anh, sp.mau, sp.kichco, sp.soLuong, 
-                                  sp.trangthai, sp.ngayTao, dm.tenDanhMuc 
-                           FROM SanPham sp
-                           INNER JOIN DanhMuc dm ON sp.danhmucID = dm.id
-                           WHERE sp.trangthai = 'active'";
-            return DBConnection.GetDataTable(sql);
-        }
-
-        // Hàm 2: Xóa mềm (Chỉ đổi trạng thái thành Inactive)
+        // 5. Xóa mềm (Đổi trạng thái thành Inactive)
         public int ChangeStatus(int id, string status)
         {
             string sql = "UPDATE SanPham SET trangthai = @status WHERE id = @id";
@@ -117,7 +113,7 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(sql, p);
         }
 
-        // Lấy ID tiếp theo sẽ được tạo cho Sản phẩm (MAX + 1)
+        // 6. Lấy ID tiếp theo sẽ được tạo
         public int GetNextProductId()
         {
             string sql = "SELECT MAX(id) FROM SanPham";

@@ -51,68 +51,63 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
-        // 5. Tìm kiếm danh mục theo tên
-        public DataTable Search(string keyword)
+        // 5. Tìm kiếm danh mục theo tên VÀ lọc theo trạng thái
+        public DataTable Search(string keyword, string status)
         {
             string sql = "SELECT * FROM DanhMuc WHERE tenDanhMuc LIKE @keyword";
-            SqlParameter[] parameters = new SqlParameter[]
+
+            if (status != "Tất cả" && !string.IsNullOrEmpty(status))
             {
-                new SqlParameter("@keyword", "%" + keyword + "%")
-            };
-            return DBConnection.GetDataTable(sql, parameters);
+                sql += " AND trangthai = @status";
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@keyword", "%" + keyword + "%"),
+                    new SqlParameter("@status", status)
+                };
+                return DBConnection.GetDataTable(sql, parameters);
+            }
+            else
+            {
+                SqlParameter[] parameters = new SqlParameter[]
+                {
+                    new SqlParameter("@keyword", "%" + keyword + "%")
+                };
+                return DBConnection.GetDataTable(sql, parameters);
+            }
         }
 
-        // Hàm mới: Chỉ lấy các danh mục có trạng thái là 'Active'
-        public DataTable GetActiveCategories()
-        {
-            string sql = "SELECT * FROM DanhMuc WHERE trangthai = 'Active'";
-            return DBConnection.GetDataTable(sql);
-        }
-
-        // Xóa mềm danh mục
-        public int ChangeStatus(int id, string status)
-        {
-            string sql = "UPDATE DanhMuc SET trangthai = @status WHERE id = @id";
-            SqlParameter[] p = {
-                new SqlParameter("@id", id),
-                new SqlParameter("@status", status)
-            };
-            return DBConnection.ExecuteNonQuery(sql, p);
-        }
-
-        //Kiểm tra danh mục có sản phẩm không
+        // 6. Kiểm tra danh mục có chứa sản phẩm không
         public bool CheckHasProduct(int idDanhMuc)
         {
             string sql = "SELECT COUNT(*) FROM SanPham WHERE danhmucID = @id";
-
-            System.Data.SqlClient.SqlParameter[] p = {
-                new System.Data.SqlClient.SqlParameter("@id", idDanhMuc)
-            };
-
+            SqlParameter[] p = { new SqlParameter("@id", idDanhMuc) };
             DataTable dt = DBConnection.GetDataTable(sql, p);
 
             if (dt != null && dt.Rows.Count > 0)
             {
-                int count = Convert.ToInt32(dt.Rows[0][0]);
-                return count > 0; // Nếu count > 0 tức là có sản phẩm (trả về true)
+                return Convert.ToInt32(dt.Rows[0][0]) > 0;
             }
             return false;
         }
 
-        // Lấy ID tiếp theo sẽ được tạo (MAX + 1)
+        // 7. Lấy ID tự tăng tiếp theo
         public int GetNextCategoryId()
         {
             string sql = "SELECT MAX(id) FROM DanhMuc";
             DataTable dt = DBConnection.GetDataTable(sql);
 
-            // Nếu có dữ liệu và không bị Null
             if (dt != null && dt.Rows.Count > 0 && dt.Rows[0][0] != DBNull.Value)
             {
                 return Convert.ToInt32(dt.Rows[0][0]) + 1;
             }
-            // Nếu bảng đang trống, ID đầu tiên sẽ là 1
             return 1;
         }
 
+        // 8. Lấy danh mục đang Active (Dành riêng cho Form Sản Phẩm gọi tới)
+        public DataTable GetActiveCategories()
+        {
+            string sql = "SELECT * FROM DanhMuc WHERE trangthai = 'Active'";
+            return DBConnection.GetDataTable(sql);
+        }
     }
 }

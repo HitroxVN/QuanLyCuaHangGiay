@@ -8,113 +8,71 @@ namespace QuanLyCuaHangGiay.controller
 {
     internal class CategoryController
     {
+        private CategoryRepository repo = new CategoryRepository();
+
         public CategoryController()
         {
-            if (
-                !Authorization.IsAdmin() &&
-                !Authorization.IsStaff()
-               )
+            if (!Authorization.IsAdmin() && !Authorization.IsStaff())
             {
-                throw new UnauthorizedAccessException(
-                    "Không có quyền"
-                );
+                throw new UnauthorizedAccessException("Không có quyền truy cập hệ thống.");
             }
         }
 
-        private CategoryRepository repo = new CategoryRepository();
-
-        //  Lấy danh sách thể loại
+        // Lấy danh sách thể loại (Admin & Staff đều xem được)
         public DataTable GetAllCategories()
         {
-            // Nhân viên chỉ xem danh mục Active
-            if (Authorization.IsStaff())
-            {
-                return repo.GetActiveCategories();
-            }
-            // Admin xem toàn bộ
             return repo.GetAll();
         }
 
-        // Lấy ID tự tăng tiếp theo
+        // Lấy ID tự tăng
         public int GetNextCategoryId()
         {
             return repo.GetNextCategoryId();
         }
 
-        //  Thêm thể loại mới
+        // Thêm thể loại
         public bool AddCategory(string tenDanhMuc, string trangThai)
         {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền thêm danh mục.");
-            }
-            if (string.IsNullOrWhiteSpace(tenDanhMuc))
-            {
-                return false;
-            }
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới có quyền thêm.");
+            if (string.IsNullOrWhiteSpace(tenDanhMuc)) return false;
 
             Categories cat = new Categories(tenDanhMuc, trangThai);
-            int result = repo.Insert(cat);
-
-            return result > 0;
+            return repo.Insert(cat) > 0;
         }
 
-        //  Cập nhật thể loại
+        // Cập nhật thể loại
         public bool UpdateCategory(int id, string tenDanhMuc, string trangThai)
         {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền cập nhật danh mục.");
-            }
-            if (id <= 0 || string.IsNullOrWhiteSpace(tenDanhMuc))
-            {
-                return false;
-            }
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới có quyền cập nhật.");
+            if (id <= 0 || string.IsNullOrWhiteSpace(tenDanhMuc)) return false;
 
             Categories cat = new Categories(id, tenDanhMuc, DateTime.Now, trangThai);
-            int result = repo.Update(cat);
-
-            return result > 0;
+            return repo.Update(cat) > 0;
         }
 
-        //  XÓA THỂ LOẠI (Đã được nâng cấp kiểm tra ràng buộc)
+        // Xóa thể loại
         public bool DeleteCategory(int id)
         {
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới có quyền xóa.");
             if (id <= 0) return false;
 
-            //  Gọi hàm CheckHasProduct từ Repository
             if (repo.CheckHasProduct(id))
             {
-                // Nếu có sản phẩm, ném ra lỗi này để Form bắt được và hiện MessageBox
                 throw new Exception("Không thể thực hiện! Danh mục này vẫn đang chứa sản phẩm.");
             }
 
-            // NẾU AN TOÀN (Không có sản phẩm) -> Tiến hành xóa
-            if (Authorization.IsStaff())
-            {
-                // Nhân viên xóa mềm (đổi trạng thái)
-                int result = repo.ChangeStatus(id, "inactive");
-                return result > 0;
-            }
-            else
-            {
-                // Admin xóa cứng khỏi database
-                int result = repo.Delete(id);
-                return result > 0;
-            }
+            return repo.Delete(id) > 0;
         }
 
-        // 5. Tìm kiếm thể loại
-        public DataTable SearchCategory(string keyword)
+        // TÌM KIẾM VÀ LỌC
+        public DataTable SearchCategory(string keyword, string status)
         {
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                return GetAllCategories();
-            }
-            return repo.Search(keyword);
+            if (keyword == null) keyword = "";
+            if (status == null) status = "Tất cả";
+
+            return repo.Search(keyword, status);
         }
 
-        // 6. Lấy danh mục Active cho ComboBox bên form Sản phẩm
         public DataTable GetActiveCategories()
         {
             return repo.GetActiveCategories();
