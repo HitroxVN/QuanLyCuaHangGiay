@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.database.repository;
+using QuanLyCuaHangGiay.database.repository;
 using QuanLyCuaHangGiay.Database;
 using QuanLyCuaHangGiay.util;
 using System;
@@ -41,6 +41,11 @@ namespace QuanLyCuaHangGiay.controller
             }
 
             return _repo.GetLichSuNhapHang(tuNgay, denNgay, nhaCungCapID, tuKhoa);
+        }
+
+        public DataTable GetPhieuNhapByTime(DateTime thoiGian)
+        {
+            return _repo.GetPhieuNhapByTime(thoiGian);
         }
     }
 }

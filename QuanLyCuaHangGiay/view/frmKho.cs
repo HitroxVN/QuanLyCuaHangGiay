@@ -1,4 +1,5 @@
 using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -83,6 +84,43 @@ namespace QuanLyCuaHangGiay.view
             if (cbLocNCC.SelectedIndex > -1 && cbLocNCC.ValueMember != "")
             {
                 LoadDataLichSu();
+            }
+        }
+
+        private void btnInPhieu_Click(object sender, EventArgs e)
+        {
+            if (dgvKho.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("Vui lòng chọn một dòng phiếu nhập để in.", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                DataGridViewRow row = dgvKho.SelectedRows[0];
+
+                // Lấy thời gian nhập từ dòng được chọn
+                // Vì khi nhập hàng, tất cả sản phẩm trong 1 đơn nhập đều có cùng thoiGian
+                // nên lấy theo thoiGian sẽ ra đầy đủ các sản phẩm trong đơn đó
+                DateTime thoiGianNhap = Convert.ToDateTime(row.Cells["Ngày Nhập"].Value);
+
+                // Lấy dữ liệu đầy đủ từ DB (bao gồm tenNCC, diaChi, sdt, tenDanhMuc, mau, kichco...)
+                DataTable dtReport = _controller.GetPhieuNhapByTime(thoiGianNhap);
+
+                if (dtReport != null && dtReport.Rows.Count > 0)
+                {
+                    string nguoiTao = Session.user?.hoTen ?? "Người tạo";
+                    frmReport frm = new frmReport("QuanLyCuaHangGiay.ReportPhieuNhap.rdlc", dtReport, nguoiTao);
+                    frm.ShowDialog();
+                }
+                else
+                {
+                    MessageBox.Show("Không tìm thấy dữ liệu phiếu nhập để in!", "Thông báo", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("Lỗi khi in phiếu nhập: " + ex.Message, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }
