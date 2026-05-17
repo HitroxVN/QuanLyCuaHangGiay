@@ -102,17 +102,6 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(sql, parameters);
         }
 
-        // 5. Xóa mềm (Đổi trạng thái thành Inactive)
-        public int ChangeStatus(int id, string status)
-        {
-            string sql = "UPDATE SanPham SET trangthai = @status WHERE id = @id";
-            SqlParameter[] p = {
-                new SqlParameter("@id", id),
-                new SqlParameter("@status", status)
-            };
-            return DBConnection.ExecuteNonQuery(sql, p);
-        }
-
         // 6. Lấy ID tiếp theo sẽ được tạo
         public int GetNextProductId()
         {

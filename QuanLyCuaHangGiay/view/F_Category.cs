@@ -1,7 +1,9 @@
-﻿using System;
+﻿using QuanLyCuaHangGiay.controller;
+using System;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
-using QuanLyCuaHangGiay.controller;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Button;
 
 namespace QuanLyCuaHangGiay.view
 {
@@ -53,7 +55,8 @@ namespace QuanLyCuaHangGiay.view
                 button2.Visible = false; 
                 button3.Visible = false; 
                 button4.Visible = false; 
-                button5.Visible = false; 
+                button5.Visible = false;
+                groupBox1.Visible = false;
 
                 tendm.Enabled = false;   
                 listtt.Enabled = false;  
@@ -87,6 +90,10 @@ namespace QuanLyCuaHangGiay.view
         private void LocVaTimKiem()
         {
             string keyword = timkiem.Text.Trim();
+            if (keyword == "Tìm kiếm theo tên danh mục ...")
+            {
+                keyword = ""; 
+            }
             string status = comboBox1.SelectedItem != null ? comboBox1.SelectedItem.ToString() : "Tất cả";
 
             dataGridView1.DataSource = categoryController.SearchCategory(keyword, status);
@@ -236,5 +243,25 @@ namespace QuanLyCuaHangGiay.view
         private void label3_Click(object sender, EventArgs e) { }
         private void label4_Click(object sender, EventArgs e) { }
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e) { }
+
+        private void timkiem_Enter(object sender, EventArgs e)
+        {
+            // Nếu chữ trong ô đang là chữ gợi ý thì xóa đi và đổi màu chữ thành đen
+            if (timkiem.Text == "Tìm kiếm theo tên danh mục ...")
+            {
+                timkiem.Text = "";
+                timkiem.ForeColor = Color.Black;
+            }
+        }
+
+        private void timkiem_Leave(object sender, EventArgs e)
+        {
+            // Nếu người dùng không nhập gì cả (ô text trống) thì hiển thị lại chữ gợi ý
+            if (string.IsNullOrWhiteSpace(timkiem.Text))
+            {
+                timkiem.Text = "Tìm kiếm theo tên danh mục ...";
+                timkiem.ForeColor = Color.Gray;
+            }
+        }
     }
 }

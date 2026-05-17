@@ -18,13 +18,14 @@ namespace QuanLyCuaHangGiay.controller
             }
         }
 
-
+        // =======================================================================
+        // 1. CHỨC NĂNG XEM VÀ LỌC (Cả Admin và Staff đều được dùng)
+        // =======================================================================
         public DataTable SearchAndFilter(string keyword, int categoryId, string status)
         {
             if (keyword == null) keyword = "";
             if (status == null) status = "Tất cả";
 
-            // ĐÃ XÓA ĐOẠN ÉP CỨNG STAFF XEM ACTIVE: Giờ đây Staff có thể xem cả "Tất cả", "active" và "inactive"
             return repo.SearchAndFilter(keyword, categoryId, status);
         }
 
@@ -33,14 +34,15 @@ namespace QuanLyCuaHangGiay.controller
             return SearchAndFilter("", 0, "Tất cả");
         }
 
-
+        // =======================================================================
+        // 2. CHỨC NĂNG THÊM, SỬA, XÓA (CHỈ ADMIN MỚI ĐƯỢC DÙNG)
+        // =======================================================================
         public bool AddProduct(string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
         {
-            // Cho phép cả Admin và Staff thêm sản phẩm
-            if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0) return false;
+            // Chặn đứng Staff
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới được thêm sản phẩm.");
 
-            // Đảm bảo an toàn: Nếu là Staff thêm mới, mặc định trạng thái luôn là "active"
-            if (Authorization.IsStaff()) trangThai = "active";
+            if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0) return false;
 
             Products sp = new Products(tenSP, gia, anh, mau, kichCo, danhMucID, trangThai);
             return repo.Insert(sp) > 0;
@@ -48,7 +50,9 @@ namespace QuanLyCuaHangGiay.controller
 
         public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai, int soLuong)
         {
-            // Cho phép cả Admin và Staff sửa sản phẩm
+            // Chặn đứng Staff
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới được cập nhật sản phẩm.");
+
             if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0) return false;
 
             Products sp = new Products(id, tenSP, gia, anh, mau, kichCo, danhMucID, trangThai, DateTime.Now, soLuong);
@@ -57,18 +61,13 @@ namespace QuanLyCuaHangGiay.controller
 
         public bool DeleteProduct(int id)
         {
+            // Chặn đứng Staff không cho xóa (kể cả xóa mềm)
+            if (!Authorization.IsAdmin()) throw new UnauthorizedAccessException("Chỉ Admin mới được xóa sản phẩm.");
+
             if (id <= 0) return false;
 
-            if (Authorization.IsStaff())
-            {
-                // YÊU CẦU CỦA BẠN: Nhân viên xóa -> Xóa mềm (đổi thành inactive)
-                return repo.ChangeStatus(id, "inactive") > 0;
-            }
-            else
-            {
-                // Admin xóa -> Xóa cứng mất khỏi Database
-                return repo.Delete(id) > 0;
-            }
+            // Admin xóa cứng
+            return repo.Delete(id) > 0;
         }
 
         public int GetNextProductId()

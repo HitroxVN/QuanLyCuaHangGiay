@@ -45,14 +45,25 @@ namespace QuanLyCuaHangGiay.view
             soluong.Text = "0";
 
             LoadAllComboboxes();
-            LocVaTimKiem(); // Load dữ liệu lần đầu
+            LocVaTimKiem(); 
             LoadNextId();
 
-            // PHÂN QUYỀN: Staff không được đổi trạng thái
             if (QuanLyCuaHangGiay.util.Authorization.IsStaff())
             {
-                listtt.Visible = false; 
-                label6.Visible = false; 
+                button2.Visible = false;
+                button3.Visible = false;
+                button4.Visible = false;
+                button5.Visible = false;
+                groupBox1.Visible = false;
+
+                // 3. Khóa các ô nhập liệu (không cho gõ) và ẩn nút Chọn Ảnh
+                button1.Visible = false; // Nút chọn ảnh
+                tensp.Enabled = false;
+                gia.Enabled = false;
+                mau.Enabled = false;
+                kichco.Enabled = false;
+                listdm.Enabled = false;
+                listtt.Enabled = false;
             }
         }
 
@@ -94,6 +105,10 @@ namespace QuanLyCuaHangGiay.view
             if (comboBox1.SelectedValue == null) return; // Bỏ qua nếu form đang khởi tạo
 
             string keyword = timkiem.Text.Trim();
+            if (keyword == "Tìm kiếm theo tên sản phẩn ...")
+            {
+                keyword = "";
+            }
             int idDanhMuc = 0;
             int.TryParse(comboBox1.SelectedValue.ToString(), out idDanhMuc);
             string status = comboBox2.SelectedItem?.ToString() ?? "Tất cả";
@@ -234,11 +249,7 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idSanPhamHienTai <= 0) { MessageBox.Show("Chọn sản phẩm để xóa!"); return; }
 
-            string message = QuanLyCuaHangGiay.util.Authorization.IsStaff() 
-                ? "Bạn có muốn ngừng kinh doanh sản phẩm này? (Sản phẩm sẽ chuyển sang trạng thái Inactive)" 
-                : "Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm này?";
-
-            if (MessageBox.Show(message, "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            if (MessageBox.Show("Xóa sản phẩm này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
@@ -251,15 +262,7 @@ namespace QuanLyCuaHangGiay.view
                             if (picture.Image != null) { picture.Image.Dispose(); picture.Image = null; }
                             File.Delete(imgPath);
                         }
-                        if (QuanLyCuaHangGiay.util.Authorization.IsStaff())
-                        {
-                            MessageBox.Show("Sản phẩm đã được chuyển sang trạng thái ngừng kinh doanh (Inactive).");
-                        }
-                        else
-                        {
-                            MessageBox.Show("Xóa thành công!");
-                        }
-                        button5_Click(sender, e);
+                        MessageBox.Show("Xóa thành công!"); button5_Click(sender, e);
                     }
                 }
                 catch (System.Data.SqlClient.SqlException ex) when (ex.Number == 547)
@@ -286,7 +289,6 @@ namespace QuanLyCuaHangGiay.view
             comboBox2.SelectedIndexChanged += (s, ev) => LocVaTimKiem();
 
             picture.Image = null; duongDanAnhGoc = ""; tenAnhLuuDB = ""; idSanPhamHienTai = -1;
-            button4.Enabled = true;
 
             LocVaTimKiem();
             LoadNextId();
@@ -310,9 +312,6 @@ namespace QuanLyCuaHangGiay.view
                     listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
                     listtt.Text = row.Cells["trangthai"].Value.ToString();
                     soluong.Text = row.Cells["soLuong"].Value?.ToString() ?? "0";
-
-                    // Vô hiệu hóa nút xóa nếu sản phẩm đã inactive
-                    button4.Enabled = (row.Cells["trangthai"].Value.ToString() == "active");
 
                     tenAnhLuuDB = row.Cells["anh"].Value.ToString();
                     duongDanAnhGoc = "";
@@ -355,5 +354,25 @@ namespace QuanLyCuaHangGiay.view
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) { }
         #endregion
+
+        private void timkiem_Enter(object sender, EventArgs e)
+        {
+            // Nếu chữ trong ô đang là chữ gợi ý thì xóa đi và đổi màu chữ thành đen
+            if (timkiem.Text == "Tìm kiếm theo tên sản phẩn ...")
+            {
+                timkiem.Text = "";
+                timkiem.ForeColor = Color.Black;
+            }
+        }
+
+        private void timkiem_Leave(object sender, EventArgs e)
+        {
+            // Nếu người dùng không nhập gì cả (ô text trống) thì hiển thị lại chữ gợi ý
+            if (string.IsNullOrWhiteSpace(timkiem.Text))
+            {
+                timkiem.Text = "Tìm kiếm theo tên sản phẩn ...";
+                timkiem.ForeColor = Color.Gray;
+            }
+        }
     }
 }

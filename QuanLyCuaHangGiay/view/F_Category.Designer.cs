@@ -161,10 +161,14 @@
             // timkiem
             // 
             this.timkiem.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.timkiem.ForeColor = System.Drawing.SystemColors.ScrollBar;
             this.timkiem.Location = new System.Drawing.Point(350, 102);
             this.timkiem.Name = "timkiem";
             this.timkiem.Size = new System.Drawing.Size(348, 30);
             this.timkiem.TabIndex = 21;
+            this.timkiem.Text = "Tìm kiếm theo tên danh mục ...";
+            this.timkiem.Enter += new System.EventHandler(this.timkiem_Enter);
+            this.timkiem.Leave += new System.EventHandler(this.timkiem_Leave);
             // 
             // button6
             // 
