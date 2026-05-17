@@ -1,4 +1,4 @@
-﻿using QuanLyCuaHangGiay.Database;
+using QuanLyCuaHangGiay.Database;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -60,6 +60,43 @@ namespace QuanLyCuaHangGiay.database.repository
             sql += " ORDER BY pn.thoiGian DESC"; 
 
             return DBConnection.GetDataTable(sql, parameters.ToArray());
+        }
+
+        // Lấy phiếu nhập theo thời gian để in báo cáo RDLC
+        // Vì tất cả sản phẩm trong 1 đơn nhập đều có cùng thoiGian nên lấy theo thoiGian
+        public DataTable GetPhieuNhapByTime(DateTime thoiGian)
+        {
+            string query = @"
+                    SELECT 
+                        pn.id,
+                        pn.thoiGian,
+
+                        ncc.tenNCC,
+                        ncc.diaChi,
+                        ncc.sdt,
+
+                        sp.tenSP,
+                        sp.mau,
+                        sp.kichco,
+                        dm.tenDanhMuc,
+
+                        pn.soLuong,
+                        pn.giaDonNhap,
+                        (pn.soLuong * pn.giaDonNhap) AS ThanhTien
+
+                    FROM PhieuNhap pn
+                    JOIN NhaCungCap ncc ON pn.nhacungcapID = ncc.id
+                    JOIN SanPham sp ON pn.sanphamID = sp.id
+                    JOIN DanhMuc dm ON sp.danhmucID = dm.id
+
+                    WHERE pn.thoiGian = @thoiGian
+                ";
+
+            SqlParameter[] pa = {
+                new SqlParameter("@thoiGian", thoiGian)
+            };
+
+            return DBConnection.GetDataTable(query, pa);
         }
     }
 }

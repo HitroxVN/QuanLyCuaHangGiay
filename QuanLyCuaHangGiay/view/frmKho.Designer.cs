@@ -1,4 +1,4 @@
-﻿namespace QuanLyCuaHangGiay.view
+namespace QuanLyCuaHangGiay.view
 {
     partial class frmKho
     {
@@ -40,6 +40,7 @@
             this.panel2 = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label7 = new System.Windows.Forms.Label();
+            this.btnInPhieu = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dgvKho)).BeginInit();
             this.panel2.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -91,6 +92,23 @@
             this.btnLoc.Text = "Tìm kiếm";
             this.btnLoc.UseVisualStyleBackColor = false;
             this.btnLoc.Click += new System.EventHandler(this.btnLoc_Click);
+            // 
+            // btnInPhieu
+            // 
+            this.btnInPhieu.BackColor = System.Drawing.Color.DarkGreen;
+            this.btnInPhieu.FlatAppearance.BorderColor = System.Drawing.Color.DarkGreen;
+            this.btnInPhieu.FlatAppearance.BorderSize = 0;
+            this.btnInPhieu.FlatAppearance.MouseDownBackColor = System.Drawing.Color.DarkGreen;
+            this.btnInPhieu.FlatAppearance.MouseOverBackColor = System.Drawing.Color.DarkGreen;
+            this.btnInPhieu.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnInPhieu.ForeColor = System.Drawing.Color.White;
+            this.btnInPhieu.Location = new System.Drawing.Point(990, 107);
+            this.btnInPhieu.Name = "btnInPhieu";
+            this.btnInPhieu.Size = new System.Drawing.Size(160, 46);
+            this.btnInPhieu.TabIndex = 26;
+            this.btnInPhieu.Text = "In phi\u1ebfu nh\u1eadp";
+            this.btnInPhieu.UseVisualStyleBackColor = false;
+            this.btnInPhieu.Click += new System.EventHandler(this.btnInPhieu_Click);
             // 
             // txtSearch
             // 
@@ -147,6 +165,7 @@
             this.panel2.Controls.Add(this.dtpDenNgay);
             this.panel2.Controls.Add(this.dtpTuNgay);
             this.panel2.Controls.Add(this.btnLoc);
+            this.panel2.Controls.Add(this.btnInPhieu);
             this.panel2.Controls.Add(this.cbLocNCC);
             this.panel2.Controls.Add(this.txtSearch);
             this.panel2.Controls.Add(this.label8);
@@ -211,5 +230,6 @@
         private System.Windows.Forms.Panel panel2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Button btnInPhieu;
     }
 }
