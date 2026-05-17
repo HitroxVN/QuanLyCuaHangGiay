@@ -6,121 +6,74 @@ using QuanLyCuaHangGiay.util;
 
 namespace QuanLyCuaHangGiay.controller
 {
-
     internal class ProductController
     {
-        public ProductController()
-        {
-            if (
-                !Authorization.IsAdmin() &&
-                !Authorization.IsStaff()
-               )
-            {
-                throw new UnauthorizedAccessException(
-                    "Không có quyền"
-                );
-            }
-        }
-
         private ProductRepository repo = new ProductRepository();
 
-        // Lấy danh sách sản phẩm (Sử dụng hàm Join để hiển thị tên danh mục thay vì ID)
+        public ProductController()
+        {
+            if (!Authorization.IsAdmin() && !Authorization.IsStaff())
+            {
+                throw new UnauthorizedAccessException("Không có quyền truy cập hệ thống.");
+            }
+        }
+
+
+        public DataTable SearchAndFilter(string keyword, int categoryId, string status)
+        {
+            if (keyword == null) keyword = "";
+            if (status == null) status = "Tất cả";
+
+            // ĐÃ XÓA ĐOẠN ÉP CỨNG STAFF XEM ACTIVE: Giờ đây Staff có thể xem cả "Tất cả", "active" và "inactive"
+            return repo.SearchAndFilter(keyword, categoryId, status);
+        }
+
         public DataTable GetAllProducts()
         {
-            // Nếu là Nhân viên -> Chỉ cho xem sản phẩm Active
-            if (Authorization.IsStaff())
-            {
-                return repo.GetActiveProductsWithCategoryName();
-            }
-            // Nếu là Admin -> Cho xem tất cả
-            return repo.GetAllWithCategoryName();
+            return SearchAndFilter("", 0, "Tất cả");
         }
 
-        // Thêm sản phẩm mới
+
         public bool AddProduct(string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
         {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền thêm sản phẩm.");
-            }
-            // Kiểm tra dữ liệu đầu vào bắt buộc
-            if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
-            {
-                return false;
-            }
+            // Cho phép cả Admin và Staff thêm sản phẩm
+            if (string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0) return false;
+
+            // Đảm bảo an toàn: Nếu là Staff thêm mới, mặc định trạng thái luôn là "active"
+            if (Authorization.IsStaff()) trangThai = "active";
 
             Products sp = new Products(tenSP, gia, anh, mau, kichCo, danhMucID, trangThai);
-            int result = repo.Insert(sp);
-
-            return result > 0;
+            return repo.Insert(sp) > 0;
         }
 
-        // Cập nhật sản phẩm
-        public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
+        public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai, int soLuong)
         {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền cập nhật sản phẩm.");
-            }
-            if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
-            {
-                return false;
-            }
+            // Cho phép cả Admin và Staff sửa sản phẩm
+            if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0) return false;
 
-            Products sp = new Products(id, tenSP, gia, anh, mau, kichCo, danhMucID, trangThai, DateTime.Now);
-            int result = repo.Update(sp);
-
-            return result > 0;
+            Products sp = new Products(id, tenSP, gia, anh, mau, kichCo, danhMucID, trangThai, DateTime.Now, soLuong);
+            return repo.Update(sp) > 0;
         }
 
-        // Xóa sản phẩm
         public bool DeleteProduct(int id)
         {
             if (id <= 0) return false;
 
             if (Authorization.IsStaff())
             {
-                // Nhân viên -> Bấm xóa là Xóa mềm (Đổi sang Inactive)
-                int result = repo.ChangeStatus(id, "inactive");
-                return result > 0;
+                // YÊU CẦU CỦA BẠN: Nhân viên xóa -> Xóa mềm (đổi thành inactive)
+                return repo.ChangeStatus(id, "inactive") > 0;
             }
             else
             {
-                // Admin -> Xóa cứng (Mất luôn khỏi CSDL)
-                // (Hoặc bạn có thể cho Admin xóa mềm luôn nếu muốn giữ lịch sử dữ liệu)
-                int result = repo.Delete(id);
-                return result > 0;
+                // Admin xóa -> Xóa cứng mất khỏi Database
+                return repo.Delete(id) > 0;
             }
-        }
-
-        // Tìm kiếm sản phẩm
-        public DataTable SearchProduct(string keyword)
-        {
-            if (string.IsNullOrWhiteSpace(keyword))
-            {
-                return GetAllProducts();
-            }
-            return repo.Search(keyword);
         }
 
         public int GetNextProductId()
         {
             return repo.GetNextProductId();
-        }
-
-        // Cập nhật sản phẩm (Thêm tham số int soLuong vàocuối)
-        public bool UpdateProduct(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai, int soLuong)
-        {
-            if (id <= 0 || string.IsNullOrWhiteSpace(tenSP) || gia < 0 || danhMucID <= 0)
-            {
-                return false;
-            }
-
-            // Đưa thêm soLuong vào để truyền xuống Repository
-            Products sp = new Products(id, tenSP, gia, anh, mau, kichCo, danhMucID, trangThai, DateTime.Now, soLuong);
-            int result = repo.Update(sp);
-
-            return result > 0;
         }
     }
 }
