@@ -45,14 +45,25 @@ namespace QuanLyCuaHangGiay.view
             soluong.Text = "0";
 
             LoadAllComboboxes();
-            LocVaTimKiem(); // Load dữ liệu lần đầu
+            LocVaTimKiem(); 
             LoadNextId();
 
-            // PHÂN QUYỀN: Staff không được đổi trạng thái
             if (QuanLyCuaHangGiay.util.Authorization.IsStaff())
             {
-                listtt.Visible = false; 
-                label6.Visible = false; 
+                button2.Visible = false;
+                button3.Visible = false;
+                button4.Visible = false;
+                button5.Visible = false;
+                groupBox1.Visible = false;
+
+                // 3. Khóa các ô nhập liệu (không cho gõ) và ẩn nút Chọn Ảnh
+                button1.Visible = false; // Nút chọn ảnh
+                tensp.Enabled = false;
+                gia.Enabled = false;
+                mau.Enabled = false;
+                kichco.Enabled = false;
+                listdm.Enabled = false;
+                listtt.Enabled = false;
             }
         }
 
