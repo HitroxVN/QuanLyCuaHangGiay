@@ -25,8 +25,8 @@ namespace QuanLyCuaHangGiay.view
         {
             LoadData();
 
-            cbTrangThai.Items.Add("Active");
-            cbTrangThai.Items.Add("Inactive");
+            cbTrangThai.Items.Add("active");
+            cbTrangThai.Items.Add("inactive");
             cbTrangThai.SelectedIndex = 0;
             cbTrangThai.Text = "";
         }

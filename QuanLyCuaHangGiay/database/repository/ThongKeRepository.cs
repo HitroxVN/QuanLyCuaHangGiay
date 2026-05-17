@@ -20,17 +20,26 @@ namespace QuanLyCuaHangGiay.database.repository
                 string sql = @"
                     SELECT 
                         (SELECT COUNT(*) FROM SanPham) AS TongSanPham,
+
                         (SELECT COUNT(*) FROM NhaCungCap) AS TongNhaCungCap,
+
                         (SELECT COUNT(*) 
                          FROM DonHang 
-                         WHERE ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)) AS TongDonHang,
+                         WHERE ngayTao >= @TuNgay 
+                         AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDonHang,
+
                         (SELECT COUNT(*) 
                          FROM PhieuNhap 
-                         WHERE thoiGian >= @TuNgay AND thoiGian < DATEADD(DAY, 1, @DenNgay)) AS TongPhieuNhap,
-                        (SELECT ISNULL(SUM(soLuong), 0) FROM SanPham) AS TongSoLuongTon,
-                        (SELECT ISNULL(SUM(tongTien), 0) 
+                         WHERE thoiGian >= @TuNgay 
+                         AND thoiGian < DATEADD(DAY,1,@DenNgay)) AS TongPhieuNhap,
+
+                        (SELECT ISNULL(SUM(soLuong),0) 
+                         FROM SanPham) AS TongSoLuongTon,
+
+                        (SELECT ISNULL(SUM(tongTien),0) 
                          FROM DonHang 
-                         WHERE ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)) AS TongDoanhThu
+                         WHERE ngayTao >= @TuNgay 
+                         AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDoanhThu
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
@@ -56,7 +65,9 @@ namespace QuanLyCuaHangGiay.database.repository
             return tk;
         }
 
-        public List<BieuDoThongKe> LayDoanhThuTheoThang(int nam, DateTime tuNgay, DateTime denNgay)
+        // ==================== CHART DOANH THU ====================
+
+        public List<BieuDoThongKe> LayDoanhThuTheoThang(DateTime tuNgay, DateTime denNgay)
         {
             List<BieuDoThongKe> ds = new List<BieuDoThongKe>();
 
@@ -65,17 +76,18 @@ namespace QuanLyCuaHangGiay.database.repository
                 conn.Open();
 
                 string sql = @"
-                    SELECT MONTH(ngayTao) AS Thang, ISNULL(SUM(tongTien), 0) AS DoanhThu
+                    SELECT 
+                        MONTH(ngayTao) AS Thang,
+                        ISNULL(SUM(tongTien),0) AS DoanhThu
                     FROM DonHang
-                    WHERE YEAR(ngayTao) = @Nam 
-                      AND ngayTao >= @TuNgay AND ngayTao < DATEADD(DAY, 1, @DenNgay)
+                    WHERE ngayTao >= @TuNgay
+                    AND ngayTao < DATEADD(DAY,1,@DenNgay)
                     GROUP BY MONTH(ngayTao)
                     ORDER BY MONTH(ngayTao)
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Nam", nam);
                     cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
                     cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
@@ -85,7 +97,7 @@ namespace QuanLyCuaHangGiay.database.repository
                         {
                             ds.Add(new BieuDoThongKe
                             {
-                                Nhan = "Tháng " + reader["Thang"],
+                                Nhan = "Tháng " + reader["Thang"].ToString(),
                                 GiaTri = Convert.ToDecimal(reader["DoanhThu"])
                             });
                         }
@@ -96,7 +108,9 @@ namespace QuanLyCuaHangGiay.database.repository
             return ds;
         }
 
-        public List<BieuDoThongKe> LayNhapHangTheoThang(int nam, DateTime tuNgay, DateTime denNgay)
+        // ==================== CHART NHẬP HÀNG ====================
+
+        public List<BieuDoThongKe> LayNhapHangTheoThang(DateTime tuNgay, DateTime denNgay)
         {
             List<BieuDoThongKe> ds = new List<BieuDoThongKe>();
 
@@ -105,17 +119,18 @@ namespace QuanLyCuaHangGiay.database.repository
                 conn.Open();
 
                 string sql = @"
-                    SELECT MONTH(thoiGian) AS Thang, ISNULL(SUM(soLuong), 0) AS TongNhap
+                    SELECT 
+                        MONTH(thoiGian) AS Thang,
+                        ISNULL(SUM(soLuong),0) AS TongNhap
                     FROM PhieuNhap
-                    WHERE YEAR(thoiGian) = @Nam 
-                      AND thoiGian >= @TuNgay AND thoiGian < DATEADD(DAY, 1, @DenNgay)
+                    WHERE thoiGian >= @TuNgay
+                    AND thoiGian < DATEADD(DAY,1,@DenNgay)
                     GROUP BY MONTH(thoiGian)
                     ORDER BY MONTH(thoiGian)
                 ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
-                    cmd.Parameters.AddWithValue("@Nam", nam);
                     cmd.Parameters.AddWithValue("@TuNgay", tuNgay.Date);
                     cmd.Parameters.AddWithValue("@DenNgay", denNgay.Date);
 
@@ -125,7 +140,7 @@ namespace QuanLyCuaHangGiay.database.repository
                         {
                             ds.Add(new BieuDoThongKe
                             {
-                                Nhan = "Tháng " + reader["Thang"],
+                                Nhan = "Tháng " + reader["Thang"].ToString(),
                                 GiaTri = Convert.ToDecimal(reader["TongNhap"])
                             });
                         }
@@ -136,6 +151,8 @@ namespace QuanLyCuaHangGiay.database.repository
             return ds;
         }
 
+        // ==================== TOP 5 BÁN CHẠY ====================
+
         public List<BieuDoThongKe> LayTop5SanPhamBanChay(DateTime tuNgay, DateTime denNgay)
         {
             List<BieuDoThongKe> ds = new List<BieuDoThongKe>();
@@ -145,11 +162,14 @@ namespace QuanLyCuaHangGiay.database.repository
                 conn.Open();
 
                 string sql = @"
-                    SELECT TOP 5 sp.tenSP, SUM(ct.soLuong) AS TongBan
+                    SELECT TOP 5 
+                        sp.tenSP,
+                        SUM(ct.soLuong) AS TongBan
                     FROM ChiTietDonHang ct
                     INNER JOIN DonHang dh ON ct.donhangID = dh.id
                     INNER JOIN SanPham sp ON ct.sanphamID = sp.id
-                    WHERE dh.ngayTao >= @TuNgay AND dh.ngayTao < DATEADD(DAY, 1, @DenNgay)
+                    WHERE dh.ngayTao >= @TuNgay
+                    AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
                     GROUP BY sp.tenSP
                     ORDER BY TongBan DESC
                 ";
@@ -176,23 +196,191 @@ namespace QuanLyCuaHangGiay.database.repository
             return ds;
         }
 
+        // ==================== BẢNG TOP BÁN CHẠY ====================
+
         public DataTable LayBangTopSanPhamBanChay(DateTime tuNgay, DateTime denNgay)
         {
             string sql = @"
-                SELECT TOP 5 sp.tenSP AS N'Sản phẩm', SUM(ct.soLuong) AS N'Số lượng bán'
+                SELECT TOP 5
+                    sp.tenSP AS N'Sản phẩm',
+                    SUM(ct.soLuong) AS N'Số lượng bán'
                 FROM ChiTietDonHang ct
                 INNER JOIN DonHang dh ON ct.donhangID = dh.id
                 INNER JOIN SanPham sp ON ct.sanphamID = sp.id
-                WHERE dh.ngayTao >= @TuNgay AND dh.ngayTao < DATEADD(DAY, 1, @DenNgay)
+                WHERE dh.ngayTao >= @TuNgay
+                AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
                 GROUP BY sp.tenSP
                 ORDER BY SUM(ct.soLuong) DESC
             ";
 
-            SqlParameter[] pa = new SqlParameter[]
+            SqlParameter[] pa =
             {
                 new SqlParameter("@TuNgay", tuNgay.Date),
                 new SqlParameter("@DenNgay", denNgay.Date)
             };
+
+            return DBConnection.GetDataTable(sql, pa);
+        }
+
+        // ==================== DANH SÁCH SẢN PHẨM ====================
+
+        public DataTable LayDanhSachSanPham()
+        {
+            string sql = @"
+        SELECT 
+            id AS N'Mã SP',
+            tenSP AS N'Tên sản phẩm',
+            soLuong AS N'Tồn kho',
+            gia AS N'Giá',
+            mau AS N'Màu',
+            kichco AS N'Kích cỡ',
+            ngayTao AS N'Ngày tạo'
+        FROM SanPham
+    ";
+
+            return DBConnection.GetDataTable(sql);
+        }
+
+        // ==================== NHÀ CUNG CẤP ====================
+
+        public DataTable LayDanhSachNhaCungCap()
+        {
+            string sql = @"
+                SELECT 
+                    id AS N'Mã NCC',
+                    tenNCC AS N'Tên nhà cung cấp',
+                    sdt AS N'SĐT',
+                    diaChi AS N'Địa chỉ'
+                FROM NhaCungCap
+            ";
+
+            return DBConnection.GetDataTable(sql);
+        }
+
+        // ==================== ĐƠN HÀNG ====================
+
+        public DataTable LayDanhSachDonHang(DateTime tuNgay, DateTime denNgay)
+        {
+            string sql = @"
+        SELECT
+            dh.id AS N'Mã đơn',
+            dh.ngayTao AS N'Ngày tạo',
+            sp.tenSP AS N'Tên sản phẩm',
+            ct.soLuong AS N'Số lượng',
+            sp.gia AS N'Giá bán',
+            kh.hoTen AS N'Tên khách hàng',
+            kh.sdt AS N'Số điện thoại',
+            dh.tongTien AS N'Tổng tiền',
+            dh.trangThai AS N'Trạng thái'
+        FROM DonHang dh
+        LEFT JOIN ChiTietDonHang ct ON dh.id = ct.donhangID
+        LEFT JOIN SanPham sp ON ct.sanphamID = sp.id
+        LEFT JOIN KhachHang kh ON dh.khachhangID = kh.id
+        WHERE dh.ngayTao >= @TuNgay
+        AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
+        ORDER BY dh.ngayTao DESC
+    ";
+
+            SqlParameter[] pa =
+            {
+        new SqlParameter("@TuNgay", tuNgay.Date),
+        new SqlParameter("@DenNgay", denNgay.Date)
+    };
+
+            return DBConnection.GetDataTable(sql, pa);
+        }
+
+        // ==================== PHIẾU NHẬP ====================
+
+        public DataTable LayDanhSachPhieuNhap(DateTime tuNgay, DateTime denNgay)
+        {
+            string sql = @"
+        SELECT
+            id AS N'Mã phiếu nhập',
+            thoiGian AS N'Thời gian',
+            soLuong AS N'Số lượng nhập',
+            giaDonNhap AS N'Giá nhập'
+        FROM PhieuNhap
+        WHERE thoiGian >= @TuNgay
+        AND thoiGian < DATEADD(DAY,1,@DenNgay)
+    ";
+
+            SqlParameter[] pa =
+            {
+        new SqlParameter("@TuNgay", tuNgay.Date),
+        new SqlParameter("@DenNgay", denNgay.Date)
+    };
+
+            return DBConnection.GetDataTable(sql, pa);
+        }
+        // ==================== TỒN KHO LÂU NHẤT ====================
+
+        public DataTable LayTonKhoLauNhat()
+        {
+            string sql = @"
+        SELECT TOP 10
+            tenSP AS N'Sản phẩm',
+            soLuong AS N'Số lượng tồn',
+            gia AS N'Giá',
+            ngayTao AS N'Ngày nhập',
+            mau AS N'Màu',
+            kichco AS N'Kích cỡ'
+        FROM SanPham
+        ORDER BY soLuong DESC, ngayTao ASC
+    ";
+
+            return DBConnection.GetDataTable(sql);
+        }
+
+
+        // ==================== DOANH THU ====================
+
+        public DataTable LayDanhSachDoanhThu(DateTime tuNgay, DateTime denNgay)
+        {
+            string sql = @"
+        SELECT
+            dh.id AS N'Mã đơn',
+
+            dh.ngayTao AS N'Ngày bán',
+
+            sp.tenSP AS N'Tên sản phẩm',
+
+            ct.soLuong AS N'Số lượng',
+
+            sp.gia AS N'Giá bán',
+
+            (ct.soLuong * sp.gia) AS N'Thành tiền',
+
+            kh.hoTen AS N'Tên khách hàng',
+
+            kh.sdt AS N'Số điện thoại',
+
+            dh.tongTien AS N'Tổng doanh thu',
+
+            dh.trangThai AS N'Trạng thái'
+
+        FROM DonHang dh
+
+        LEFT JOIN ChiTietDonHang ct
+            ON dh.id = ct.donhangID
+
+        LEFT JOIN SanPham sp
+            ON ct.sanphamID = sp.id
+
+        LEFT JOIN KhachHang kh
+            ON dh.khachhangID = kh.id
+
+        WHERE dh.ngayTao >= @TuNgay
+        AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
+
+        ORDER BY dh.tongTien DESC
+    ";
+
+            SqlParameter[] pa =
+            {
+        new SqlParameter("@TuNgay", tuNgay.Date),
+        new SqlParameter("@DenNgay", denNgay.Date)
+    };
 
             return DBConnection.GetDataTable(sql, pa);
         }

@@ -234,7 +234,11 @@ namespace QuanLyCuaHangGiay.view
         {
             if (idSanPhamHienTai <= 0) { MessageBox.Show("Chọn sản phẩm để xóa!"); return; }
 
-            if (MessageBox.Show("Xóa sản phẩm này?", "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
+            string message = QuanLyCuaHangGiay.util.Authorization.IsStaff() 
+                ? "Bạn có muốn ngừng kinh doanh sản phẩm này? (Sản phẩm sẽ chuyển sang trạng thái Inactive)" 
+                : "Bạn có chắc chắn muốn xóa vĩnh viễn sản phẩm này?";
+
+            if (MessageBox.Show(message, "Xác nhận", MessageBoxButtons.YesNo, MessageBoxIcon.Warning) == DialogResult.Yes)
             {
                 try
                 {
@@ -247,7 +251,15 @@ namespace QuanLyCuaHangGiay.view
                             if (picture.Image != null) { picture.Image.Dispose(); picture.Image = null; }
                             File.Delete(imgPath);
                         }
-                        MessageBox.Show("Xóa thành công!"); button5_Click(sender, e);
+                        if (QuanLyCuaHangGiay.util.Authorization.IsStaff())
+                        {
+                            MessageBox.Show("Sản phẩm đã được chuyển sang trạng thái ngừng kinh doanh (Inactive).");
+                        }
+                        else
+                        {
+                            MessageBox.Show("Xóa thành công!");
+                        }
+                        button5_Click(sender, e);
                     }
                 }
                 catch (System.Data.SqlClient.SqlException ex) when (ex.Number == 547)
@@ -274,6 +286,7 @@ namespace QuanLyCuaHangGiay.view
             comboBox2.SelectedIndexChanged += (s, ev) => LocVaTimKiem();
 
             picture.Image = null; duongDanAnhGoc = ""; tenAnhLuuDB = ""; idSanPhamHienTai = -1;
+            button4.Enabled = true;
 
             LocVaTimKiem();
             LoadNextId();
@@ -297,6 +310,9 @@ namespace QuanLyCuaHangGiay.view
                     listdm.Text = row.Cells["tenDanhMuc"].Value.ToString();
                     listtt.Text = row.Cells["trangthai"].Value.ToString();
                     soluong.Text = row.Cells["soLuong"].Value?.ToString() ?? "0";
+
+                    // Vô hiệu hóa nút xóa nếu sản phẩm đã inactive
+                    button4.Enabled = (row.Cells["trangthai"].Value.ToString() == "active");
 
                     tenAnhLuuDB = row.Cells["anh"].Value.ToString();
                     duongDanAnhGoc = "";
