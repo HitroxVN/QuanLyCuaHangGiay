@@ -2,15 +2,8 @@
 {
     partial class frmThongKe
     {
-        /// <summary>
-        /// Required designer variable.
-        /// </summary>
         private System.ComponentModel.IContainer components = null;
 
-        /// <summary>
-        /// Clean up any resources being used.
-        /// </summary>
-        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && (components != null))
@@ -37,8 +30,6 @@
             this.lblDenNgay = new System.Windows.Forms.Label();
             this.dtpTuNgay = new System.Windows.Forms.DateTimePicker();
             this.lblTuNgay = new System.Windows.Forms.Label();
-            this.cboNam = new System.Windows.Forms.ComboBox();
-            this.lblNam = new System.Windows.Forms.Label();
             this.panelTongSanPham = new System.Windows.Forms.Panel();
             this.lblTongSanPham = new System.Windows.Forms.Label();
             this.lblTextTongSanPham = new System.Windows.Forms.Label();
@@ -62,6 +53,10 @@
             this.chartTopSanPham = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.dgvTopSanPham = new System.Windows.Forms.DataGridView();
             this.label7 = new System.Windows.Forms.Label();
+            this.lblRoleAdmin =
+             new System.Windows.Forms.Label();
+            this.lblCapNhatLuc = new System.Windows.Forms.Label();
+
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
             this.panelTongSanPham.SuspendLayout();
@@ -75,19 +70,53 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartTopSanPham)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTopSanPham)).BeginInit();
             this.SuspendLayout();
-            // 
+
             // panel1
-            // 
             this.panel1.BackColor = System.Drawing.Color.DarkRed;
             this.panel1.Controls.Add(this.label7);
+            this.panel1.Controls.Add(this.lblRoleAdmin);
+            this.panel1.Controls.Add(this.lblCapNhatLuc);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(1837, 80);
             this.panel1.TabIndex = 0;
-            // 
+
+            // label7
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("Segoe UI", 19.8F, System.Drawing.FontStyle.Bold);
+            this.label7.ForeColor = System.Drawing.Color.Lavender;
+            this.label7.Location = new System.Drawing.Point(13, 17);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(164, 45);
+            this.label7.TabIndex = 3;
+            this.label7.Text ="THỐNG KÊ";
+            // lblCapNhatLuc
+            this.lblCapNhatLuc.AutoSize = false;
+            this.lblCapNhatLuc.Anchor =
+                ((System.Windows.Forms.AnchorStyles)
+                (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.lblCapNhatLuc.Font = new System.Drawing.Font("Segoe UI", 10F);
+            this.lblCapNhatLuc.ForeColor = System.Drawing.Color.WhiteSmoke;
+            this.lblCapNhatLuc.Location = new System.Drawing.Point(1300, 18);
+            this.lblCapNhatLuc.Name = "lblCapNhatLuc";
+            this.lblCapNhatLuc.Size = new System.Drawing.Size(360, 25);
+            this.lblCapNhatLuc.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblCapNhatLuc.Text = "Cập nhật lúc: --";
+
+            // lblRoleAdmin
+            this.lblRoleAdmin.AutoSize = false;
+            this.lblRoleAdmin.Anchor =
+                ((System.Windows.Forms.AnchorStyles)
+                (System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right));
+            this.lblRoleAdmin.Font = new System.Drawing.Font("Segoe UI", 10F, System.Drawing.FontStyle.Bold);
+            this.lblRoleAdmin.ForeColor = System.Drawing.Color.White;
+            this.lblRoleAdmin.Location = new System.Drawing.Point(1300, 45);
+            this.lblRoleAdmin.Name = "lblRoleAdmin";
+            this.lblRoleAdmin.Size = new System.Drawing.Size(360, 25);
+            this.lblRoleAdmin.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.lblRoleAdmin.Text = "👤 Quản trị viên";
             // panel2
-            // 
             this.panel2.Controls.Add(this.btnXuatExcel);
             this.panel2.Controls.Add(this.btnLoc);
             this.panel2.Controls.Add(this.btnTaiLai);
@@ -95,8 +124,6 @@
             this.panel2.Controls.Add(this.lblDenNgay);
             this.panel2.Controls.Add(this.dtpTuNgay);
             this.panel2.Controls.Add(this.lblTuNgay);
-            this.panel2.Controls.Add(this.cboNam);
-            this.panel2.Controls.Add(this.lblNam);
             this.panel2.Controls.Add(this.panelTongSanPham);
             this.panel2.Controls.Add(this.panelTongNCC);
             this.panel2.Controls.Add(this.panelTongDonHang);
@@ -112,349 +139,257 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(1837, 945);
             this.panel2.TabIndex = 1;
-            // 
-            // btnXuatExcel
-            // 
-            this.btnXuatExcel.BackColor = System.Drawing.Color.DarkRed;
-            this.btnXuatExcel.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnXuatExcel.ForeColor = System.Drawing.Color.White;
-            this.btnXuatExcel.Location = new System.Drawing.Point(1620, 26);
-            this.btnXuatExcel.Name = "btnXuatExcel";
-            this.btnXuatExcel.Size = new System.Drawing.Size(140, 40);
-            this.btnXuatExcel.TabIndex = 18;
-            this.btnXuatExcel.Text = "Xuất Excel";
-            this.btnXuatExcel.UseVisualStyleBackColor = false;
-            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
-            // 
-            // btnLoc
-            // 
-            this.btnLoc.BackColor = System.Drawing.Color.DarkRed;
-            this.btnLoc.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnLoc.ForeColor = System.Drawing.Color.White;
-            this.btnLoc.Location = new System.Drawing.Point(1490, 26);
-            this.btnLoc.Name = "btnLoc";
-            this.btnLoc.Size = new System.Drawing.Size(100, 40);
-            this.btnLoc.TabIndex = 17;
-            this.btnLoc.Text = "Lọc";
-            this.btnLoc.UseVisualStyleBackColor = false;
-            this.btnLoc.Click += new System.EventHandler(this.btnLoc_Click);
-            // 
-            // btnTaiLai
-            // 
-            this.btnTaiLai.BackColor = System.Drawing.Color.DarkRed;
-            this.btnTaiLai.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnTaiLai.ForeColor = System.Drawing.Color.White;
-            this.btnTaiLai.Location = new System.Drawing.Point(1360, 26);
-            this.btnTaiLai.Name = "btnTaiLai";
-            this.btnTaiLai.Size = new System.Drawing.Size(100, 40);
-            this.btnTaiLai.TabIndex = 16;
-            this.btnTaiLai.Text = "Tải lại";
-            this.btnTaiLai.UseVisualStyleBackColor = false;
-            this.btnTaiLai.Click += new System.EventHandler(this.btnTaiLai_Click);
-            // 
-            // dtpDenNgay
-            // 
-            this.dtpDenNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.dtpDenNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
-            this.dtpDenNgay.Location = new System.Drawing.Point(1115, 35);
-            this.dtpDenNgay.Name = "dtpDenNgay";
-            this.dtpDenNgay.Size = new System.Drawing.Size(200, 30);
-            this.dtpDenNgay.TabIndex = 15;
-            // 
-            // lblDenNgay
-            // 
-            this.lblDenNgay.AutoSize = true;
-            this.lblDenNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblDenNgay.Location = new System.Drawing.Point(1025, 39);
-            this.lblDenNgay.Name = "lblDenNgay";
-            this.lblDenNgay.Size = new System.Drawing.Size(87, 23);
-            this.lblDenNgay.TabIndex = 14;
-            this.lblDenNgay.Text = "Đến ngày:";
-            // 
+
             // dtpTuNgay
-            // 
-            this.dtpTuNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.dtpTuNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F);
             this.dtpTuNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
             this.dtpTuNgay.Location = new System.Drawing.Point(790, 35);
             this.dtpTuNgay.Name = "dtpTuNgay";
             this.dtpTuNgay.Size = new System.Drawing.Size(200, 30);
-            this.dtpTuNgay.TabIndex = 13;
-            // 
+
             // lblTuNgay
-            // 
             this.lblTuNgay.AutoSize = true;
-            this.lblTuNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTuNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F);
             this.lblTuNgay.Location = new System.Drawing.Point(710, 39);
-            this.lblTuNgay.Name = "lblTuNgay";
-            this.lblTuNgay.Size = new System.Drawing.Size(75, 23);
-            this.lblTuNgay.TabIndex = 12;
             this.lblTuNgay.Text = "Từ ngày:";
-            // 
-            // cboNam
-            // 
-            this.cboNam.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cboNam.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            this.cboNam.FormattingEnabled = true;
-            this.cboNam.Location = new System.Drawing.Point(560, 34);
-            this.cboNam.Name = "cboNam";
-            this.cboNam.Size = new System.Drawing.Size(121, 28);
-            this.cboNam.TabIndex = 11;
-            this.cboNam.SelectedIndexChanged += new System.EventHandler(this.cboNam_SelectedIndexChanged);
-            // 
-            // lblNam
-            // 
-            this.lblNam.AutoSize = true;
-            this.lblNam.Font = new System.Drawing.Font("Microsoft Sans Serif", 10.2F);
-            this.lblNam.Location = new System.Drawing.Point(500, 38);
-            this.lblNam.Name = "lblNam";
-            this.lblNam.Size = new System.Drawing.Size(49, 20);
-            this.lblNam.TabIndex = 10;
-            this.lblNam.Text = "Năm:";
-            // 
-            // panelTongSanPham
-            // 
+
+            // dtpDenNgay
+            this.dtpDenNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F);
+            this.dtpDenNgay.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.dtpDenNgay.Location = new System.Drawing.Point(1115, 35);
+            this.dtpDenNgay.Name = "dtpDenNgay";
+            this.dtpDenNgay.Size = new System.Drawing.Size(200, 30);
+
+            // lblDenNgay
+            this.lblDenNgay.AutoSize = true;
+            this.lblDenNgay.Font = new System.Drawing.Font("Segoe UI", 10.2F);
+            this.lblDenNgay.Location = new System.Drawing.Point(1025, 39);
+            this.lblDenNgay.Text = "Đến ngày:";
+
+            // btnTaiLai
+            this.btnTaiLai.BackColor = System.Drawing.Color.DarkRed;
+            this.btnTaiLai.Font = new System.Drawing.Font("Segoe UI", 10.2F);
+            this.btnTaiLai.ForeColor = System.Drawing.Color.White;
+            this.btnTaiLai.Location = new System.Drawing.Point(1360, 26);
+            this.btnTaiLai.Name = "btnTaiLai";
+            this.btnTaiLai.Size = new System.Drawing.Size(100, 40);
+            this.btnTaiLai.Text = "Tải lại";
+            this.btnTaiLai.UseVisualStyleBackColor = false;
+            this.btnTaiLai.Click += new System.EventHandler(this.btnTaiLai_Click);
+
+            // btnLoc
+            this.btnLoc.BackColor = System.Drawing.Color.DarkRed;
+            this.btnLoc.Font = new System.Drawing.Font("Segoe UI", 10.2F);
+            this.btnLoc.ForeColor = System.Drawing.Color.White;
+            this.btnLoc.Location = new System.Drawing.Point(1490, 26);
+            this.btnLoc.Name = "btnLoc";
+            this.btnLoc.Size = new System.Drawing.Size(100, 40);
+            this.btnLoc.Text = "Lọc";
+            this.btnLoc.UseVisualStyleBackColor = false;
+            this.btnLoc.Click += new System.EventHandler(this.btnLoc_Click);
+
+            // btnXuatExcel
+            this.btnXuatExcel.BackColor = System.Drawing.Color.DarkRed;
+            this.btnXuatExcel.Font = new System.Drawing.Font("Segoe UI", 10.2F);
+            this.btnXuatExcel.ForeColor = System.Drawing.Color.White;
+            this.btnXuatExcel.Location = new System.Drawing.Point(1620, 26);
+            this.btnXuatExcel.Name = "btnXuatExcel";
+            this.btnXuatExcel.Size = new System.Drawing.Size(140, 40);
+            this.btnXuatExcel.Text = "Xuất Excel";
+            this.btnXuatExcel.UseVisualStyleBackColor = false;
+            this.btnXuatExcel.Click += new System.EventHandler(this.btnXuatExcel_Click);
+
+            // Các panel tổng giữ nguyên
             this.panelTongSanPham.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongSanPham.Controls.Add(this.lblTongSanPham);
             this.panelTongSanPham.Controls.Add(this.lblTextTongSanPham);
             this.panelTongSanPham.Location = new System.Drawing.Point(30, 95);
-            this.panelTongSanPham.Name = "panelTongSanPham";
             this.panelTongSanPham.Size = new System.Drawing.Size(250, 95);
-            this.panelTongSanPham.TabIndex = 0;
-            // 
-            // lblTongSanPham
-            // 
+
+            this.lblTextTongSanPham.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongSanPham.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongSanPham.Size = new System.Drawing.Size(242, 25);
+            this.lblTextTongSanPham.Text = "📦 Tổng sản phẩm";
+            this.lblTextTongSanPham.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongSanPham.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.lblTongSanPham.ForeColor = System.Drawing.Color.Firebrick;
             this.lblTongSanPham.Location = new System.Drawing.Point(3, 45);
-            this.lblTongSanPham.Name = "lblTongSanPham";
             this.lblTongSanPham.Size = new System.Drawing.Size(242, 35);
-            this.lblTongSanPham.TabIndex = 1;
             this.lblTongSanPham.Text = "0";
             this.lblTongSanPham.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongSanPham
-            // 
-            this.lblTextTongSanPham.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongSanPham.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongSanPham.Name = "lblTextTongSanPham";
-            this.lblTextTongSanPham.Size = new System.Drawing.Size(242, 25);
-            this.lblTextTongSanPham.TabIndex = 0;
-            this.lblTextTongSanPham.Text = "Tổng sản phẩm";
-            this.lblTextTongSanPham.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelTongNCC
-            // 
+
             this.panelTongNCC.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongNCC.Controls.Add(this.lblTongNCC);
             this.panelTongNCC.Controls.Add(this.lblTextTongNCC);
             this.panelTongNCC.Location = new System.Drawing.Point(320, 95);
-            this.panelTongNCC.Name = "panelTongNCC";
             this.panelTongNCC.Size = new System.Drawing.Size(250, 95);
-            this.panelTongNCC.TabIndex = 1;
-            // 
-            // lblTongNCC
-            // 
+
+            this.lblTextTongNCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongNCC.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongNCC.Size = new System.Drawing.Size(242, 25);
+            this.lblTextTongNCC.Text = "🏬 Nhà cung cấp";
+            this.lblTextTongNCC.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongNCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.lblTongNCC.ForeColor = System.Drawing.Color.Green;
             this.lblTongNCC.Location = new System.Drawing.Point(3, 45);
-            this.lblTongNCC.Name = "lblTongNCC";
             this.lblTongNCC.Size = new System.Drawing.Size(242, 35);
-            this.lblTongNCC.TabIndex = 1;
             this.lblTongNCC.Text = "0";
             this.lblTongNCC.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongNCC
-            // 
-            this.lblTextTongNCC.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongNCC.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongNCC.Name = "lblTextTongNCC";
-            this.lblTextTongNCC.Size = new System.Drawing.Size(242, 25);
-            this.lblTextTongNCC.TabIndex = 0;
-            this.lblTextTongNCC.Text = "Nhà cung cấp";
-            this.lblTextTongNCC.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelTongDonHang
-            // 
+
             this.panelTongDonHang.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongDonHang.Controls.Add(this.lblTongDonHang);
             this.panelTongDonHang.Controls.Add(this.lblTextTongDonHang);
             this.panelTongDonHang.Location = new System.Drawing.Point(610, 95);
-            this.panelTongDonHang.Name = "panelTongDonHang";
             this.panelTongDonHang.Size = new System.Drawing.Size(250, 95);
-            this.panelTongDonHang.TabIndex = 2;
-            // 
-            // lblTongDonHang
-            // 
+
+            this.lblTextTongDonHang.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongDonHang.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongDonHang.Size = new System.Drawing.Size(242, 25);
+            this.lblTextTongDonHang.Text = "🛒 Đơn hàng";
+            this.lblTextTongDonHang.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongDonHang.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.lblTongDonHang.ForeColor = System.Drawing.Color.MidnightBlue;
             this.lblTongDonHang.Location = new System.Drawing.Point(3, 45);
-            this.lblTongDonHang.Name = "lblTongDonHang";
             this.lblTongDonHang.Size = new System.Drawing.Size(242, 35);
-            this.lblTongDonHang.TabIndex = 1;
             this.lblTongDonHang.Text = "0";
             this.lblTongDonHang.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongDonHang
-            // 
-            this.lblTextTongDonHang.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongDonHang.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongDonHang.Name = "lblTextTongDonHang";
-            this.lblTextTongDonHang.Size = new System.Drawing.Size(242, 25);
-            this.lblTextTongDonHang.TabIndex = 0;
-            this.lblTextTongDonHang.Text = "Đơn hàng";
-            this.lblTextTongDonHang.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelTongPhieuNhap
-            // 
+
             this.panelTongPhieuNhap.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongPhieuNhap.Controls.Add(this.lblTongPhieuNhap);
             this.panelTongPhieuNhap.Controls.Add(this.lblTextTongPhieuNhap);
             this.panelTongPhieuNhap.Location = new System.Drawing.Point(900, 95);
-            this.panelTongPhieuNhap.Name = "panelTongPhieuNhap";
             this.panelTongPhieuNhap.Size = new System.Drawing.Size(250, 95);
-            this.panelTongPhieuNhap.TabIndex = 3;
-            // 
-            // lblTongPhieuNhap
-            // 
+
+            this.lblTextTongPhieuNhap.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongPhieuNhap.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongPhieuNhap.Size = new System.Drawing.Size(242, 25);
+            this.lblTextTongPhieuNhap.Text = "📥 Phiếu nhập";
+            this.lblTextTongPhieuNhap.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongPhieuNhap.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.lblTongPhieuNhap.ForeColor = System.Drawing.Color.DarkOrange;
             this.lblTongPhieuNhap.Location = new System.Drawing.Point(3, 45);
-            this.lblTongPhieuNhap.Name = "lblTongPhieuNhap";
             this.lblTongPhieuNhap.Size = new System.Drawing.Size(242, 35);
-            this.lblTongPhieuNhap.TabIndex = 1;
             this.lblTongPhieuNhap.Text = "0";
             this.lblTongPhieuNhap.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongPhieuNhap
-            // 
-            this.lblTextTongPhieuNhap.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongPhieuNhap.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongPhieuNhap.Name = "lblTextTongPhieuNhap";
-            this.lblTextTongPhieuNhap.Size = new System.Drawing.Size(242, 25);
-            this.lblTextTongPhieuNhap.TabIndex = 0;
-            this.lblTextTongPhieuNhap.Text = "Phiếu nhập";
-            this.lblTextTongPhieuNhap.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelTongTonKho
-            // 
+
             this.panelTongTonKho.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongTonKho.Controls.Add(this.lblTongTonKho);
             this.panelTongTonKho.Controls.Add(this.lblTextTongTonKho);
             this.panelTongTonKho.Location = new System.Drawing.Point(1190, 95);
-            this.panelTongTonKho.Name = "panelTongTonKho";
             this.panelTongTonKho.Size = new System.Drawing.Size(250, 95);
-            this.panelTongTonKho.TabIndex = 4;
-            // 
-            // lblTongTonKho
-            // 
+
+            this.lblTextTongTonKho.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongTonKho.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongTonKho.Size = new System.Drawing.Size(242, 25);
+            this.lblTextTongTonKho.Text = "📦 Tồn kho";
+            this.lblTextTongTonKho.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongTonKho.Font = new System.Drawing.Font("Microsoft Sans Serif", 16.2F, System.Drawing.FontStyle.Bold);
             this.lblTongTonKho.ForeColor = System.Drawing.Color.Purple;
             this.lblTongTonKho.Location = new System.Drawing.Point(3, 45);
-            this.lblTongTonKho.Name = "lblTongTonKho";
             this.lblTongTonKho.Size = new System.Drawing.Size(242, 35);
-            this.lblTongTonKho.TabIndex = 1;
             this.lblTongTonKho.Text = "0";
             this.lblTongTonKho.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongTonKho
-            // 
-            this.lblTextTongTonKho.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongTonKho.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongTonKho.Name = "lblTextTongTonKho";
-            this.lblTextTongTonKho.Size = new System.Drawing.Size(242, 25);
-            this.lblTextTongTonKho.TabIndex = 0;
-            this.lblTextTongTonKho.Text = "Tồn kho";
-            this.lblTextTongTonKho.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // panelTongDoanhThu
-            // 
+
             this.panelTongDoanhThu.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.panelTongDoanhThu.Controls.Add(this.lblTongDoanhThu);
             this.panelTongDoanhThu.Controls.Add(this.lblTextTongDoanhThu);
             this.panelTongDoanhThu.Location = new System.Drawing.Point(1480, 95);
-            this.panelTongDoanhThu.Name = "panelTongDoanhThu";
             this.panelTongDoanhThu.Size = new System.Drawing.Size(280, 95);
-            this.panelTongDoanhThu.TabIndex = 5;
-            // 
-            // lblTongDoanhThu
-            // 
+
+            this.lblTextTongDoanhThu.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
+            this.lblTextTongDoanhThu.Location = new System.Drawing.Point(3, 10);
+            this.lblTextTongDoanhThu.Size = new System.Drawing.Size(272, 25);
+            this.lblTextTongDoanhThu.Text = "💰 Tổng doanh thu";
+            this.lblTextTongDoanhThu.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+
             this.lblTongDoanhThu.Font = new System.Drawing.Font("Microsoft Sans Serif", 15F, System.Drawing.FontStyle.Bold);
             this.lblTongDoanhThu.ForeColor = System.Drawing.Color.Brown;
             this.lblTongDoanhThu.Location = new System.Drawing.Point(3, 45);
-            this.lblTongDoanhThu.Name = "lblTongDoanhThu";
             this.lblTongDoanhThu.Size = new System.Drawing.Size(272, 35);
-            this.lblTongDoanhThu.TabIndex = 1;
             this.lblTongDoanhThu.Text = "0 VNĐ";
             this.lblTongDoanhThu.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // lblTextTongDoanhThu
-            // 
-            this.lblTextTongDoanhThu.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Bold);
-            this.lblTextTongDoanhThu.Location = new System.Drawing.Point(3, 10);
-            this.lblTextTongDoanhThu.Name = "lblTextTongDoanhThu";
-            this.lblTextTongDoanhThu.Size = new System.Drawing.Size(272, 25);
-            this.lblTextTongDoanhThu.TabIndex = 0;
-            this.lblTextTongDoanhThu.Text = "Tổng doanh thu";
-            this.lblTextTongDoanhThu.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
+
             // chartDoanhThu
-            // 
             chartArea1.Name = "ChartArea1";
             this.chartDoanhThu.ChartAreas.Add(chartArea1);
+
+            this.chartDoanhThu.Anchor =
+                ((System.Windows.Forms.AnchorStyles)(
+                ((System.Windows.Forms.AnchorStyles.Top
+                | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right)));
+
             this.chartDoanhThu.Location = new System.Drawing.Point(30, 225);
             this.chartDoanhThu.Name = "chartDoanhThu";
-            this.chartDoanhThu.Size = new System.Drawing.Size(870, 280);
-            this.chartDoanhThu.TabIndex = 6;
-            this.chartDoanhThu.Text = "chartDoanhThu";
-            // 
+            this.chartDoanhThu.Size = new System.Drawing.Size(860, 280);
+            this.chartDoanhThu.TabIndex = 20;
+            this.chartDoanhThu.Text = "chart1";
             // chartNhapHang
-            // 
             chartArea2.Name = "ChartArea1";
             this.chartNhapHang.ChartAreas.Add(chartArea2);
-            this.chartNhapHang.Location = new System.Drawing.Point(930, 225);
+
+            this.chartNhapHang.Anchor =
+                ((System.Windows.Forms.AnchorStyles)(
+                ((System.Windows.Forms.AnchorStyles.Top
+                | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right)));
+
+            this.chartNhapHang.Location = new System.Drawing.Point(910, 225);
             this.chartNhapHang.Name = "chartNhapHang";
-            this.chartNhapHang.Size = new System.Drawing.Size(830, 280);
-            this.chartNhapHang.TabIndex = 7;
-            this.chartNhapHang.Text = "chartNhapHang";
-            // 
+            this.chartNhapHang.Size = new System.Drawing.Size(900, 280);
+            this.chartNhapHang.TabIndex = 21;
+            this.chartNhapHang.Text = "chart2";
+
             // chartTopSanPham
-            // 
             chartArea3.Name = "ChartArea1";
             this.chartTopSanPham.ChartAreas.Add(chartArea3);
+
             legend1.Name = "Legend1";
             this.chartTopSanPham.Legends.Add(legend1);
+
+            this.chartTopSanPham.Anchor =
+                ((System.Windows.Forms.AnchorStyles)(
+                ((System.Windows.Forms.AnchorStyles.Top
+                | System.Windows.Forms.AnchorStyles.Bottom)
+                | System.Windows.Forms.AnchorStyles.Left)));
+
             this.chartTopSanPham.Location = new System.Drawing.Point(30, 530);
             this.chartTopSanPham.Name = "chartTopSanPham";
-            this.chartTopSanPham.Size = new System.Drawing.Size(700, 360);
-            this.chartTopSanPham.TabIndex = 8;
-            this.chartTopSanPham.Text = "chartTopSanPham";
-            // 
+            this.chartTopSanPham.Size = new System.Drawing.Size(560, 380);
+            this.chartTopSanPham.TabIndex = 22;
+            this.chartTopSanPham.Text = "chart3";
+
             // dgvTopSanPham
-            // 
-            this.dgvTopSanPham.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
-            this.dgvTopSanPham.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dgvTopSanPham.Location = new System.Drawing.Point(760, 530);
+            this.dgvTopSanPham.Anchor =
+                ((System.Windows.Forms.AnchorStyles)(
+                ((System.Windows.Forms.AnchorStyles.Top
+                | System.Windows.Forms.AnchorStyles.Bottom)
+                | System.Windows.Forms.AnchorStyles.Left)
+                | System.Windows.Forms.AnchorStyles.Right));
+
+            this.dgvTopSanPham.AutoSizeColumnsMode =
+                System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+
+            this.dgvTopSanPham.ColumnHeadersHeightSizeMode =
+                System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+
+            this.dgvTopSanPham.Location = new System.Drawing.Point(620, 530);
             this.dgvTopSanPham.Name = "dgvTopSanPham";
             this.dgvTopSanPham.ReadOnly = true;
             this.dgvTopSanPham.RowHeadersWidth = 51;
             this.dgvTopSanPham.RowTemplate.Height = 24;
-            this.dgvTopSanPham.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvTopSanPham.Size = new System.Drawing.Size(1000, 360);
-            this.dgvTopSanPham.TabIndex = 9;
-            // 
-            // label7
-            // 
-            this.label7.AutoSize = true;
-            this.label7.Font = new System.Drawing.Font("Segoe UI", 19.8F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label7.ForeColor = System.Drawing.Color.Lavender;
-            this.label7.Location = new System.Drawing.Point(13, 17);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(164, 45);
-            this.label7.TabIndex = 3;
-            this.label7.Text = "Thống kê";
-            // 
+            this.dgvTopSanPham.SelectionMode =
+                System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
+
+            this.dgvTopSanPham.Size = new System.Drawing.Size(1180, 380);
+            this.dgvTopSanPham.TabIndex = 23;
+
             // frmThongKe
-            // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1837, 1025);
@@ -463,6 +398,7 @@
             this.Name = "frmThongKe";
             this.Text = "frmThongKe";
             this.Load += new System.EventHandler(this.frmThongKe_Load);
+
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
@@ -478,15 +414,12 @@
             ((System.ComponentModel.ISupportInitialize)(this.chartTopSanPham)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.dgvTopSanPham)).EndInit();
             this.ResumeLayout(false);
-
         }
 
         #endregion
 
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel panel2;
-        private System.Windows.Forms.Label lblNam;
-        private System.Windows.Forms.ComboBox cboNam;
         private System.Windows.Forms.Label lblTuNgay;
         private System.Windows.Forms.DateTimePicker dtpTuNgay;
         private System.Windows.Forms.Label lblDenNgay;
@@ -524,5 +457,7 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chartTopSanPham;
         private System.Windows.Forms.DataGridView dgvTopSanPham;
         private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.Label lblRoleAdmin;
+        private System.Windows.Forms.Label lblCapNhatLuc;
     }
 }
