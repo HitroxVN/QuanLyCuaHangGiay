@@ -54,7 +54,7 @@ namespace QuanLyCuaHangGiay.database.repository
         // 5. Tìm kiếm danh mục theo tên VÀ lọc theo trạng thái
         public DataTable Search(string keyword, string status)
         {
-            string sql = "SELECT * FROM DanhMuc WHERE tenDanhMuc LIKE @keyword";
+            string sql = "SELECT * FROM DanhMuc WHERE (tenDanhMuc LIKE @keyword OR CAST(id AS NVARCHAR) LIKE @keyword)";
 
             if (status != "Tất cả" && !string.IsNullOrEmpty(status))
             {

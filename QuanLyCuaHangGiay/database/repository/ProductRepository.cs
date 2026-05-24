@@ -23,7 +23,10 @@ namespace QuanLyCuaHangGiay.database.repository
             // Nếu có gõ từ khóa
             if (!string.IsNullOrEmpty(keyword))
             {
-                sql += " AND sp.tenSP LIKE @keyword";
+                sql += @" AND (sp.tenSP LIKE @keyword 
+                              OR CAST(sp.id AS NVARCHAR) LIKE @keyword 
+                              OR sp.mau LIKE @keyword 
+                              OR CAST(sp.kichco AS NVARCHAR) LIKE @keyword)";
                 paramList.Add(new SqlParameter("@keyword", "%" + keyword + "%"));
             }
 
