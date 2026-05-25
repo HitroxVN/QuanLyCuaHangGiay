@@ -119,7 +119,6 @@ namespace QuanLyCuaHangGiay.view
             SetFill("Giá nhập", 110);
             SetFill("Tổng tiền", 130);
             SetFill("Thành tiền", 130);
-            SetFill("Tổng doanh thu", 150);
 
             SetFill("Số điện thoại", 140);
             SetFill("SĐT", 120);
@@ -138,7 +137,6 @@ namespace QuanLyCuaHangGiay.view
             DinhDangCotTien("Giá nhập");
             DinhDangCotTien("Tổng tiền");
             DinhDangCotTien("Thành tiền");
-            DinhDangCotTien("Tổng doanh thu");
 
             ToMauTonKhoThap();
         }
@@ -292,18 +290,12 @@ namespace QuanLyCuaHangGiay.view
             chartDoanhThu.Legends.Clear();
 
             chartDoanhThu.ChartAreas.Add(new ChartArea("ChartArea1"));
+
             chartDoanhThu.Titles.Add("Doanh thu theo tháng");
 
             Series series = new Series("DoanhThu");
 
             series.ChartType = SeriesChartType.Column;
-
-            series.Color = Color.Firebrick;
-            series.BackGradientStyle = GradientStyle.TopBottom;
-            series.BackSecondaryColor = Color.IndianRed;
-            series["PointWidth"] = "0.4";
-            series.Label = "#VALY{N0} VNĐ";
-            series.Font = new Font("Segoe UI", 9, FontStyle.Bold);
 
             series.Color = Color.Firebrick;
 
@@ -312,6 +304,10 @@ namespace QuanLyCuaHangGiay.view
 
             series.BackSecondaryColor =
                 Color.IndianRed;
+
+            series["PointWidth"] = "0.4";
+
+            series.Label = "#VALY{N0} VNĐ";
 
             series.Font =
                 new Font("Segoe UI", 10, FontStyle.Bold);
@@ -326,6 +322,8 @@ namespace QuanLyCuaHangGiay.view
             }
 
             chartDoanhThu.Series.Add(series);
+            chartDoanhThu.ChartAreas[0].AxisY.Maximum =
+    chartDoanhThu.ChartAreas[0].AxisY.Maximum * 1.2;
         }
 
         private void VeChartNhapHang(DateTime tuNgay, DateTime denNgay)
@@ -391,7 +389,10 @@ namespace QuanLyCuaHangGiay.view
             ChartArea area = new ChartArea("ChartArea1");
             area.BackColor = Color.White;
             area.Area3DStyle.Enable3D = false;
-            area.Position.Width = 70;
+            area.Position.Auto = false;
+            area.Position.X = 0;
+            area.Position.Y = 15;
+            area.Position.Width = 65;
             area.Position.Height = 80;
 
             chartTopSanPham.ChartAreas.Add(area);
@@ -402,20 +403,27 @@ namespace QuanLyCuaHangGiay.view
             chartTopSanPham.Titles.Add(title);
 
             Series series = new Series("TopSanPham");
+
             series.ChartType = SeriesChartType.Pie;
+
             series.IsValueShownAsLabel = true;
+
             series.Label = "#PERCENT{P0}";
 
-            series.Color = Color.Firebrick;
-            series.BackGradientStyle = GradientStyle.TopBottom;
-            series.BackSecondaryColor = Color.IndianRed;
+            series.LabelForeColor = Color.White;
+
+            series.Font =
+                new Font("Segoe UI", 10, FontStyle.Bold);
 
             series.BorderWidth = 2;
-            series.BorderColor = Color.White;
-            series.Font = new Font("Segoe UI", 9, FontStyle.Bold);
 
-            series["PieLabelStyle"] = "Outside";
+            series.BorderColor = Color.White;
+
+            series["PieLabelStyle"] = "Inside";
+
             series["PieDrawingStyle"] = "SoftEdge";
+
+            series["PieStartAngle"] = "270";
 
             foreach (var item in ds)
             {
@@ -426,11 +434,13 @@ namespace QuanLyCuaHangGiay.view
             chartTopSanPham.Series.Add(series);
 
             Legend legend = new Legend("Legend1");
-            legend.Font = new Font("Segoe UI", 10, FontStyle.Bold);
+            legend.Font = new Font("Segoe UI", 9, FontStyle.Bold);
             legend.Docking = Docking.Right;
+            legend.Alignment = StringAlignment.Center;
             legend.Enabled = ds.Count > 1;
 
             chartTopSanPham.Legends.Add(legend);
+
             chartTopSanPham.BackColor = Color.White;
         }
         private void LoadBangTopSanPham(DateTime tuNgay, DateTime denNgay)
@@ -576,16 +586,15 @@ using (ExcelPackage pck = new ExcelPackage())
 
 
         private int ThemBangVaoSheet(
-        ExcelWorksheet ws,
-        string tieuDe,
-        DataTable dt,
-        int dongBatDau
+            ExcelWorksheet ws,
+            string tieuDe,
+            DataTable dt,
+            int dongBatDau
         )
         {
             int dong = dongBatDau;
 
-ws.Cells[dong, 1].Value = tieuDe;
-
+            ws.Cells[dong, 1].Value = tieuDe;
             ws.Cells[dong, 1].Style.Font.Bold = true;
             ws.Cells[dong, 1].Style.Font.Size = 14;
             ws.Cells[dong, 1].Style.Font.Color.SetColor(Color.DarkRed);
@@ -595,46 +604,51 @@ ws.Cells[dong, 1].Value = tieuDe;
             if (dt == null || dt.Rows.Count == 0)
             {
                 ws.Cells[dong, 1].Value = "Không có dữ liệu";
-
                 return dong + 2;
             }
 
-            // HEADER
             for (int i = 0; i < dt.Columns.Count; i++)
             {
-                ws.Cells[dong, i + 1].Value =
-                    dt.Columns[i].ColumnName;
-
+                ws.Cells[dong, i + 1].Value = dt.Columns[i].ColumnName;
                 ws.Cells[dong, i + 1].Style.Font.Bold = true;
-
-                ws.Cells[dong, i + 1].Style.Fill.PatternType =
-                    ExcelFillStyle.Solid;
-
-                ws.Cells[dong, i + 1].Style.Fill.BackgroundColor
-                    .SetColor(Color.LightBlue);
-
-                ws.Cells[dong, i + 1].Style.Border.Top.Style =
-                    ExcelBorderStyle.Thin;
-
-                ws.Cells[dong, i + 1].Style.Border.Left.Style =
-                    ExcelBorderStyle.Thin;
-
-                ws.Cells[dong, i + 1].Style.Border.Right.Style =
-                    ExcelBorderStyle.Thin;
-
-                ws.Cells[dong, i + 1].Style.Border.Bottom.Style =
-                    ExcelBorderStyle.Thin;
+                ws.Cells[dong, i + 1].Style.Fill.PatternType = ExcelFillStyle.Solid;
+                ws.Cells[dong, i + 1].Style.Fill.BackgroundColor.SetColor(Color.LightBlue);
+                ws.Cells[dong, i + 1].Style.Border.Top.Style = ExcelBorderStyle.Thin;
+                ws.Cells[dong, i + 1].Style.Border.Left.Style = ExcelBorderStyle.Thin;
+                ws.Cells[dong, i + 1].Style.Border.Right.Style = ExcelBorderStyle.Thin;
+                ws.Cells[dong, i + 1].Style.Border.Bottom.Style = ExcelBorderStyle.Thin;
             }
 
             dong++;
-
-            // DATA
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 for (int j = 0; j < dt.Columns.Count; j++)
                 {
-                    ws.Cells[dong, j + 1].Value =
-                        dt.Rows[i][j];
+                    object value = dt.Rows[i][j];
+
+                    ws.Cells[dong, j + 1].Value = value;
+
+                    string tenCot = dt.Columns[j].ColumnName.ToLower();
+
+                    if (tenCot.Contains("ngày") ||
+                        tenCot.Contains("thời gian"))
+                    {
+                        ws.Cells[dong, j + 1].Style.Numberformat.Format =
+                            "dd/MM/yyyy HH:mm";
+                    }
+
+                    if (tenCot.Contains("giá") ||
+                        tenCot.Contains("tiền") ||
+                        tenCot.Contains("doanh thu"))
+                    {
+                        if (decimal.TryParse(value.ToString(), out decimal tien))
+                        {
+                            ws.Cells[dong, j + 1].Value = tien;
+
+                            ws.Cells[dong, j + 1].Style.Numberformat.Format =
+                                "#,##0\" VNĐ\"";
+                        }
+                    }
 
                     ws.Cells[dong, j + 1].Style.Border.Top.Style =
                         ExcelBorderStyle.Thin;
@@ -653,8 +667,7 @@ ws.Cells[dong, 1].Value = tieuDe;
             }
 
             return dong + 1;
-}
-
+        }
         private void ThemSheetDataTable(ExcelPackage pck, string tenSheet, DataTable dt)
         {
             ExcelWorksheet ws = pck.Workbook.Worksheets.Add(tenSheet);
@@ -693,51 +706,55 @@ ws.Cells[dong, 1].Value = tieuDe;
         }
         private void CaiDatGiaoDienChuyenNghiep()
         {
-            // ================= DATAGRIDVIEW =================
-
             dgvTopSanPham.EnableHeadersVisualStyles = false;
 
-            // Header đỏ
-            dgvTopSanPham.ColumnHeadersDefaultCellStyle.BackColor = Color.DarkRed;
-            dgvTopSanPham.ColumnHeadersDefaultCellStyle.ForeColor = Color.White;
-            dgvTopSanPham.ColumnHeadersDefaultCellStyle.SelectionBackColor = Color.DarkRed;
-            dgvTopSanPham.ColumnHeadersDefaultCellStyle.SelectionForeColor = Color.White;
-            dgvTopSanPham.ColumnHeadersDefaultCellStyle.Font =
-                new Font("Segoe UI", 10, FontStyle.Bold);
+            dgvTopSanPham.ColumnHeadersDefaultCellStyle.BackColor =
+                Color.DarkRed;
 
-            // Dòng bình thường
+            dgvTopSanPham.ColumnHeadersDefaultCellStyle.ForeColor =
+                Color.White;
+
+            dgvTopSanPham.ColumnHeadersDefaultCellStyle.SelectionBackColor =
+                Color.DarkRed;
+
+            dgvTopSanPham.ColumnHeadersDefaultCellStyle.SelectionForeColor =
+                Color.White;
+
             dgvTopSanPham.ColumnHeadersDefaultCellStyle.Font =
                 new Font("Segoe UI", 9, FontStyle.Bold);
 
-            dgvTopSanPham.DefaultCellStyle.BackColor = Color.White;
-            dgvTopSanPham.DefaultCellStyle.ForeColor = Color.Black;
+            dgvTopSanPham.DefaultCellStyle.BackColor =
+                Color.White;
 
-            // Dòng được chọn đỏ nhạt
-            dgvTopSanPham.DefaultCellStyle.SelectionBackColor =Color.FromArgb(205, 92, 92);
-            dgvTopSanPham.DefaultCellStyle.SelectionForeColor = Color.White;
+            dgvTopSanPham.DefaultCellStyle.ForeColor =
+                Color.Black;
 
-            // Dòng xen kẽ
+            dgvTopSanPham.DefaultCellStyle.SelectionBackColor =
+                Color.FromArgb(205, 92, 92);
+
+            dgvTopSanPham.DefaultCellStyle.SelectionForeColor =
+                Color.White;
+
             dgvTopSanPham.AlternatingRowsDefaultCellStyle.BackColor =
                 Color.FromArgb(255, 245, 245);
 
-            dgvTopSanPham.AlternatingRowsDefaultCellStyle.ForeColor = Color.Black;
+            dgvTopSanPham.AlternatingRowsDefaultCellStyle.ForeColor =
+                Color.Black;
 
-            // Kẻ bảng nhẹ, chuyên nghiệp hơn
-            dgvTopSanPham.GridColor = Color.Silver;
-            // Kẻ bảng
-            dgvTopSanPham.GridColor = Color.LightGray;
+            dgvTopSanPham.GridColor =
+                Color.LightGray;
 
             dgvTopSanPham.CellBorderStyle =
                 DataGridViewCellBorderStyle.Single;
 
             dgvTopSanPham.ColumnHeadersBorderStyle =
                 DataGridViewHeaderBorderStyle.Single;
-            dgvTopSanPham.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Single;
 
-            dgvTopSanPham.BackgroundColor = Color.White;
-            dgvTopSanPham.BorderStyle = BorderStyle.FixedSingle;
+            dgvTopSanPham.BackgroundColor =
+                Color.White;
 
-            // ================= CARD THỐNG KÊ =================
+            dgvTopSanPham.BorderStyle =
+                BorderStyle.FixedSingle;
 
             CaiDatCardThongKe(panelTongSanPham);
             CaiDatCardThongKe(panelTongNCC);
@@ -746,28 +763,33 @@ ws.Cells[dong, 1].Value = tieuDe;
             CaiDatCardThongKe(panelTongTonKho);
             CaiDatCardThongKe(panelTongDoanhThu);
 
-            // ================= CHART =================
-
             CaiDatChartDep(chartDoanhThu);
             CaiDatChartDep(chartNhapHang);
             CaiDatChartDep(chartTopSanPham);
         }
+
         private void CaiDatCardThongKe(Panel panel)
         {
-            panel.BackColor = Color.FromArgb(252, 252, 252);
-            panel.BorderStyle = BorderStyle.FixedSingle;
+            panel.BackColor =
+                Color.FromArgb(252, 252, 252);
+
+            panel.BorderStyle =
+                BorderStyle.FixedSingle;
+
+            panel.Padding =
+                new Padding(1);
 
             panel.MouseEnter += (s, e) =>
             {
-                panel.BackColor = Color.FromArgb(245, 245, 245);
+                panel.BackColor =
+                    Color.FromArgb(245, 245, 245);
             };
 
             panel.MouseLeave += (s, e) =>
             {
-                panel.BackColor = Color.FromArgb(252, 252, 252);
+                panel.BackColor =
+                    Color.FromArgb(252, 252, 252);
             };
-            panel.Padding = new Padding(1);
-            panel.BackColor =Color.FromArgb(245, 245, 245);
         }
 
         private void GanHoverPanel(Panel panel)

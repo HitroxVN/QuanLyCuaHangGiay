@@ -18,29 +18,29 @@ namespace QuanLyCuaHangGiay.database.repository
                 conn.Open();
 
                 string sql = @"
-                    SELECT 
-                        (SELECT COUNT(*) FROM SanPham) AS TongSanPham,
+            SELECT 
+                (SELECT COUNT(*) FROM SanPham) AS TongSanPham,
 
-                        (SELECT COUNT(*) FROM NhaCungCap) AS TongNhaCungCap,
+                (SELECT COUNT(*) FROM NhaCungCap) AS TongNhaCungCap,
 
-                        (SELECT COUNT(*) 
-                         FROM DonHang 
-                         WHERE ngayTao >= @TuNgay 
-                         AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDonHang,
+                (SELECT COUNT(*) 
+                 FROM DonHang 
+                 WHERE ngayTao >= @TuNgay 
+                 AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDonHang,
 
-                        (SELECT COUNT(*) 
-                         FROM PhieuNhap 
-                         WHERE thoiGian >= @TuNgay 
-                         AND thoiGian < DATEADD(DAY,1,@DenNgay)) AS TongPhieuNhap,
+                (SELECT COUNT(*) 
+                 FROM PhieuNhap 
+                 WHERE thoiGian >= @TuNgay 
+                 AND thoiGian < DATEADD(DAY,1,@DenNgay)) AS TongPhieuNhap,
 
-                        (SELECT ISNULL(SUM(soLuong),0) 
-                         FROM SanPham) AS TongSoLuongTon,
+                (SELECT ISNULL(SUM(soLuong),0) 
+                 FROM SanPham) AS TongSoLuongTon,
 
-                        (SELECT ISNULL(SUM(tongTien),0) 
-                         FROM DonHang 
-                         WHERE ngayTao >= @TuNgay 
-                         AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDoanhThu
-                ";
+                (SELECT ISNULL(SUM(tongTien),0) 
+                 FROM DonHang 
+                 WHERE ngayTao >= @TuNgay 
+                 AND ngayTao < DATEADD(DAY,1,@DenNgay)) AS TongDoanhThu
+        ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -76,15 +76,15 @@ namespace QuanLyCuaHangGiay.database.repository
                 conn.Open();
 
                 string sql = @"
-                    SELECT 
-                        MONTH(ngayTao) AS Thang,
-                        ISNULL(SUM(tongTien),0) AS DoanhThu
-                    FROM DonHang
-                    WHERE ngayTao >= @TuNgay
-                    AND ngayTao < DATEADD(DAY,1,@DenNgay)
-                    GROUP BY MONTH(ngayTao)
-                    ORDER BY MONTH(ngayTao)
-                ";
+            SELECT 
+                MONTH(ngayTao) AS Thang,
+                ISNULL(SUM(tongTien),0) AS DoanhThu
+            FROM DonHang
+            WHERE ngayTao >= @TuNgay
+            AND ngayTao < DATEADD(DAY,1,@DenNgay)
+            GROUP BY MONTH(ngayTao)
+            ORDER BY MONTH(ngayTao)
+        ";
 
                 using (SqlCommand cmd = new SqlCommand(sql, conn))
                 {
@@ -107,7 +107,6 @@ namespace QuanLyCuaHangGiay.database.repository
 
             return ds;
         }
-
         // ==================== CHART NHẬP HÀNG ====================
 
         public List<BieuDoThongKe> LayNhapHangTheoThang(DateTime tuNgay, DateTime denNgay)
@@ -264,18 +263,13 @@ namespace QuanLyCuaHangGiay.database.repository
             string sql = @"
         SELECT
             dh.id AS N'Mã đơn',
-            dh.ngayTao AS N'Ngày tạo',
-            sp.tenSP AS N'Tên sản phẩm',
-            ct.soLuong AS N'Số lượng',
-            sp.gia AS N'Giá bán',
-            kh.hoTen AS N'Tên khách hàng',
-            kh.sdt AS N'Số điện thoại',
-            dh.tongTien AS N'Tổng tiền',
+            dh.ngayTao AS N'Ngày bán',
+            tk.sdt AS N'Khách hàng',
+            tk.hoTen AS N'Nhân viên',
+            dh.tongTien AS N'Thành tiền',
             dh.trangThai AS N'Trạng thái'
         FROM DonHang dh
-        LEFT JOIN ChiTietDonHang ct ON dh.id = ct.donhangID
-        LEFT JOIN SanPham sp ON ct.sanphamID = sp.id
-        LEFT JOIN KhachHang kh ON dh.khachhangID = kh.id
+        LEFT JOIN TaiKhoan tk ON dh.taikhoanID = tk.id
         WHERE dh.ngayTao >= @TuNgay
         AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
         ORDER BY dh.ngayTao DESC
@@ -297,10 +291,17 @@ namespace QuanLyCuaHangGiay.database.repository
             string sql = @"
         SELECT
             id AS N'Mã phiếu nhập',
+
             thoiGian AS N'Thời gian',
+
             soLuong AS N'Số lượng nhập',
-            giaDonNhap AS N'Giá nhập'
+
+            giaDonNhap AS N'Giá nhập',
+
+            (soLuong * giaDonNhap) AS N'Thành tiền'
+
         FROM PhieuNhap
+
         WHERE thoiGian >= @TuNgay
         AND thoiGian < DATEADD(DAY,1,@DenNgay)
     ";
@@ -340,40 +341,16 @@ namespace QuanLyCuaHangGiay.database.repository
             string sql = @"
         SELECT
             dh.id AS N'Mã đơn',
-
             dh.ngayTao AS N'Ngày bán',
-
-            sp.tenSP AS N'Tên sản phẩm',
-
-            ct.soLuong AS N'Số lượng',
-
-            sp.gia AS N'Giá bán',
-
-            (ct.soLuong * sp.gia) AS N'Thành tiền',
-
-            kh.hoTen AS N'Tên khách hàng',
-
-            kh.sdt AS N'Số điện thoại',
-
-            dh.tongTien AS N'Tổng doanh thu',
-
+            tk.sdt AS N'Khách hàng',
+            tk.hoTen AS N'Nhân viên',
+            dh.tongTien AS N'Thành tiền',
             dh.trangThai AS N'Trạng thái'
-
         FROM DonHang dh
-
-        LEFT JOIN ChiTietDonHang ct
-            ON dh.id = ct.donhangID
-
-        LEFT JOIN SanPham sp
-            ON ct.sanphamID = sp.id
-
-        LEFT JOIN KhachHang kh
-            ON dh.khachhangID = kh.id
-
+        LEFT JOIN TaiKhoan tk ON dh.taikhoanID = tk.id
         WHERE dh.ngayTao >= @TuNgay
         AND dh.ngayTao < DATEADD(DAY,1,@DenNgay)
-
-        ORDER BY dh.tongTien DESC
+        ORDER BY dh.ngayTao DESC
     ";
 
             SqlParameter[] pa =

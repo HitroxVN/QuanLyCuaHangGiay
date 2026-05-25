@@ -90,7 +90,7 @@
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(164, 45);
             this.label7.TabIndex = 3;
-            this.label7.Text ="THỐNG KÊ";
+            this.label7.Text ="Thống kê";
             // lblCapNhatLuc
             this.lblCapNhatLuc.AutoSize = false;
             this.lblCapNhatLuc.Anchor =
