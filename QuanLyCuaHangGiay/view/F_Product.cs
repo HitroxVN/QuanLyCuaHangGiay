@@ -22,7 +22,6 @@ namespace QuanLyCuaHangGiay.view
             this.Load += F_Product_Load;
 
             // Gắn sự kiện nút bấm
-            button1.Click += button1_Click; // Chọn ảnh
             button2.Click += button2_Click; // Thêm
             button3.Click += button3_Click; // Sửa
             button4.Click += button4_Click; // Xóa
@@ -137,6 +136,14 @@ namespace QuanLyCuaHangGiay.view
                 dataGridView1.Columns["tenDanhMuc"].HeaderText = "Danh Mục";
                 if (dataGridView1.Columns.Contains("anh")) dataGridView1.Columns["anh"].HeaderText = "Tên Ảnh";
                 if (dataGridView1.Columns.Contains("soLuong")) dataGridView1.Columns["soLuong"].HeaderText = "Số Lượng";
+
+                // Format tiền (Giá) theo định dạng Việt Nam: phân cách hàng nghìn và hiển thị đơn vị VNĐ
+                if (dataGridView1.Columns.Contains("gia"))
+                {
+                    dataGridView1.Columns["gia"].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
+                    // keep numeric type for sorting; suffix will be applied in CellFormatting
+                    dataGridView1.Columns["gia"].DefaultCellStyle.Format = "N0"; // thousands separator
+                }
             }
         }
 
@@ -161,22 +168,57 @@ namespace QuanLyCuaHangGiay.view
 
         private bool ValidateData()
         {
-            if (string.IsNullOrWhiteSpace(tensp.Text)) { MessageBox.Show("Nhập Tên Sản Phẩm!"); tensp.Focus(); return false; }
-
+            if (string.IsNullOrWhiteSpace(tensp.Text))
+            {
+                MessageBox.Show("Nhập Tên Sản Phẩm!");
+                tensp.Focus();
+                return false;
+            }
             if (!decimal.TryParse(gia.Text, out decimal checkGia) || checkGia < 0)
-            { MessageBox.Show("Giá tiền không hợp lệ!"); gia.Focus(); return false; }
-
-            if (string.IsNullOrWhiteSpace(mau.Text)) { MessageBox.Show("Nhập Màu Sắc!"); mau.Focus(); return false; }
-
-            if (!decimal.TryParse(kichco.Text.Trim(), out decimal checkKichCo) || checkKichCo < 20 || checkKichCo > 50)
-            { MessageBox.Show("Kích cỡ từ 20 đến 50!"); kichco.Focus(); return false; }
-
+            {
+                MessageBox.Show("Giá tiền không hợp lệ!");
+                gia.Focus();
+                return false;
+            }
+            if (string.IsNullOrWhiteSpace(mau.Text))
+            {
+                MessageBox.Show("Nhập Màu Sắc!");
+                mau.Focus();
+                return false;
+            }
+            if (!decimal.TryParse(kichco.Text.Trim(), out decimal checkKichCo)
+                || checkKichCo < 20 || checkKichCo > 50)
+            {
+                MessageBox.Show("Kích cỡ từ 20 đến 50!");
+                kichco.Focus();
+                return false;
+            }
             if (BitConverter.GetBytes(decimal.GetBits(checkKichCo)[3])[2] > 1)
-            { MessageBox.Show("Kích cỡ tối đa 1 số thập phân (VD: 39.5)!"); kichco.Focus(); return false; }
+            {
+                MessageBox.Show("Kích cỡ tối đa 1 số thập phân (VD: 39.5)!");
+                kichco.Focus();
+                return false;
+            }
+            if (listdm.SelectedIndex == -1)
+            {
+                MessageBox.Show("Chọn Danh Mục!");
+                listdm.Focus();
+                return false;
+            }
 
-            if (listdm.SelectedIndex == -1) { MessageBox.Show("Chọn Danh Mục!"); listdm.Focus(); return false; }
-            if (listtt.SelectedIndex == -1) { MessageBox.Show("Chọn Trạng Thái!"); listtt.Focus(); return false; }
-
+            if (listtt.SelectedIndex == -1)
+            {
+                MessageBox.Show("Chọn Trạng Thái!");
+                listtt.Focus();
+                return false;
+            }
+            // Kiểm tra ảnh
+            if (string.IsNullOrEmpty(duongDanAnhGoc) &&
+                string.IsNullOrEmpty(tenAnhLuuDB))
+            {
+                MessageBox.Show("Vui lòng chọn ảnh sản phẩm!");
+                return false;
+            }
             return true;
         }
         #endregion
@@ -334,6 +376,7 @@ namespace QuanLyCuaHangGiay.view
 
         private void dataGridView1_CellFormatting(object sender, DataGridViewCellFormattingEventArgs e)
         {
+            // Highlight low stock rows
             if (dataGridView1.Columns.Contains("soLuong") && e.RowIndex >= 0)
             {
                 var cellValue = dataGridView1.Rows[e.RowIndex].Cells["soLuong"].Value;
@@ -342,6 +385,25 @@ namespace QuanLyCuaHangGiay.view
                     dataGridView1.Rows[e.RowIndex].DefaultCellStyle.BackColor = Color.LightPink;
                     dataGridView1.Rows[e.RowIndex].DefaultCellStyle.ForeColor = Color.DarkRed;
                     dataGridView1.Rows[e.RowIndex].DefaultCellStyle.Font = new Font(dataGridView1.Font, FontStyle.Bold);
+                }
+            }
+
+            // Format gia cell to show VNĐ suffix while preserving numeric value for sorting
+            if (dataGridView1.Columns.Contains("gia") && e.RowIndex >= 0 && e.ColumnIndex >= 0)
+            {
+                var col = dataGridView1.Columns[e.ColumnIndex];
+                if (col.Name == "gia")
+                {
+                    var val = dataGridView1.Rows[e.RowIndex].Cells["gia"].Value;
+                    if (val != null && val != DBNull.Value)
+                    {
+                        // Try to parse as decimal and format with thousand separators
+                        if (decimal.TryParse(val.ToString(), out decimal money))
+                        {
+                            e.Value = money.ToString("N0") + " VNĐ";
+                            e.FormattingApplied = true;
+                        }
+                    }
                 }
             }
         }

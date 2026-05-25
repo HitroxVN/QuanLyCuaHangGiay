@@ -18,9 +18,8 @@ namespace QuanLyCuaHangGiay.controller
             }
         }
 
-        // =======================================================================
+
         // 1. CHỨC NĂNG XEM VÀ LỌC (Cả Admin và Staff đều được dùng)
-        // =======================================================================
         public DataTable SearchAndFilter(string keyword, int categoryId, string status)
         {
             if (keyword == null) keyword = "";
@@ -34,9 +33,8 @@ namespace QuanLyCuaHangGiay.controller
             return SearchAndFilter("", 0, "Tất cả");
         }
 
-        // =======================================================================
+
         // 2. CHỨC NĂNG THÊM, SỬA, XÓA (CHỈ ADMIN MỚI ĐƯỢC DÙNG)
-        // =======================================================================
         public bool AddProduct(string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai)
         {
             // Chặn đứng Staff

@@ -219,7 +219,6 @@
     <Compile Include="model\Kho.cs" />
     <Compile Include="model\NhaCungCap.cs" />
     <Compile Include="model\PhieuNhap.cs" />
-    <Compile Include="model\SanPham.cs" />
     <Compile Include="view\frmMain.cs">
       <SubType>Form</SubType>
     </Compile>

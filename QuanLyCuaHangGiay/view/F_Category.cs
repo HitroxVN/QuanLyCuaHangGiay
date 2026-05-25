@@ -16,6 +16,7 @@ namespace QuanLyCuaHangGiay.view
         {
             InitializeComponent();
 
+            // gọi hàm load 
             this.Load += F_Category_Load;
             button2.Click += button2_Click; // Thêm
             button3.Click += button3_Click; // Sửa
@@ -24,13 +25,16 @@ namespace QuanLyCuaHangGiay.view
 
             // Sự kiện tìm kiếm và lọc
             timkiem.TextChanged += timkiem_TextChanged;
+            // chọn lọc 
             comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
 
+            // Sự kiện click vào ô trong DataGridView để hiển thị thông tin lên form
             dataGridView1.CellClick += dataGridView1_CellClick;
         }
 
         private void F_Category_Load(object sender, EventArgs e)
         {
+            // không cho sửa ô id 
             textBox1.ReadOnly = true;
 
             // Load trạng thái cho Thêm/Sửa
@@ -206,7 +210,7 @@ namespace QuanLyCuaHangGiay.view
                 }
                 catch (Exception ex)
                 {
-                    MessageBox.Show(ex.Message, "Lỗi Ràng Buộc", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(ex.Message, "Lỗi vì danh mục đang chứa sản phẩm", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
             }
         }

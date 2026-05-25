@@ -26,8 +26,6 @@ namespace QuanLyCuaHangGiay.model
         {
         }
 
-        // Constructor đầy đủ tham số (Đã bổ sung soLuong)
-        // Mẹo: Để int soLuong = 0 giúp các đoạn code cũ gọi hàm này tạm thời không bị lỗi thiếu tham số
         public Products(int id, string tenSP, decimal gia, string anh, string mau, string kichCo, int danhMucID, string trangThai, DateTime ngayTao, int soLuong = 0)
         {
             Id = id;
