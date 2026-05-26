@@ -93,31 +93,13 @@ namespace QuanLyCuaHangGiay.controller
             return rs;
         }
 
-        public List<Users> getAllUsers()
+        public List<Users> searchAndFilterUsers(string keyword, string role)
         {
             if (!Authorization.IsAdmin())
             {
-                throw new UnauthorizedAccessException("Không có quyền xem danh sách người dùng.");
+                throw new UnauthorizedAccessException("Không có quyền tìm kiếm và lọc người dùng.");
             }
-            return repo.getAllUsers();
-        }
-
-        public List<Users> searchUsers(string keyword)
-        {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền tìm kiếm người dùng.");
-            }
-            return repo.searchUsers(keyword);
-        }
-
-        public List<Users> filterUsersByRole(string role)
-        {
-            if (!Authorization.IsAdmin())
-            {
-                throw new UnauthorizedAccessException("Không có quyền lọc người dùng.");
-            }
-            return repo.filterByRole(role);
+            return repo.searchAndFilter(keyword, role);
         }
     }
 }
