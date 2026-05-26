@@ -130,8 +130,7 @@ namespace QuanLyCuaHangGiay.view
 
         private void loadData()
         {
-            dgvUsers.DataSource = uctr.getAllUsers();
-            dgvUsers.Columns["matKhau"].Visible = false;    // Ẩn cột mật khẩu
+            applyFilters();
             txtEmail.Enabled = true;
             txtPassword.Enabled = true;
         }
@@ -158,29 +157,26 @@ namespace QuanLyCuaHangGiay.view
             loadData();
         }
 
+        private void applyFilters()
+        {
+            string keyword = txtSearch.Text.Trim();
+            string role = cbLocTheoQuyen.SelectedItem?.ToString() ?? "all";
+
+            dgvUsers.DataSource = uctr.searchAndFilterUsers(keyword, role);
+            if (dgvUsers.Columns.Contains("matKhau"))
+            {
+                dgvUsers.Columns["matKhau"].Visible = false;
+            }
+        }
+
         private void txtSearch_TextChanged(object sender, EventArgs e)
         {
-            string k = txtSearch.Text.Trim();
-            if (string.IsNullOrEmpty(k))
-            {
-                loadData();
-            }
-            else
-            {
-                dgvUsers.DataSource = uctr.searchUsers(k);
-            }
+            applyFilters();
         }
 
         private void cbLocTheoQuyen_SelectedIndexChanged(object sender, EventArgs e)
         {
-            string quyen = cbLocTheoQuyen.SelectedItem.ToString();
-            if(quyen == "all")
-            {
-                loadData();
-            } else
-            {
-                dgvUsers.DataSource = uctr.filterUsersByRole(quyen);
-            }
+            applyFilters();
         }
     }
 }
