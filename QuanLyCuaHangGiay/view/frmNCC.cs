@@ -1,5 +1,6 @@
-﻿using QuanLyCuaHangGiay.controller;
+using QuanLyCuaHangGiay.controller;
 using QuanLyCuaHangGiay.model;
+using QuanLyCuaHangGiay.util;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -29,6 +30,18 @@ namespace QuanLyCuaHangGiay.view
             cbTrangThai.Items.Add("inactive");
             cbTrangThai.SelectedIndex = 0;
             cbTrangThai.Text = "";
+
+            if (Session.user != null && Session.user.quyen == "staff")
+            {
+                btnThem.Enabled = false;
+                btnSua.Enabled = false;
+                btnXoa.Enabled = false;
+                txtTen.Enabled = false;
+                txtEmail.Enabled = false;
+                txtDiaChi.Enabled = false;
+                txtSDT.Enabled = false;
+                cbTrangThai.Enabled = false;
+            }
         }
 
         private void LoadData()
@@ -122,11 +135,16 @@ namespace QuanLyCuaHangGiay.view
 
             if (MessageBox.Show("Xác nhận xóa?", "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                if (_controller.delete(selectedID))
+                string msg;
+                if (_controller.delete(selectedID, out msg))
                 {
-                    MessageBox.Show("Xóa thành công!");
+                    MessageBox.Show(msg);
                     LoadData();
                     ResetForm();
+                }
+                else
+                {
+                    MessageBox.Show(msg, "Lỗi", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
         }
