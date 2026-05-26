@@ -36,7 +36,8 @@ namespace QuanLyCuaHangGiay.view
             CaiDatGiaoDienCoGian();
             GanSuKienClickThongKe();
 
-            LoadThongKe(); 
+            LoadThongKe();
+
             ToMauTonKhoThap();
         }
 
