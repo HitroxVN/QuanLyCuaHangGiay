@@ -21,14 +21,14 @@ namespace QuanLyCuaHangGiay.view
             InitializeComponent();
             this.Load += F_Product_Load;
 
-            // Gắn sự kiện nút bấm
+            // gắn sự kiện nút bấm
             button2.Click += button2_Click; // Thêm
             button3.Click += button3_Click; // Sửa
             button4.Click += button4_Click; // Xóa
             button5.Click += button5_Click; // Làm mới
             button6.Click += (s, e) => LocVaTimKiem();
 
-            // Gắn sự kiện lọc tự động
+            // gắn sự kiện lọc tự động
             timkiem.TextChanged += (s, e) => LocVaTimKiem();
             comboBox1.SelectedIndexChanged += (s, e) => LocVaTimKiem(); // Lọc danh mục
             comboBox2.SelectedIndexChanged += (s, e) => LocVaTimKiem(); // Lọc trạng thái
@@ -55,8 +55,8 @@ namespace QuanLyCuaHangGiay.view
                 button5.Visible = false;
                 groupBox1.Visible = false;
 
-                // 3. Khóa các ô nhập liệu (không cho gõ) và ẩn nút Chọn Ảnh
-                button1.Visible = false; // Nút chọn ảnh
+                // nhân viên không được sửa, ẩn nút chọn ảnh
+                button1.Visible = false;
                 tensp.Enabled = false;
                 gia.Enabled = false;
                 mau.Enabled = false;
@@ -66,7 +66,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
-        #region 1. HÀM HỖ TRỢ & NẠP DỮ LIỆU
+        // 1. hàm hỗ trợ & nạp dữ liệu
         private void LoadNextId()
         {
             textBox1.Text = productController.GetNextProductId().ToString();
@@ -98,7 +98,7 @@ namespace QuanLyCuaHangGiay.view
             comboBox2.SelectedIndex = 0;
         }
 
-        // Thay thế hoàn toàn ThucHienLocChung cồng kềnh cũ
+            // lọc và tìm kiếm
         private void LocVaTimKiem()
         {
             if (comboBox1.SelectedValue == null) return; // Bỏ qua nếu form đang khởi tạo
@@ -117,11 +117,9 @@ namespace QuanLyCuaHangGiay.view
             FormatGrid();
         }
 
-        public void ReloadData()
-        {
-            LocVaTimKiem();
-        }
+        public void ReloadData() { LocVaTimKiem(); }
 
+        // định dạng cột lưới
         private void FormatGrid()
         {
             if (dataGridView1.Columns.Count > 0)
@@ -147,6 +145,7 @@ namespace QuanLyCuaHangGiay.view
             }
         }
 
+        // xử lý lưu ảnh vào thư mục images
         private string XulyLuuAnh()
         {
             if (string.IsNullOrEmpty(duongDanAnhGoc)) return tenAnhLuuDB;
@@ -166,64 +165,21 @@ namespace QuanLyCuaHangGiay.view
             return tenFile;
         }
 
+        // kiểm tra dữ liệu đầu vào
         private bool ValidateData()
         {
-            if (string.IsNullOrWhiteSpace(tensp.Text))
-            {
-                MessageBox.Show("Nhập Tên Sản Phẩm!");
-                tensp.Focus();
-                return false;
-            }
-            if (!decimal.TryParse(gia.Text, out decimal checkGia) || checkGia < 0)
-            {
-                MessageBox.Show("Giá tiền không hợp lệ!");
-                gia.Focus();
-                return false;
-            }
-            if (string.IsNullOrWhiteSpace(mau.Text))
-            {
-                MessageBox.Show("Nhập Màu Sắc!");
-                mau.Focus();
-                return false;
-            }
-            if (!decimal.TryParse(kichco.Text.Trim(), out decimal checkKichCo)
-                || checkKichCo < 20 || checkKichCo > 50)
-            {
-                MessageBox.Show("Kích cỡ từ 20 đến 50!");
-                kichco.Focus();
-                return false;
-            }
-            if (BitConverter.GetBytes(decimal.GetBits(checkKichCo)[3])[2] > 1)
-            {
-                MessageBox.Show("Kích cỡ tối đa 1 số thập phân (VD: 39.5)!");
-                kichco.Focus();
-                return false;
-            }
-            if (listdm.SelectedIndex == -1)
-            {
-                MessageBox.Show("Chọn Danh Mục!");
-                listdm.Focus();
-                return false;
-            }
-
-            if (listtt.SelectedIndex == -1)
-            {
-                MessageBox.Show("Chọn Trạng Thái!");
-                listtt.Focus();
-                return false;
-            }
-            // Kiểm tra ảnh
-            if (string.IsNullOrEmpty(duongDanAnhGoc) &&
-                string.IsNullOrEmpty(tenAnhLuuDB))
-            {
-                MessageBox.Show("Vui lòng chọn ảnh sản phẩm!");
-                return false;
-            }
+            if (string.IsNullOrWhiteSpace(tensp.Text)) { MessageBox.Show("nhập tên sản phẩm"); tensp.Focus(); return false; }
+            if (!decimal.TryParse(gia.Text, out decimal checkGia) || checkGia < 0) { MessageBox.Show("giá tiền không hợp lệ"); gia.Focus(); return false; }
+            if (string.IsNullOrWhiteSpace(mau.Text)) { MessageBox.Show("nhập màu sắc"); mau.Focus(); return false; }
+            if (!decimal.TryParse(kichco.Text.Trim(), out decimal checkKichCo) || checkKichCo < 20 || checkKichCo > 50) { MessageBox.Show("kích cỡ từ 20 đến 50"); kichco.Focus(); return false; }
+            if (BitConverter.GetBytes(decimal.GetBits(checkKichCo)[3])[2] > 1) { MessageBox.Show("kích cỡ tối đa 1 số thập phân (vd: 39.5)"); kichco.Focus(); return false; }
+            if (listdm.SelectedIndex == -1) { MessageBox.Show("chọn danh mục"); listdm.Focus(); return false; }
+            if (listtt.SelectedIndex == -1) { MessageBox.Show("chọn trạng thái"); listtt.Focus(); return false; }
+            // kiểm tra ảnh
+            if (string.IsNullOrEmpty(duongDanAnhGoc) && string.IsNullOrEmpty(tenAnhLuuDB)) { MessageBox.Show("vui lòng chọn ảnh sản phẩm"); return false; }
             return true;
         }
-        #endregion
-
-        #region 2. SỰ KIỆN NÚT BẤM (CRUD)
+        // 2. sự kiện nút bấm (crud)
         private void button1_Click(object sender, EventArgs e)
         {
             using (OpenFileDialog ofd = new OpenFileDialog() { Filter = "Image Files|*.jpg;*.jpeg;*.png;*.gif", Title = "Chọn ảnh" })
@@ -335,9 +291,7 @@ namespace QuanLyCuaHangGiay.view
             LocVaTimKiem();
             LoadNextId();
         }
-        #endregion
-
-        #region 3. SỰ KIỆN LƯỚI & RÁC
+        // 3. sự kiện lưới & xử lý hiển thị
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex >= 0 && !dataGridView1.Rows[e.RowIndex].IsNewRow)
@@ -415,7 +369,7 @@ namespace QuanLyCuaHangGiay.view
         private void soluong_TextChanged(object sender, EventArgs e) { }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e) { }
-        #endregion
+        
 
         private void timkiem_Enter(object sender, EventArgs e)
         {
