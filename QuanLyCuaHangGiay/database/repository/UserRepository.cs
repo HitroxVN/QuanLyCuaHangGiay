@@ -92,41 +92,8 @@ namespace QuanLyCuaHangGiay.database.repository
             return DBConnection.ExecuteNonQuery(query, p) > 0;
         }
 
-        public List<Users> getAllUsers()
+        private List<Users> map(DataTable dt)
         {
-            string query = "SELECT * FROM TaiKhoan";
-            DataTable dt = DBConnection.GetDataTable(query);
-
-            List<Users> list = new List<Users>();
-
-            foreach(DataRow row in dt.Rows)
-            {
-                Users u = new Users
-                {
-                    id = (int)row["id"],
-                    hoTen = row["hoTen"].ToString(),
-                    email = row["email"].ToString(),
-                    matKhau = row["matKhau"].ToString(),
-                    sdt = row["sdt"].ToString(),
-                    diaChi = row["diaChi"].ToString(),
-                    quyen = row["quyen"].ToString(),
-                    ngayTao = (DateTime)row["ngayTao"],
-                    trangThai = row["trangThai"].ToString()
-                };
-                list.Add(u);
-            }
-
-            return list;
-        }
-
-        public List<Users> searchUsers(string keyword)
-        {
-            string query = "SELECT * FROM TaiKhoan WHERE hoTen LIKE @kw OR email LIKE @kw";
-            SqlParameter[] p = new SqlParameter[]
-            {
-                new SqlParameter("@kw", "%" + keyword + "%")
-            };
-            DataTable dt = DBConnection.GetDataTable(query, p);
             List<Users> list = new List<Users>();
             foreach (DataRow row in dt.Rows)
             {
@@ -147,32 +114,25 @@ namespace QuanLyCuaHangGiay.database.repository
             return list;
         }
 
-        public List<Users> filterByRole(string role)
+        public List<Users> searchAndFilter(string keyword, string role)
         {
-            string query = "SELECT * FROM TaiKhoan WHERE quyen = @role";
-            SqlParameter[] p = new SqlParameter[]
+            string query = "SELECT * FROM TaiKhoan WHERE 1=1";
+            List<SqlParameter> parameters = new List<SqlParameter>();
+
+            if (!string.IsNullOrEmpty(keyword))
             {
-                new SqlParameter("@role", role)
-            };
-            DataTable dt = DBConnection.GetDataTable(query, p);
-            List<Users> list = new List<Users>();
-            foreach (DataRow row in dt.Rows)
-            {
-                Users u = new Users
-                {
-                    id = (int)row["id"],
-                    hoTen = row["hoTen"].ToString(),
-                    email = row["email"].ToString(),
-                    matKhau = row["matKhau"].ToString(),
-                    sdt = row["sdt"].ToString(),
-                    diaChi = row["diaChi"].ToString(),
-                    quyen = row["quyen"].ToString(),
-                    ngayTao = (DateTime)row["ngayTao"],
-                    trangThai = row["trangThai"].ToString()
-                };
-                list.Add(u);
+                query += " AND (hoTen LIKE @kw OR email LIKE @kw)";
+                parameters.Add(new SqlParameter("@kw", "%" + keyword + "%"));
             }
-            return list;
+
+            if (!string.IsNullOrEmpty(role) && role != "all")
+            {
+                query += " AND quyen = @role";
+                parameters.Add(new SqlParameter("@role", role));
+            }
+
+            DataTable dt = DBConnection.GetDataTable(query, parameters.ToArray());
+            return map(dt);
         }
 
         public bool checkPassword(int userId, string password)
